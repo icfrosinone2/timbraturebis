@@ -3,135 +3,911 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestione Oraria ATA - Scansione QR & PIN</title>
-  <!-- Libreria HTML5 QR Code Scanner -->
-  <script src="https://unpkg.com/html5-qrcode"></script>
+  <title>Gestione Oraria ATA - IC Frosinone 2</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: #f4f6f9; color: #333; padding-bottom: 30px; }
-    header { background: #1565c0; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
-    .container { max-width: 1250px; margin: 25px auto; padding: 0 15px; }
-    .grid-main { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    @media(max-width: 900px) { .grid-main { grid-template-columns: 1fr; } }
-    .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    h2 { font-size: 1.2rem; margin-bottom: 15px; color: #1565c0; }
+    body { background-color: #f1f5f9; color: #0f172a; padding-bottom: 30px; }
     
-    /* Box Scanner Fotocamera */
-    #reader { width: 100%; border-radius: 8px; overflow: hidden; background: #222; min-height: 280px; }
-    .btn { background: #1565c0; color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 10px; }
-    .btn:hover { background: #0d47a1; }
-    .btn-action { display: flex; gap: 10px; margin-top: 15px; }
-    .btn-green { background: #2e7d32; }
-    .btn-orange { background: #ef6c00; }
-    .btn-red { background: #c62828; }
+    header { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-size: 18px; font-weight: bold; color: #1e3a8a; }
+    nav { display: flex; gap: 8px; }
+    nav button { background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; }
+    nav button.active { background: #2563eb; color: white; border-color: #2563eb; }
 
-    /* Tastierino PIN */
-    .pin-display { background: #eef2f7; font-size: 1.5rem; text-align: center; padding: 10px; border-radius: 6px; margin-bottom: 12px; letter-spacing: 5px; }
-    .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .keypad button { padding: 12px; font-size: 1.2rem; font-weight: bold; border: 1px solid #ccc; background: #fff; border-radius: 6px; cursor: pointer; }
-    .keypad button:active { background: #e0e0e0; }
-    select, input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 12px; }
+    .container { max-width: 1250px; margin: 25px auto; padding: 0 15px; }
+    .grid-main { display: grid; grid-template-columns: 6.5fr 5.5fr; gap: 20px; }
+    @media (max-width: 900px) { .grid-main { grid-template-columns: 1fr; } }
+
+    .card { background: white; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    
+    .clock-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .time { font-size: 36px; font-weight: 800; color: #0f172a; }
+    .date { color: #64748b; font-size: 13px; text-transform: capitalize; }
+
+    .gps-bar { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 600; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+    
+    label { display: block; font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 4px; margin-top: 10px; }
+    select, input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; background: #fff; }
+    
+    .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 15px; }
+    .keypad button { padding: 14px; font-size: 18px; font-weight: bold; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; }
+    .keypad button:active { background: #cbd5e1; }
+
+    .btn-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+    .btn-action { padding: 14px; border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 13px; cursor: pointer; text-transform: uppercase; transition: opacity 0.2s; }
+    .btn-action:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
+    .btn-in { background: #16a34a; }
+    .btn-pause { background: #d97706; }
+    .btn-out { background: #dc2626; }
+
+    .sites-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
+    @media (max-width: 600px) { .sites-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .site-card { border: 2px solid #cbd5e1; border-radius: 12px; padding: 10px; cursor: pointer; transition: all 0.2s; position: relative; background: #f8fafc; }
+    .site-card.selected { border-color: #2563eb; background: #eff6ff; }
+    
+    .site-card-pietrobono { border-color: #93c5fd; background: #eff6ff; }
+    .site-card-rinascita { border-color: #86efac; background: #f0fdf4; }
+    .site-card-xxiii { border-color: #fde047; background: #fefce8; }
+    .site-card-verdi { border-color: #c084fc; background: #faf5ff; }
+    .site-card-pinocchio { border-color: #f472b6; background: #fdf2f8; }
+    .site-card-spinelli { border-color: #fdba74; background: #fff7ed; }
+    .site-card-casa { border: 2px dashed #16a34a; background: #f0fdf4; }
+
+    .site-title { font-weight: 800; font-size: 13px; color: #0f172a; display: flex; align-items: center; gap: 4px; }
+    .btn-maps-mini { background: #0284c7; color: white; text-decoration: none; font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 6px; display: inline-block; margin-top: 6px; }
+
+    .log-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; font-size: 12px; }
+    .badge { padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; color: white; }
+    .badge-entrata { background: #16a34a; }
+    .badge-pausa { background: #d97706; }
+    .badge-uscita { background: #dc2626; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
+    th, td { padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; }
+    th { background: #f8fafc; font-weight: bold; color: #475569; }
+
+    .btn-small { padding: 6px 10px; font-size: 11px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; text-decoration: none; display: inline-block; }
+    .btn-blue { background: #2563eb; color: white; }
+    .btn-green { background: #16a34a; color: white; }
+    .btn-red { background: #dc2626; color: white; }
+    .btn-edit { background: #e0f2fe; color: #0369a1; }
+    .btn-delete { background: #fee2e2; color: #b91c1c; }
+
+    .day-schedule-card { border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 8px; padding: 8px; margin-bottom: 6px; }
+
+    /* LAYOUT BADGES ED ELEMENTI DI STAMPA */
+    .badge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; margin-top: 15px; }
+    .badge-wrapper { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+    
+    .badge-card { width: 350px; height: 210px; background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); border: 2px solid #0f172a; border-radius: 12px; color: white; padding: 12px 14px; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.15); display: flex; flex-direction: column; justify-content: space-between; }
+    .badge-header { border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+    .badge-school { font-size: 11px; font-weight: 800; letter-spacing: 0.5px; }
+    
+    .badge-main-content { display: flex; gap: 12px; margin-top: 8px; align-items: center; }
+    .badge-photo-box { width: 70px; height: 85px; background: rgba(255,255,255,0.15); border: 2px dashed rgba(255,255,255,0.6); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; text-align: center; color: #dbeafe; padding: 2px; }
+    
+    .badge-details { flex: 1; }
+    .badge-name { font-size: 14px; font-weight: 800; text-transform: uppercase; color: #ffffff; letter-spacing: 0.5px; line-height: 1.2; }
+    .badge-profile { font-size: 11px; color: #dbeafe; font-weight: 600; margin-top: 3px; }
+    .badge-role { font-size: 9px; color: #93c5fd; }
+    .badge-site { font-size: 9px; color: #e2e8f0; margin-top: 4px; }
+
+    .badge-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 6px; }
+    .badge-pin-box { background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; }
+    .badge-qr-img { width: 45px; height: 45px; background: white; padding: 2px; border-radius: 4px; }
+
+    .filter-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 15px; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; }
+
+    .hidden { display: none !important; }
+
+    @media print {
+      header, .no-print, nav, .container > div:not(#tab-badges) { display: none !important; }
+      body { background: white; padding: 0; margin: 0; }
+      #tab-badges { border: none; box-shadow: none; padding: 0; }
+      .badge-wrapper.print-only { display: block !important; }
+      .badge-wrapper.print-only .btn-small { display: none !important; }
+      .badge-card { page-break-inside: avoid; break-inside: avoid; margin: 10px auto; box-shadow: none; border: 1px solid #000; color: #000; background: #fff !important; }
+      .badge-card * { color: #000 !important; border-color: #000 !important; }
+      .badge-photo-box { border: 1px dashed #000 !important; }
+    }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>Gestione Oraria ATA - IC Frosinone 2</h1>
-  <div id="clock" style="font-size: 1.2rem; font-weight: bold;"></div>
-</header>
+  <header>
+    <div class="brand">Gestione Oraria ATA - IC Frosinone 2</div>
+    <nav>
+      <button id="nav-kiosk" class="active" onclick="showTab('kiosk')">Timbra</button>
+      <button id="nav-logs" onclick="showTab('logs')">Registro & Report DSGA</button>
+      <button id="nav-badges" onclick="showTab('badges')">🪪 Stampa Badges</button>
+      <button id="nav-settings" onclick="showTab('settings')">⚙️ Impostazioni Sedi & Dipendenti</button>
+    </nav>
+  </header>
 
-<div class="container">
-  <div class="grid-main">
-    
-    <!-- COLONNA 1: SCANSIONE FOTOCAMERA / QR CODE -->
-    <div class="card">
-      <h2>📷 Scansione Badge QR Code</h2>
-      <div id="reader"></div>
-      <button class="btn" onclick="startCamera()">📷 Attiva Fotocamera</button>
-      <div id="scan-result" style="margin-top: 15px; font-weight: bold; color: #2e7d32; text-align: center;"></div>
-    </div>
+  <div class="container">
 
-    <!-- COLONNA 2: SELEZIONE MANUALE E PIN -->
-    <div class="card">
-      <h2>👤 Timbratura Manuale / PIN</h2>
-      
-      <label>Seleziona Dipendente ATA:</label>
-      <select id="employee-select">
-        <option value="">-- Seleziona Dipendente --</option>
-        <option value="BELARDO GIOVANNI">BELARDO GIOVANNI - Collaboratore Scolastico</option>
-        <option value="DIPENDENTE TEST">DIPENDENTE TEST - Assistente Amministrativo</option>
-      </select>
+    <!-- TAB TIMBRA -->
+    <div id="tab-kiosk" class="grid-main">
+      <div class="card">
+        <div class="clock-box">
+          <div>
+            <div id="clock" class="time">--:--:--</div>
+            <div id="date" class="date">--</div>
+          </div>
+          <div>
+            <span id="active-site-badge" style="background:#dbeafe; color:#1e40af; padding:6px 12px; border-radius:12px; font-weight:bold; font-size:12px;">SELEZIONA DIPENDENTE</span>
+          </div>
+        </div>
 
-      <label>PIN Personale (4 Cifre):</label>
-      <div class="pin-display" id="pin-display">....</div>
+        <div class="gps-bar">
+          <span id="gps-info">📍 Posizione Rilevata: Casa Test - Viale Portogallo 4</span>
+          <div>
+            <button onclick="calcolaGeofencing()" class="btn-small btn-blue">Aggiorna Posizione</button>
+          </div>
+        </div>
 
-      <div class="keypad">
-        <button onclick="pressKey('1')">1</button>
-        <button onclick="pressKey('2')">2</button>
-        <button onclick="pressKey('3')">3</button>
-        <button onclick="pressKey('4')">4</button>
-        <button onclick="pressKey('5')">5</button>
-        <button onclick="pressKey('6')">6</button>
-        <button onclick="pressKey('7')">7</button>
-        <button onclick="pressKey('8')">8</button>
-        <button onclick="pressKey('9')">9</button>
-        <button onclick="clearPin()">C</button>
-        <button onclick="pressKey('0')">0</button>
-        <button onclick="deletePin()">⌫</button>
+        <label>Seleziona Dipendente ATA (Ordine Alfabetico)</label>
+        <select id="kiosk-worker" onchange="onWorkerSelected()"></select>
+
+        <div id="worker-shift-info" style="margin-top:8px; padding:10px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; font-size:12px; color:#1e40af;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span>📅 Orario Previsto Oggi (<b id="current-day-name">--</b>):</span>
+            <button onclick="editTodayShiftModal()" class="btn-small" style="background:#dbeafe; color:#1e40af; border:1px solid #93c5fd;">✏️ Modifica Turno di Oggi</button>
+          </div>
+          <div style="margin-top:4px;">
+            ⏱️ <b>Turno 1:</b> <span id="shift-hours-text">08:00 - 14:00</span>
+            <span id="shift-hours-sec-wrapper" style="display:none;"> | ⏱️ <b>Turno 2 (Rientro):</b> <span id="shift-hours-sec-text">14:30 - 17:30</span></span>
+          </div>
+        </div>
+
+        <label>PIN Personale (4 cifre)</label>
+        <input type="password" id="kiosk-pin" maxlength="4" placeholder="••••" style="text-align: center; font-size: 24px; letter-spacing: 5px;" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+
+        <div class="keypad">
+          <button onclick="press('1')">1</button><button onclick="press('2')">2</button><button onclick="press('3')">3</button>
+          <button onclick="press('4')">4</button><button onclick="press('5')">5</button><button onclick="press('6')">6</button>
+          <button onclick="press('7')">7</button><button onclick="press('8')">8</button><button onclick="press('9')">9</button>
+          <button onclick="clearPin()" style="background:#e2e8f0;">C</button>
+          <button onclick="press('0')">0</button>
+          <button onclick="clearPin()" style="background:#fee2e2; color:#dc2626;">⌫</button>
+        </div>
+
+        <label>Note Facoltative</label>
+        <input type="text" id="kiosk-note" placeholder="es. Permesso orario, Straordinario, Sostituzione...">
+
+        <div class="btn-group">
+          <button id="btn-in" class="btn-action btn-in" onclick="clock('ENTRATA')">Entrata</button>
+          <button id="btn-pause" class="btn-action btn-pause" onclick="clock('PAUSA')">Pausa (30m)</button>
+          <button id="btn-out" class="btn-action btn-out" onclick="clock('USCITA')">Uscita</button>
+        </div>
       </div>
 
-      <div class="btn-action">
-        <button class="btn btn-green" onclick="timbra('ENTRATA')">ENTRATA</button>
-        <button class="btn btn-orange" onclick="timbra('PAUSA')">PAUSA</button>
-        <button class="btn btn-red" onclick="timbra('USCITA')">USCITA</button>
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h3 style="font-size:15px;">📍 6 Plessi + Test</h3>
+          <span style="font-size:11px; color:#64748b;">Clicca sulla scheda per selezionare la sede</span>
+        </div>
+
+        <div class="sites-grid">
+          <div class="site-card site-card-pietrobono" id="card-s_101" onclick="selectSiteCard('s_101')">
+            <div class="site-title">🏛️ Pietrobono</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=Scuola+Luigi+Pietrobono+Via+Puccini+Frosinone" target="_blank" onclick="event.stopPropagation()" class="btn-maps-mini">Maps</a>
+          </div>
+          <div class="site-card site-card-rinascita" id="card-s_104" onclick="selectSiteCard('s_104')">
+            <div class="site-title">🌱 Rinascita</div>
+            <a href="https://maps.app.goo.gl/GitXH3MyVTMkEiHk8" target="_blank" onclick="event.stopPropagation()" class="btn-maps-mini">Maps</a>
+          </div>
+          <div class="site-card site-card-xxiii" id="card-s_102" onclick="selectSiteCard('s_102')">
+            <div class="site-title">🏫 XXIII</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=Scuola+Giovanni+XXIII+Via+Albinoni+Frosinone" target="_blank" onclick="event.stopPropagation()" class="btn-maps-mini">Maps</a>
+          </div>
+          <div class="site-card site-card-verdi" id="card-s_103" onclick="selectSiteCard('s_103')">
+            <div class="site-title">🎵 Verdi</div>
+            <a href="https://maps.app.goo.gl/bRiBdpatafdKoPkJ6" target="_blank" onclick="event.stopPropagation()" class="btn-maps-mini">Maps</a>
+          </div>
+          <div class="site-card site-card-pinocchio" id="card-s_105" onclick="selectSiteCard('s_105')">
+            <div class="site-title">🐸 Pinocchio</div>
+            <a href="https://maps.app.goo.gl/why6Dos1CBKGSooP6" target="_blank" onclick="event.stopPropagation()" class="btn-maps-mini">Maps</a>
+          </div>
+          <div class="site-card site-card-spinelli" id="card-s_106" onclick="selectSiteCard('s_106')">
+            <div class="site-title">⭐ Spinelli</div>
+            <a href="https://maps.app.goo.gl/d8ZWC2AHq5BvUARR8" target="_blank" onclick="event.stopPropagation()" class="btn-maps-mini">Maps</a>
+          </div>
+        </div>
+
+        <div id="casa-test-container">
+          <div class="site-card site-card-casa selected" id="card-s_casa" onclick="selectSiteCard('s_casa')" style="margin-bottom:10px;">
+            <div class="site-title">🏠 Casa Test - Viale Portogallo 4</div>
+            <a href="https://maps.app.goo.gl/iTijwKKyjkakmTkD9" target="_blank" onclick="event.stopPropagation()" class="btn-maps-mini">Maps</a>
+            <span style="font-size:9px; background:#16a34a; color:white; padding:1px 4px; border-radius:4px; margin-left:5px;">TEST LIBERO</span>
+          </div>
+        </div>
+
+        <h4 style="font-size:13px; margin-bottom:8px; border-top:1px solid #e2e8f0; padding-top:10px;">Timbrature ATA di Oggi</h4>
+        <div id="today-logs"></div>
+      </div>
+    </div>
+
+    <!-- TAB LOGS E EXPORT PER DSGA CON FILTRI -->
+    <div id="tab-logs" class="card hidden">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+        <div>
+          <h3>📋 Registro Storico Timbrature & Report DSGA</h3>
+          <p style="font-size:12px; color:#64748b;">Filtra le ore ed esporta il file Excel/CSV completo per la segreteria.</p>
+        </div>
+        <button onclick="esportaCSV()" class="btn-small btn-green" style="padding:10px 16px; font-size:13px;">📥 Esporta Registro (Excel / CSV)</button>
+      </div>
+
+      <!-- BARRA FILTRI -->
+      <div class="filter-bar">
+        <div>
+          <label style="margin-top:0;">Filtra per Dipendente</label>
+          <select id="filter-worker" onchange="renderLogs()"></select>
+        </div>
+        <div>
+          <label style="margin-top:0;">Filtra per Mese / Anno</label>
+          <input type="month" id="filter-month" onchange="renderLogs()">
+        </div>
+        <div>
+          <label style="margin-top:0;">Filtra per Evento</label>
+          <select id="filter-type" onchange="renderLogs()">
+            <option value="">-- Tutti gli Eventi --</option>
+            <option value="ENTRATA">ENTRATA</option>
+            <option value="PAUSA">PAUSA</option>
+            <option value="USCITA">USCITA</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="total-hours-box" style="margin-bottom:12px; padding:10px 14px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; font-size:13px; color:#1e40af; font-weight:bold;">
+        ⏱️ Ore Totali Calcolate per i filtri selezionati: <span id="total-hours-value" style="color:#16a34a; font-weight:800; font-size:15px;">0 Ore 0 Minuti</span>
+      </div>
+
+      <table id="logs-table">
+        <thead>
+          <tr>
+            <th>Data e Ora</th>
+            <th>Dipendente</th>
+            <th>Profilo / Contratto</th>
+            <th>Evento</th>
+            <th>Sede Effettiva (Titolarità)</th>
+            <th>Distanza GPS</th>
+            <th>Note</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- TAB BADGES CON SELEZIONE E STAMPA -->
+    <div id="tab-badges" class="card hidden">
+      <div class="no-print" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+        <div>
+          <h3>🪪 Tesserini e Badges Personali ATA</h3>
+          <p style="font-size:12px; color:#64748b;">Stampa singoli tesserini o l'elenco completo dei dipendenti.</p>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <select id="badge-filter-worker" onchange="filtratestBadgeVista()" style="padding:6px; font-size:12px;">
+            <option value="ALL">-- Mostra Tutti i Badge --</option>
+          </select>
+          <button onclick="stampaBadgesSelezionati()" class="btn-small btn-blue" style="padding:10px 16px; font-size:13px;">🖨️ Stampa Vista Attuale</button>
+        </div>
+      </div>
+
+      <div id="badges-container" class="badge-grid"></div>
+    </div>
+
+    <!-- TAB IMPOSTAZIONI -->
+    <div id="tab-settings" class="grid-main hidden">
+      <div class="card">
+        <h3 id="worker-form-title">Aggiungi / Modifica Dipendente ATA</h3>
+        <form onsubmit="saveWorker(event)">
+          <input type="hidden" id="worker-id">
+          <label>Nome e Cognome *</label>
+          <input type="text" id="worker-name" required placeholder="es. Mario Rossi">
+          
+          <label>Profilo ATA *</label>
+          <select id="worker-profile" required>
+            <option value="DSGA">1. DSGA</option>
+            <option value="Assistente Amministrativo">2. Assistente Amministrativo</option>
+            <option value="Assistente Tecnico">3. Assistente Tecnico</option>
+            <option value="Collaboratore Scolastico">4. Collaboratore Scolastico</option>
+          </select>
+
+          <label>Tipo di Ruolo / Contratto *</label>
+          <select id="worker-role-type" required>
+            <option value="Tempo Indeterminato">1. Tempo Indeterminato</option>
+            <option value="Supplente Annuale al 31 Agosto">2. Supplente Annuale al 31 Agosto</option>
+            <option value="Supplente Annuale al 30 Giugno">3. Supplente Annuale al 30 Giugno</option>
+            <option value="Supplente Breve">4. Supplente Breve</option>
+          </select>
+
+          <div style="display: flex; gap: 10px;">
+            <div style="flex:1;">
+              <label>Sede Principale *</label>
+              <select id="worker-main-site" required></select>
+            </div>
+            <div style="flex:1;">
+              <label>Secondo Plesso (Opzionale)</label>
+              <select id="worker-second-site"></select>
+            </div>
+          </div>
+
+          <div style="margin-top:15px; font-weight:bold; font-size:13px; color:#1e40af; border-bottom:1px solid #bfdbfe; padding-bottom:4px;">
+            📅 PLANIMETRIA ORARI DI SERVIZIO SETTIMANALI (GIORNO PER GIORNO)
+          </div>
+          <div id="weekly-schedule-container" style="margin-top:8px;"></div>
+
+          <label>PIN Personale (4 Cifre) *</label>
+          <input type="text" id="worker-pin-input" maxlength="4" required placeholder="1234" pattern="\d{4}">
+          
+          <div style="display: flex; gap: 10px; margin-top: 15px;">
+            <button type="submit" class="btn-small btn-blue" style="flex:1; padding:10px;">Salva Dipendente</button>
+            <button type="button" onclick="resetWorkerForm()" class="btn-small" style="background:#e2e8f0; padding:10px;">Annulla</button>
+          </div>
+        </form>
+
+        <h4 style="margin-top:20px; margin-bottom:10px;">Dipendenti ATA Registrati (Ordine Alfabetico)</h4>
+        <div id="workers-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
       </div>
     </div>
 
   </div>
-</div>
 
-<script>
-  // Orologio in tempo reale
-  setInterval(() => {
-    const now = new Date();
-    document.getElementById('clock').innerText = now.toLocaleTimeString('it-IT');
-  }, 1000);
+  <script>
+    var DAYS = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
 
-  // Gestione PIN
-  let currentPin = "";
-  function pressKey(num) {
-    if (currentPin.length < 4) {
-      currentPin += num;
-      updatePinDisplay();
+    var SITES = [
+      { id: "s_101", name: "Sede Centrale Pietrobono", lat: 41.63720, lng: 13.34210 },
+      { id: "s_102", name: "Plesso Giovanni XXIII", lat: 41.63580, lng: 13.33950 },
+      { id: "s_103", name: "Plesso Via Verdi", lat: 41.63910, lng: 13.34450 },
+      { id: "s_104", name: "Plesso La Rinascita", lat: 41.63250, lng: 13.33600 },
+      { id: "s_105", name: "Plesso Pinocchio", lat: 41.63080, lng: 13.33380 },
+      { id: "s_106", name: "Plesso Teresa Spinelli", lat: 41.63690, lng: 13.34150 },
+      { id: "s_casa", name: "Casa Test - Viale Portogallo 4", lat: 41.6333, lng: 13.3389 }
+    ];
+
+    function createDefaultSchedule() {
+      var sch = {};
+      for(var i=0; i<DAYS.length; i++) {
+        sch[DAYS[i]] = { start1: "08:00", end1: "14:00", hasSec: false, start2: "14:30", end2: "17:30" };
+      }
+      return sch;
     }
-  }
-  function clearPin() { currentPin = ""; updatePinDisplay(); }
-  function deletePin() { currentPin = currentPin.slice(0, -1); updatePinDisplay(); }
-  function updatePinDisplay() {
-    document.getElementById('pin-display').innerText = currentPin.padEnd(4, '.');
-  }
 
-  // Scansione Fotocamera QR
-  let html5QrcodeScanner;
-  function startCamera() {
-    html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 250, height: 250} });
-    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-  }
+    var DEFAULT_WORKERS = [
+      { id: "w_1", name: "BELARDO GIOVANNI", profile: "Collaboratore Scolastico", roleType: "Supplente Annuale al 30 Giugno", mainSiteId: "s_101", secondSiteId: "", schedule: createDefaultSchedule(), pin: "1234" },
+      { id: "w_2", name: "NADDEI ELEONORA", profile: "Assistente Amministrativo", roleType: "Tempo Indeterminato", mainSiteId: "s_101", secondSiteId: "", schedule: createDefaultSchedule(), pin: "5678" },
+      { id: "w_3", name: "SANNA VITTORIA", profile: "Collaboratore Scolastico", roleType: "Tempo Indeterminato", mainSiteId: "s_102", secondSiteId: "", schedule: createDefaultSchedule(), pin: "9012" }
+    ];
 
-  function onScanSuccess(decodedText) {
-    document.getElementById('scan-result').innerText = "Badge Riconosciuto: " + decodedText;
-    alert("Badge Timbrato con successo per: " + decodedText);
-  }
-  function onScanFailure(error) { /* scansione continua */ }
+    function loadSavedWorkers() {
+      var saved = localStorage.getItem('ata_workers_v112');
+      if (saved) {
+        try {
+          var parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch(e){}
+      }
+      return DEFAULT_WORKERS;
+    }
 
-  function timbra(tipo) {
-    const emp = document.getElementById('employee-select').value;
-    if (!emp) { alert("Seleziona un dipendente!"); return; }
-    if (currentPin.length !== 4) { alert("Inserisci il PIN di 4 cifre!"); return; }
-    alert(`Timbratura ${tipo} registrata per ${emp} alle ${new Date().toLocaleTimeString('it-IT')}`);
-    clearPin();
-  }
-</script>
+    var WORKERS = loadSavedWorkers();
+    var logs = JSON.parse(localStorage.getItem('ata_logs_v112')) || [];
+    var activeSiteId = "s_casa";
+    var posCorrente = { lat: 41.6333, lng: 13.3389 };
 
+    function aggiornaOrologio() {
+      var d = new Date();
+      document.getElementById('clock').innerText = d.toLocaleTimeString('it-IT');
+      document.getElementById('date').innerText = d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    }
+
+    function getTodayDayName() {
+      var d = new Date().getDay();
+      if(d === 1) return "Lunedì";
+      if(d === 2) return "Martedì";
+      if(d === 3) return "Mercoledì";
+      if(d === 4) return "Giovedì";
+      if(d === 5) return "Venerdì";
+      if(d === 6) return "Sabato";
+      return "Domenica";
+    }
+
+    function ordinaDipendenti() {
+      WORKERS.sort(function(a, b){ return a.name.localeCompare(b.name, 'it'); });
+    }
+
+    function renderWeeklyScheduleForm() {
+      var container = document.getElementById('weekly-schedule-container');
+      var html = '';
+      for(var i=0; i<DAYS.length; i++) {
+        var day = DAYS[i];
+        html += '<div class="day-schedule-card">' +
+                '<div style="font-size:12px; font-weight:bold; color:#1e3a8a; margin-bottom:4px;">📌 ' + day + '</div>' +
+                '<div style="display:flex; gap:10px;">' +
+                  '<div style="flex:1;"><label style="margin:0;">Inizio 1</label><input type="time" id="sch_' + day + '_start1" value="08:00"></div>' +
+                  '<div style="flex:1;"><label style="margin:0;">Fine 1</label><input type="time" id="sch_' + day + '_end1" value="14:00"></div>' +
+                '</div>' +
+                '<div style="margin-top:4px;">' +
+                  '<label style="display:flex; align-items:center; gap:4px; font-size:10px; text-transform:none; margin:0;">' +
+                    '<input type="checkbox" id="sch_' + day + '_hasSec" onchange="toggleDaySecInput(\'' + day + '\')"> Aggiungi Rientro Pomeridiano' +
+                  '</label>' +
+                '</div>' +
+                '<div id="sch_' + day + '_secBox" class="hidden" style="display:flex; gap:10px; margin-top:4px;">' +
+                  '<div style="flex:1;"><label style="margin:0;">Inizio 2</label><input type="time" id="sch_' + day + '_start2" value="14:30"></div>' +
+                  '<div style="flex:1;"><label style="margin:0;">Fine 2</label><input type="time" id="sch_' + day + '_end2" value="17:30"></div>' +
+                '</div>' +
+              '</div>';
+      }
+      container.innerHTML = html;
+    }
+
+    function toggleDaySecInput(day) {
+      var chk = document.getElementById('sch_' + day + '_hasSec').checked;
+      var box = document.getElementById('sch_' + day + '_secBox');
+      if(chk) box.classList.remove('hidden'); else box.classList.add('hidden');
+    }
+
+    function popolaMenuSediForm() {
+      var mainSel = document.getElementById('worker-main-site');
+      var secondSel = document.getElementById('worker-second-site');
+      mainSel.innerHTML = '';
+      secondSel.innerHTML = '<option value="">-- Nessun Secondo Plesso --</option>';
+
+      for(var i=0; i<SITES.length; i++) {
+        var opt1 = document.createElement('option');
+        opt1.value = SITES[i].id;
+        opt1.innerText = SITES[i].name;
+        mainSel.appendChild(opt1);
+
+        var opt2 = document.createElement('option');
+        opt2.value = SITES[i].id;
+        opt2.innerText = SITES[i].name;
+        secondSel.appendChild(opt2);
+      }
+    }
+
+    function caricaDipendenti() {
+      ordinaDipendenti();
+      var sel = document.getElementById('kiosk-worker');
+      var filterSel = document.getElementById('filter-worker');
+      var badgeFilterSel = document.getElementById('badge-filter-worker');
+      
+      sel.innerHTML = '';
+      filterSel.innerHTML = '<option value="">-- Tutti i Dipendenti --</option>';
+      badgeFilterSel.innerHTML = '<option value="ALL">-- Mostra Tutti i Badge --</option>';
+
+      for(var i=0; i<WORKERS.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = WORKERS[i].id;
+        opt.innerText = WORKERS[i].name + ' - ' + WORKERS[i].profile + ' (' + WORKERS[i].roleType + ')';
+        sel.appendChild(opt);
+
+        var optF = document.createElement('option');
+        optF.value = WORKERS[i].name;
+        optF.innerText = WORKERS[i].name;
+        filterSel.appendChild(optF);
+
+        var optB = document.createElement('option');
+        optB.value = WORKERS[i].id;
+        optB.innerText = WORKERS[i].name;
+        badgeFilterSel.appendChild(optB);
+      }
+
+      renderWorkersList();
+      renderBadges();
+      onWorkerSelected();
+    }
+
+    function onWorkerSelected() {
+      var id = document.getElementById('kiosk-worker').value;
+      var w = WORKERS.find(function(x){ return String(x.id) === String(id); });
+      var today = getTodayDayName();
+      document.getElementById('current-day-name').innerText = today;
+
+      if(w) {
+        var daySch = (w.schedule && w.schedule[today]) ? w.schedule[today] : { start1: "08:00", end1: "14:00", hasSec: false };
+        document.getElementById('shift-hours-text').innerText = (daySch.start1||'08:00') + ' - ' + (daySch.end1||'14:00');
+        
+        var secWrapper = document.getElementById('shift-hours-sec-wrapper');
+        if(daySch.hasSec && daySch.start2 && daySch.end2) {
+          secWrapper.style.display = 'inline';
+          document.getElementById('shift-hours-sec-text').innerText = daySch.start2 + ' - ' + daySch.end2;
+        } else {
+          secWrapper.style.display = 'none';
+        }
+      }
+    }
+
+    function editTodayShiftModal() {
+      var id = document.getElementById('kiosk-worker').value;
+      var w = WORKERS.find(function(x){ return String(x.id) === String(id); });
+      var today = getTodayDayName();
+      if(!w) return;
+
+      var currentShift1 = document.getElementById('shift-hours-text').innerText;
+      var newShift = prompt("Modifica l'orario di servizio per " + w.name + " di OGGI (" + today + "):", currentShift1);
+      if(newShift) {
+        document.getElementById('shift-hours-text').innerText = newShift;
+        alert("Turno del giorno aggiornato!");
+      }
+    }
+
+    function selectSiteCard(id) {
+      activeSiteId = id;
+      var cards = document.querySelectorAll('.site-card');
+      for(var i=0; i<cards.length; i++) cards[i].classList.remove('selected');
+      
+      var elem = document.getElementById('card-' + id);
+      if(elem) elem.classList.add('selected');
+      
+      var site = SITES.find(function(s){ return String(s.id) === String(id); });
+      if(site) {
+        document.getElementById('active-site-badge').innerText = 'SEDE SELEZIONATA: ' + site.name;
+      }
+      calcolaGeofencing();
+    }
+
+    function getDist(lat1, lon1, lat2, lon2) {
+      var R = 6371e3;
+      var φ1 = lat1 * Math.PI/180, φ2 = lat2 * Math.PI/180;
+      var Δφ = (lat2-lat1) * Math.PI/180, Δλ = (lon2-lon1) * Math.PI/180;
+      var a = Math.sin(Δφ/2)*Math.sin(Δφ/2) + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)*Math.sin(Δλ/2);
+      return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+    }
+
+    function calcolaGeofencing() {
+      var site = SITES.find(function(s){ return String(s.id) === String(activeSiteId); });
+      var btnIn = document.getElementById('btn-in');
+      var btnPause = document.getElementById('btn-pause');
+      var btnOut = document.getElementById('btn-out');
+      if(!site) return;
+
+      if(site.id === "s_casa") {
+        document.getElementById('gps-info').innerHTML = '<span style="color:#16a34a;">🧪 CASA TEST: Sei nel plesso (Timbratura Abilitata)</span>';
+        btnIn.disabled = false; btnPause.disabled = false; btnOut.disabled = false;
+        return;
+      }
+
+      var dist = getDist(posCorrente.lat, posCorrente.lng, site.lat, site.lng);
+      if(dist <= 150) {
+        document.getElementById('gps-info').innerHTML = '<span style="color:#16a34a;">📍 Distanza da ' + site.name + ': <b>' + dist + 'm</b> (In raggio di 150m)</span>';
+        btnIn.disabled = false; btnPause.disabled = false; btnOut.disabled = false;
+      } else {
+        document.getElementById('gps-info').innerHTML = '<span style="color:#dc2626;">⛔ FUORI RAGGIO: <b>' + dist + 'm</b> da ' + site.name + ' (Max 150m)</span>';
+        btnIn.disabled = true; btnPause.disabled = true; btnOut.disabled = true;
+      }
+    }
+
+    function press(n) {
+      var input = document.getElementById('kiosk-pin');
+      if(input.value.length < 4) input.value += n;
+    }
+    function clearPin() { document.getElementById('kiosk-pin').value = ''; }
+
+    function clock(type) {
+      var wId = document.getElementById('kiosk-worker').value;
+      var pin = document.getElementById('kiosk-pin').value;
+      var note = document.getElementById('kiosk-note').value;
+      var worker = WORKERS.find(function(w){ return String(w.id) === String(wId); });
+      var site = SITES.find(function(s){ return String(s.id) === String(activeSiteId); });
+
+      if(!worker) return alert("Seleziona un dipendente!");
+      if(worker.pin && worker.pin !== pin) return alert("PIN Errato!");
+
+      var dist = getDist(posCorrente.lat, posCorrente.lng, site.lat, site.lng);
+      if(site.id !== "s_casa" && dist > 150) {
+        return alert("⛔ Timbratura rifiutata! Ti trovi a " + dist + " metri dal plesso (limite 150m).");
+      }
+
+      logs.unshift({
+        time: new Date().toISOString(),
+        worker: worker.name,
+        profile: worker.profile + ' (' + worker.roleType + ')',
+        siteDisplay: site.name,
+        type: type,
+        dist: site.id === "s_casa" ? 0 : dist,
+        note: note
+      });
+
+      localStorage.setItem('ata_logs_v112', JSON.stringify(logs));
+      clearPin();
+      document.getElementById('kiosk-note').value = '';
+
+      alert("✅ Timbratura [" + type + "] registrata con successo per " + worker.name + "!");
+      renderLogs();
+    }
+
+    // ESPORTAZIONE CSV / EXCEL PER DSGA
+    function esportaCSV() {
+      if(logs.length === 0) return alert("Nessuna timbratura presente da esportare!");
+
+      var csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "Data e Ora;Dipendente;Profilo e Contratto;Evento;Sede Effettiva;Distanza GPS (m);Note\n";
+
+      for(var i=0; i<logs.length; i++) {
+        var l = logs[i];
+        var row = [
+          '"' + new Date(l.time).toLocaleString('it-IT') + '"',
+          '"' + l.worker + '"',
+          '"' + l.profile + '"',
+          '"' + l.type + '"',
+          '"' + l.siteDisplay + '"',
+          l.dist,
+          '"' + (l.note || '') + '"'
+        ].join(";");
+        csvContent += row + "\n";
+      }
+
+      var encodedUri = encodeURI(csvContent);
+      var link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "Report_Timbrature_ATA_IC_Frosinone_2.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // RENDERING BADGES CON SELEZIONE
+    function renderBadges() {
+      var container = document.getElementById('badges-container');
+      var html = '';
+      
+      for(var i=0; i<WORKERS.length; i++) {
+        var w = WORKERS[i];
+        var ms = SITES.find(function(s){ return String(s.id) === String(w.mainSiteId); });
+        var msName = ms ? ms.name : 'Sede Centrale';
+        var qrData = encodeURIComponent("ATA:" + w.id + "|" + w.name + "|PIN:" + w.pin);
+        var qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + qrData;
+
+        html += '<div class="badge-wrapper" id="badge-wrap-' + w.id + '">' +
+                  '<div class="badge-card">' +
+                    '<div class="badge-header">' +
+                      '<div class="badge-school">🇮🇹 IC FROSINONE 2</div>' +
+                      '<div style="font-size:9px; background:rgba(255,255,255,0.25); padding:2px 6px; border-radius:4px; font-weight:bold;">TESSERA ATA</div>' +
+                    '</div>' +
+                    '<div class="badge-main-content">' +
+                      '<div class="badge-photo-box">📷<br>SPAZIO FOTO</div>' +
+                      '<div class="badge-details">' +
+                        '<div class="badge-name">' + w.name + '</div>' +
+                        '<div class="badge-profile">' + w.profile + '</div>' +
+                        '<div class="badge-role">' + w.roleType + '</div>' +
+                        '<div class="badge-site">📍 ' + msName + '</div>' +
+                      '</div>' +
+                    '</div>' +
+                    '<div class="badge-footer">' +
+                      '<div class="badge-pin-box">PIN: ' + (w.pin || '****') + '</div>' +
+                      '<img class="badge-qr-img" src="' + qrUrl + '" alt="QR Code">' +
+                    '</div>' +
+                  '</div>' +
+                  '<button onclick="stampaBadgeSingolo(\'' + w.id + '\')" class="btn-small btn-blue no-print" style="width:100%; padding:6px; font-size:11px;">🖨️ Stampa Questo Badge</button>' +
+                '</div>';
+      }
+      container.innerHTML = html;
+    }
+
+    function filtratestBadgeVista() {
+      var val = document.getElementById('badge-filter-worker').value;
+      var wrappers = document.querySelectorAll('.badge-wrapper');
+      wrappers.forEach(function(w){
+        if(val === 'ALL' || w.id === 'badge-wrap-' + val) {
+          w.style.display = 'flex';
+        } else {
+          w.style.display = 'none';
+        }
+      });
+    }
+
+    function stampaBadgesSelezionati() {
+      var val = document.getElementById('badge-filter-worker').value;
+      if(val === 'ALL') {
+        var wrappers = document.querySelectorAll('.badge-wrapper');
+        wrappers.forEach(function(w){ w.classList.add('print-only'); });
+      } else {
+        stampaBadgeSingolo(val);
+      }
+      window.print();
+    }
+
+    function stampaBadgeSingolo(id) {
+      var wrappers = document.querySelectorAll('.badge-wrapper');
+      wrappers.forEach(function(w){ 
+        if(w.id === 'badge-wrap-' + id) {
+          w.classList.add('print-only');
+        } else {
+          w.classList.remove('print-only');
+        }
+      });
+      window.print();
+    }
+
+    function saveWorker(e) {
+      e.preventDefault();
+      var id = document.getElementById('worker-id').value || 'w_' + Date.now();
+      
+      var sch = {};
+      for(var i=0; i<DAYS.length; i++) {
+        var day = DAYS[i];
+        sch[day] = {
+          start1: document.getElementById('sch_' + day + '_start1').value,
+          end1: document.getElementById('sch_' + day + '_end1').value,
+          hasSec: document.getElementById('sch_' + day + '_hasSec').checked,
+          start2: document.getElementById('sch_' + day + '_start2').value,
+          end2: document.getElementById('sch_' + day + '_end2').value
+        };
+      }
+
+      var wObj = {
+        id: id,
+        name: document.getElementById('worker-name').value.trim(),
+        profile: document.getElementById('worker-profile').value,
+        roleType: document.getElementById('worker-role-type').value,
+        mainSiteId: document.getElementById('worker-main-site').value,
+        secondSiteId: document.getElementById('worker-second-site').value,
+        schedule: sch,
+        pin: document.getElementById('worker-pin-input').value.trim()
+      };
+
+      var idx = WORKERS.findIndex(function(w){ return String(w.id) === String(id); });
+      if(idx >= 0) WORKERS[idx] = wObj; else WORKERS.push(wObj);
+
+      localStorage.setItem('ata_workers_v112', JSON.stringify(WORKERS));
+      resetWorkerForm();
+      caricaDipendenti();
+      alert("Dipendente salvato con successo!");
+    }
+
+    function editWorker(id) {
+      var w = WORKERS.find(function(x){ return String(x.id) === String(id); });
+      if(!w) return;
+      document.getElementById('worker-id').value = w.id;
+      document.getElementById('worker-name').value = w.name;
+      document.getElementById('worker-profile').value = w.profile;
+      document.getElementById('worker-role-type').value = w.roleType;
+      document.getElementById('worker-main-site').value = w.mainSiteId || SITES[0].id;
+      document.getElementById('worker-second-site').value = w.secondSiteId || '';
+      
+      if(w.schedule) {
+        for(var i=0; i<DAYS.length; i++) {
+          var day = DAYS[i];
+          if(w.schedule[day]) {
+            document.getElementById('sch_' + day + '_start1').value = w.schedule[day].start1 || '08:00';
+            document.getElementById('sch_' + day + '_end1').value = w.schedule[day].end1 || '14:00';
+            document.getElementById('sch_' + day + '_hasSec').checked = !!w.schedule[day].hasSec;
+            toggleDaySecInput(day);
+            document.getElementById('sch_' + day + '_start2').value = w.schedule[day].start2 || '14:30';
+            document.getElementById('sch_' + day + '_end2').value = w.schedule[day].end2 || '17:30';
+          }
+        }
+      }
+
+      document.getElementById('worker-pin-input').value = w.pin;
+      document.getElementById('worker-form-title').innerText = "Modifica Dipendente ATA";
+    }
+
+    function deleteWorker(id) {
+      if(confirm("Eliminare questo dipendente ATA?")) {
+        WORKERS = WORKERS.filter(function(w){ return String(w.id) !== String(id); });
+        localStorage.setItem('ata_workers_v112', JSON.stringify(WORKERS));
+        caricaDipendenti();
+      }
+    }
+
+    function resetWorkerForm() {
+      document.getElementById('worker-id').value = '';
+      document.getElementById('worker-name').value = '';
+      document.getElementById('worker-pin-input').value = '';
+      document.getElementById('worker-form-title').innerText = "Aggiungi / Modifica Dipendente ATA";
+    }
+
+    function renderWorkersList() {
+      var html = '';
+      if(WORKERS.length === 0) {
+        html = '<div style="font-size:12px; color:#94a3b8;">Nessun dipendente inserito.</div>';
+      } else {
+        for(var i=0; i<WORKERS.length; i++) {
+          var w = WORKERS[i];
+          var ms = SITES.find(function(s){ return String(s.id) === String(w.mainSiteId); });
+          var msName = ms ? ms.name : 'N/D';
+
+          html += '<div style="padding:10px; border:1px solid #e2e8f0; border-radius:8px; display:flex; justify-content:space-between; align-items:center; background:#f8fafc;">' +
+                  '<div><b>👤 ' + w.name + '</b><div style="font-size:11px; color:#64748b;">Profilo: <b>' + w.profile + '</b> • Sede: <b>' + msName + '</b></div></div>' +
+                  '<div style="display:flex; gap:5px;"><button onclick="editWorker(\'' + w.id + '\')" class="btn-small btn-edit">✏️ Modifica Schedule</button><button onclick="deleteWorker(\'' + w.id + '\')" class="btn-small btn-delete">🗑️ Elimina</button></div></div>';
+        }
+      }
+      document.getElementById('workers-list').innerHTML = html;
+    }
+
+    function renderLogs() {
+      var todayStr = new Date().toISOString().split('T')[0];
+      var todayLogs = logs.filter(function(l){ return l.time.startsWith(todayStr); });
+      
+      var html = '';
+      if(todayLogs.length === 0) {
+        html = '<div style="font-size:12px; color:#94a3b8; text-align:center; padding:15px;">Nessuna timbratura oggi.</div>';
+      } else {
+        for(var i=0; i<todayLogs.length; i++) {
+          var l = todayLogs[i];
+          html += '<div class="log-item"><div><b>' + l.worker + '</b> - <span class="badge badge-' + l.type.toLowerCase() + '">' + l.type + '</span><br><span style="font-size:11px; color:#64748b;">' + l.siteDisplay + '</span></div><div><b>' + new Date(l.time).toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit'}) + '</b></div></div>';
+        }
+      }
+      document.getElementById('today-logs').innerHTML = html;
+
+      // APPLICAZIONE FILTRI PER REGISTRO STORICO
+      var fWorker = document.getElementById('filter-worker').value;
+      var fMonth = document.getElementById('filter-month').value;
+      var fType = document.getElementById('filter-type').value;
+
+      var filteredLogs = logs.filter(function(log) {
+        if(fWorker && log.worker !== fWorker) return false;
+        if(fType && log.type !== fType) return false;
+        if(fMonth) {
+          var logMonth = log.time.substring(0, 7);
+          if(logMonth !== fMonth) return false;
+        }
+        return true;
+      });
+
+      var tableHtml = '';
+      for(var j=0; j<filteredLogs.length; j++) {
+        var log = filteredLogs[j];
+        tableHtml += '<tr><td>' + new Date(log.time).toLocaleString('it-IT') + '</td><td><b>' + log.worker + '</b></td><td>' + log.profile + '</td><td><b>' + log.type + '</b></td><td>' + log.siteDisplay + '</td><td>' + log.dist + 'm</td><td>' + (log.note||'-') + '</td></tr>';
+      }
+      document.querySelector('#logs-table tbody').innerHTML = tableHtml;
+
+      // CALCOLO ORE TOTALI FILTRATE
+      calcolaOreTotali(filteredLogs);
+    }
+
+    function calcolaOreTotali(logList) {
+      var totalMs = 0;
+      var lastIn = null;
+
+      // Ordina in senso cronologico crescente per il calcolo
+      var sorted = logList.slice().sort(function(a,b){ return new Date(a.time) - new Date(b.time); });
+
+      for(var i=0; i<sorted.length; i++) {
+        var item = sorted[i];
+        if(item.type === 'ENTRATA') {
+          lastIn = new Date(item.time);
+        } else if(item.type === 'USCITA' && lastIn) {
+          var diff = new Date(item.time) - lastIn;
+          if(diff > 0) totalMs += diff;
+          lastIn = null;
+        }
+      }
+
+      var totalMin = Math.floor(totalMs / (1000 * 60));
+      var h = Math.floor(totalMin / 60);
+      var m = totalMin % 60;
+      document.getElementById('total-hours-value').innerText = h + ' Ore ' + m + ' Minuti';
+    }
+
+    function showTab(tab) {
+      document.getElementById('tab-kiosk').classList.add('hidden');
+      document.getElementById('tab-logs').classList.add('hidden');
+      document.getElementById('tab-badges').classList.add('hidden');
+      document.getElementById('tab-settings').classList.add('hidden');
+
+      document.getElementById('nav-kiosk').classList.remove('active');
+      document.getElementById('nav-logs').classList.remove('active');
+      document.getElementById('nav-badges').classList.remove('active');
+      document.getElementById('nav-settings').classList.remove('active');
+
+      document.getElementById('tab-' + tab).classList.remove('hidden');
+      document.getElementById('nav-' + tab).classList.add('active');
+    }
+
+    // AVVIO
+    aggiornaOrologio();
+    setInterval(aggiornaOrologio, 1000);
+    renderWeeklyScheduleForm();
+    popolaMenuSediForm();
+    caricaDipendenti();
+    renderLogs();
+    selectSiteCard('s_casa');
+  </script>
 </body>
 </html>
