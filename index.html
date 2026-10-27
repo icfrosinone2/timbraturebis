@@ -80,8 +80,21 @@
 
     .day-schedule-card { border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 8px; padding: 8px; margin-bottom: 6px; }
 
+    /* Badge QR Code Modal & Card */
+    .qr-badge-card {
+      border: 2px dashed #2563eb;
+      background: #ffffff;
+      padding: 15px;
+      border-radius: 12px;
+      text-align: center;
+      margin-top: 15px;
+    }
+
     .hidden { display: none !important; }
   </style>
+
+  <!-- Libreria QRCode.js per generare Badge QR -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <!-- Firebase App & Realtime Database SDK (Compat Mode) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -243,7 +256,7 @@
     <div id="tab-settings" class="grid-main hidden">
       <div class="card">
         <h3 id="worker-form-title">Aggiungi / Modifica Dipendente ATA</h3>
-        <form onsubmit="saveWorker(event)">
+        <form id="worker-form" onsubmit="saveWorker(event)">
           <input type="hidden" id="worker-id">
           <label>Nome e Cognome *</label>
           <input type="text" id="worker-name" required placeholder="es. Mario Rossi">
@@ -275,8 +288,9 @@
             </div>
           </div>
 
-          <div style="margin-top:15px; font-weight:bold; font-size:13px; color:#1e40af; border-bottom:1px solid #bfdbfe; padding-bottom:4px;">
-            📅 PLANIMETRIA ORARI DI SERVIZIO SETTIMANALI (GIORNO PER GIORNO)
+          <div style="margin-top:15px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #bfdbfe; padding-bottom:4px;">
+            <span style="font-weight:bold; font-size:12px; color:#1e40af;">📅 PLANIMETRIA ORARI SETTIMANALI</span>
+            <button type="button" onclick="copyMondayScheduleToAll()" class="btn-small btn-blue" style="font-size:10px;">📋 Copia Lunedì su tutti i giorni</button>
           </div>
           <div id="weekly-schedule-container" style="margin-top:8px;"></div>
 
@@ -291,6 +305,19 @@
 
         <h4 style="margin-top:20px; margin-bottom:10px;">Dipendenti ATA Registrati (Ordine Alfabetico)</h4>
         <div id="workers-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
+      </div>
+
+      <div class="card">
+        <h3>🪪 Stampa Badge QR Code Dipendente</h3>
+        <p style="font-size:12px; color:#64748b; margin-bottom:10px;">Seleziona un dipendente dall'elenco per generare e stampare il Badge personale con QR Code per il tablet.</p>
+        
+        <div id="qr-badge-wrapper" class="qr-badge-card hidden">
+          <h4 id="qr-worker-name" style="color:#1e3a8a; font-size:16px; margin-bottom:4px;">---</h4>
+          <div id="qr-worker-profile" style="font-size:12px; color:#475569; margin-bottom:10px;">---</div>
+          <div id="qrcode" style="display:flex; justify-content:center; margin:15px 0;"></div>
+          <div id="qr-worker-pin" style="font-size:13px; font-weight:bold; color:#0f172a; margin-bottom:12px;">PIN: ****</div>
+          <button onclick="window.print()" class="btn-small btn-green">🖨️ Stampa Badge</button>
+        </div>
       </div>
     </div>
   </div>
@@ -348,6 +375,7 @@
     var activeSiteId = "s_casa";
     var posCorrente = { lat: 41.6333, lng: 13.3389 };
     var webcamStream = null;
+    var qrCodeObj = null;
 
     // -------------------------------------------------------------
     // 3. SINCRONIZZAZIONE IN TEMPO REALE FIREBASE
@@ -375,7 +403,29 @@
     });
 
     // -------------------------------------------------------------
-    // 4. FUNZIONALITÀ INTERFACCIA
+    // 4. FUNZIONE PER COPIARE L'ORARIO DEL LUNEDÌ
+    // -------------------------------------------------------------
+    function copyMondayScheduleToAll() {
+      var monStart1 = document.getElementById('sch_Lunedì_start1').value;
+      var monEnd1 = document.getElementById('sch_Lunedì_end1').value;
+      var monHasSec = document.getElementById('sch_Lunedì_hasSec').checked;
+      var monStart2 = document.getElementById('sch_Lunedì_start2').value;
+      var monEnd2 = document.getElementById('sch_Lunedì_end2').value;
+
+      for (var i = 1; i < DAYS.length; i++) {
+        var day = DAYS[i];
+        document.getElementById('sch_' + day + '_start1').value = monStart1;
+        document.getElementById('sch_' + day + '_end1').value = monEnd1;
+        document.getElementById('sch_' + day + '_hasSec').checked = monHasSec;
+        toggleDaySecInput(day);
+        document.getElementById('sch_' + day + '_start2').value = monStart2;
+        document.getElementById('sch_' + day + '_end2').value = monEnd2;
+      }
+      alert("✅ Orario del Lunedì copiato su tutti i giorni dal Martedì al Sabato!");
+    }
+
+    // -------------------------------------------------------------
+    // 5. FUNZIONALITÀ INTERFACCIA ED UTILITÀ
     // -------------------------------------------------------------
     function aggiornaOrologio() {
       var d = new Date();
@@ -661,6 +711,8 @@
       refWorkers.child(id).set(wObj).then(function() {
         resetWorkerForm();
         alert("Dipendente salvato con successo su tutti i tablet!");
+      }).catch(function(err) {
+        alert("Errore nel salvataggio: " + err.message);
       });
     }
 
@@ -700,6 +752,25 @@
       }
     }
 
+    function generateBadge(id) {
+      var w = WORKERS.find(function(x){ return String(x.id) === String(id); });
+      if(!w) return;
+
+      document.getElementById('qr-worker-name').innerText = w.name;
+      document.getElementById('qr-worker-profile').innerText = w.profile + ' (' + w.roleType + ')';
+      document.getElementById('qr-worker-pin').innerText = "PIN: " + w.pin;
+
+      var qrContainer = document.getElementById('qrcode');
+      qrContainer.innerHTML = '';
+      new QRCode(qrContainer, {
+        text: w.id,
+        width: 140,
+        height: 140
+      });
+
+      document.getElementById('qr-badge-wrapper').classList.remove('hidden');
+    }
+
     function resetWorkerForm() {
       document.getElementById('worker-id').value = '';
       document.getElementById('worker-name').value = '';
@@ -719,7 +790,7 @@
 
           html += '<div style="padding:10px; border:1px solid #e2e8f0; border-radius:8px; display:flex; justify-content:space-between; align-items:center; background:#f8fafc;">' +
                   '<div><b>👤 ' + w.name + '</b><div style="font-size:11px; color:#64748b;">Profilo: <b>' + w.profile + '</b> • Sede: <b>' + msName + '</b></div></div>' +
-                  '<div style="display:flex; gap:5px;"><button onclick="editWorker(\'' + w.id + '\')" class="btn-small btn-edit">✏️ Modifica Schedule</button><button onclick="deleteWorker(\'' + w.id + '\')" class="btn-small btn-delete">🗑️ Elimina</button></div></div>';
+                  '<div style="display:flex; gap:5px;"><button onclick="generateBadge(\'' + w.id + '\')" class="btn-small btn-green">🪪 Badge</button><button onclick="editWorker(\'' + w.id + '\')" class="btn-small btn-edit">✏️ Modifica</button><button onclick="deleteWorker(\'' + w.id + '\')" class="btn-small btn-delete">🗑️ Elimina</button></div></div>';
         }
       }
       document.getElementById('workers-list').innerHTML = html;
