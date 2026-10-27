@@ -57,9 +57,8 @@
     .site-title { font-weight: 800; font-size: 13px; color: #0f172a; display: flex; align-items: center; gap: 4px; }
     .btn-maps-mini { background: #0284c7; color: white; text-decoration: none; font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 6px; display: inline-block; margin-top: 6px; }
 
-    /* CONTENITORE MIRINO SCANNER LIVE */
     .camera-container { background: #0f172a; border-radius: 12px; overflow: hidden; margin-bottom: 15px; text-align: center; padding: 10px; color: white; }
-    #reader { width: 100%; max-width: 400px; margin: 0 auto; min-height: 200px; background: #1e293b; border-radius: 8px; overflow: hidden; }
+    #reader { width: 100%; max-width: 380px; margin: 0 auto; min-height: 180px; background: #1e293b; border-radius: 8px; overflow: hidden; }
     #reader video { width: 100% !important; height: auto !important; border-radius: 8px; }
 
     .log-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; font-size: 12px; }
@@ -82,7 +81,6 @@
 
     .day-schedule-card { border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 8px; padding: 8px; margin-bottom: 6px; }
 
-    /* BADGES GRID & CARDS */
     .badges-grid { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px; }
     .badge-card-container { width: 340px; display: flex; flex-direction: column; gap: 8px; }
     
@@ -113,7 +111,6 @@
 
     .hidden { display: none !important; }
 
-    /* REGOLE STAMPA BIANCO RISPARMIA INCHIOSTRO */
     @media print {
       body * { visibility: hidden !important; }
       #print-badges-area, #print-badges-area * { visibility: visible !important; }
@@ -147,13 +144,8 @@
     }
   </style>
 
-  <!-- QRCode.js per generare i badge -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-  <!-- HTML5 QR CODE SCANNER UFFICIALE PER LA SCANSIONE LIVE -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
-
-  <!-- Firebase JavaScript SDK -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
@@ -189,17 +181,16 @@
           </div>
         </div>
 
-        <!-- CAMERA SCANNER LIVE CON MIRINO INTEGRATO -->
         <div class="camera-container">
           <div style="font-size: 11px; margin-bottom: 6px; font-weight: bold;">📷 MIRINO SCANNER BADGE QR CODE</div>
           
           <div id="reader"></div>
           <div id="scanner-status" style="margin-top: 6px; font-size: 11px; color: #94a3b8;">
-            Clicca "Avvia Scanner" e inquadra il QR Code del badge nel mirino.
+            Premi "Avvia Scanner" e mostra il QR Code del badge nel mirino.
           </div>
           
           <div style="margin-top: 10px; display: flex; justify-content: center; gap: 8px;">
-            <button onclick="startQRScanner()" class="btn-small btn-green">▶️ Avvia Scanner Badge (Mirino Live)</button>
+            <button onclick="startQRScanner()" class="btn-small btn-green">▶️ Avvia Scanner Badge</button>
             <button onclick="stopQRScanner()" class="btn-small btn-red">⏹️ Spegni Scanner</button>
           </div>
         </div>
@@ -399,4 +390,694 @@
     }
     const db = firebase.database();
     const refWorkers = db.ref('dipendenti');
-    const refLogs = db.ref('timbr
+    const refLogs = db.ref('timbrature');
+
+    var html5QrCodeScanner = null;
+
+    function startQRScanner() {
+      stopQRScanner();
+      document.getElementById('scanner-status').innerText = "🟢 Scanner attivo. Inquadra il QR Code nel mirino...";
+      
+      html5QrCodeScanner = new Html5Qrcode("reader");
+      const config = { fps: 10, qrbox: { width: 220, height: 220 } };
+
+      html5QrCodeScanner.start(
+        { facingMode: "environment" },
+        config,
+        onQRCodeScanned,
+        function(err) {}
+      ).catch(function(err) {
+        html5QrCodeScanner.start(
+          { facingMode: "user" },
+          config,
+          onQRCodeScanned,
+          function(err) {}
+        ).catch(function(e) {
+          document.getElementById('scanner-status').innerText = "⛔ Impossibile accedere alla fotocamera: " + e;
+        });
+      });
+    }
+
+    function stopQRScanner() {
+      if (html5QrCodeScanner) {
+        html5QrCodeScanner.stop().then(function() {
+          html5QrCodeScanner.clear();
+          html5QrCodeScanner = null;
+          document.getElementById('scanner-status').innerText = "⚪ Scanner disattivato.";
+        }).catch(function(e) {
+          html5QrCodeScanner = null;
+        });
+      }
+    }
+
+    function onQRCodeScanned(decodedText, decodedResult) {
+      var workerId = decodedText.trim();
+      var workerSel = document.getElementById('kiosk-worker');
+      var found = false;
+
+      for (var i = 0; i < workerSel.options.length; i++) {
+        if (workerSel.options[i].value === workerId) {
+          workerSel.selectedIndex = i;
+          found = true;
+          break;
+        }
+      }
+
+      if (found) {
+        onWorkerSelected();
+        playBeep('ENTRATA');
+        document.getElementById('scanner-status').innerHTML = "<span style='color:#16a34a; font-weight:bold;'>✅ Badge riconosciuto! Inserisci il PIN.</span>";
+        document.getElementById('kiosk-pin').focus();
+      } else {
+        document.getElementById('scanner-status').innerHTML = "<span style='color:#dc2626;'>⚠️ Badge non trovato per ID: " + workerId + "</span>";
+      }
+    }
+
+    var audioCtx = null;
+    function initAudioContext() {
+      if (!audioCtx) {
+        var AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) audioCtx = new AudioContext();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playBeep(type) {
+      initAudioContext();
+      if (!audioCtx) return;
+
+      try {
+        var osc = audioCtx.createOscillator();
+        var gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'ENTRATA') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+          osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.12);
+          gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.4);
+        } else if (type === 'USCITA') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(659.25, audioCtx.currentTime);
+          osc.frequency.setValueAtTime(440, audioCtx.currentTime + 0.15);
+          gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.45);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.45);
+        } else {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.25);
+        }
+      } catch(e){}
+    }
+
+    var DAYS = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
+
+    var SITES = [
+      { id: "s_101", name: "Sede Centrale Pietrobono", lat: 41.63720, lng: 13.34210 },
+      { id: "s_102", name: "Plesso Giovanni XXIII", lat: 41.63580, lng: 13.33950 },
+      { id: "s_103", name: "Plesso Via Verdi", lat: 41.63910, lng: 13.34450 },
+      { id: "s_104", name: "Plesso La Rinascita", lat: 41.63250, lng: 13.33600 },
+      { id: "s_105", name: "Plesso Pinocchio", lat: 41.63080, lng: 13.33380 },
+      { id: "s_106", name: "Plesso Teresa Spinelli", lat: 41.63690, lng: 13.34150 },
+      { id: "s_casa", name: "Casa Test - Viale Portogallo 4", lat: 41.6333, lng: 13.3389 }
+    ];
+
+    function createDefaultSchedule() {
+      var sch = {};
+      for(var i=0; i<DAYS.length; i++) {
+        sch[DAYS[i]] = { start1: "08:00", end1: "14:00", hasSec: false, start2: "14:30", end2: "17:30" };
+      }
+      return sch;
+    }
+
+    var DEFAULT_WORKERS = [
+      { id: "w_1", name: "BELARDO GIOVANNI", profile: "Collaboratore Scolastico", roleType: "Supplente Annuale al 30 Giugno", mainSiteId: "s_101", secondSiteId: "", schedule: createDefaultSchedule(), pin: "1234" },
+      { id: "w_2", name: "NADDEI ELEONORA", profile: "Assistente Amministrativo", roleType: "Tempo Indeterminato", mainSiteId: "s_101", secondSiteId: "", schedule: createDefaultSchedule(), pin: "5678" },
+      { id: "w_3", name: "SANNA VITTORIA", profile: "Collaboratore Scolastico", roleType: "Tempo Indeterminato", mainSiteId: "s_102", secondSiteId: "", schedule: createDefaultSchedule(), pin: "9012" }
+    ];
+
+    var WORKERS = [];
+    var logs = [];
+    var activeSiteId = "s_casa";
+    var posCorrente = { lat: 41.6333, lng: 13.3389 };
+
+    refWorkers.on('value', function(snapshot) {
+      var val = snapshot.val();
+      if (val) {
+        WORKERS = Object.keys(val).map(function(k) { return val[k]; });
+      } else {
+        WORKERS = DEFAULT_WORKERS;
+        DEFAULT_WORKERS.forEach(function(w) { refWorkers.child(w.id).set(w); });
+      }
+      caricaDipendenti();
+      popolaFiltroBadges();
+      renderBadgesTab();
+    });
+
+    refLogs.on('value', function(snapshot) {
+      var val = snapshot.val();
+      if (val) {
+        logs = Object.keys(val).map(function(k) { 
+          var item = val[k];
+          item._key = k;
+          return item; 
+        });
+        logs.sort(function(a, b) { return new Date(b.time) - new Date(a.time); });
+      } else {
+        logs = [];
+      }
+      renderLogs();
+    });
+
+    function copyMondayScheduleToAll() {
+      var monStart1 = document.getElementById('sch_Lunedì_start1').value;
+      var monEnd1 = document.getElementById('sch_Lunedì_end1').value;
+      var monHasSec = document.getElementById('sch_Lunedì_hasSec').checked;
+      var monStart2 = document.getElementById('sch_Lunedì_start2').value;
+      var monEnd2 = document.getElementById('sch_Lunedì_end2').value;
+
+      for (var i = 1; i < DAYS.length; i++) {
+        var day = DAYS[i];
+        document.getElementById('sch_' + day + '_start1').value = monStart1;
+        document.getElementById('sch_' + day + '_end1').value = monEnd1;
+        document.getElementById('sch_' + day + '_hasSec').checked = monHasSec;
+        toggleDaySecInput(day);
+        document.getElementById('sch_' + day + '_start2').value = monStart2;
+        document.getElementById('sch_' + day + '_end2').value = monEnd2;
+      }
+      alert("✅ Orario del Lunedì copiato su tutti i giorni dal Martedì al Sabato!");
+    }
+
+    function popolaFiltroBadges() {
+      var sel = document.getElementById('badges-filter-select');
+      var currVal = sel.value || 'ALL';
+      sel.innerHTML = '<option value="ALL">-- Mostra Tutti i Badge --</option>';
+      WORKERS.forEach(function(w) {
+        var opt = document.createElement('option');
+        opt.value = w.id;
+        opt.innerText = w.name;
+        sel.appendChild(opt);
+      });
+      sel.value = currVal;
+    }
+
+    function createBadgeCardHTML(worker, uniqueId) {
+      var ms = SITES.find(function(s){ return String(s.id) === String(worker.mainSiteId); });
+      var msName = ms ? ms.name : 'Sede Centrale';
+
+      return '<div class="badge-card-container" id="container_' + uniqueId + '">' +
+        '<div class="blue-badge">' +
+          '<div class="blue-badge-header">' +
+            '<span>🏛️ IC FROSINONE 2</span>' +
+            '<span style="background:rgba(255,255,255,0.2); padding:2px 6px; border-radius:4px;">TESSERA ATA</span>' +
+          '</div>' +
+          '<div class="blue-badge-body">' +
+            '<div class="photo-placeholder">SPAZIO FOTO</div>' +
+            '<div class="badge-details">' +
+              '<h3>' + worker.name + '</h3>' +
+              '<p><b>' + worker.profile + '</b></p>' +
+              '<p style="font-size:9px; opacity:0.8;">' + worker.roleType + '</p>' +
+              '<p style="font-size:9px; opacity:0.8;">📍 ' + msName + '</p>' +
+            '</div>' +
+          '</div>' +
+          '<div class="blue-badge-footer">' +
+            '<div class="pin-badge-tag">PIN: ' + worker.pin + '</div>' +
+            '<div class="qr-box-bg"><div class="qr-target-box" id="qr_' + uniqueId + '"></div></div>' +
+          '</div>' +
+        '</div>' +
+        '<button onclick="stampaSingoloBadge(\'' + worker.id + '\')" class="btn-small btn-blue no-print" style="width:100%;">🖨️ Stampa Questo Badge</button>' +
+      '</div>';
+    }
+
+    function renderBadgesTab() {
+      var container = document.getElementById('badges-container');
+      container.innerHTML = '';
+      var selectedId = document.getElementById('badges-filter-select').value;
+
+      var targetList = WORKERS;
+      if (selectedId && selectedId !== 'ALL') {
+        targetList = WORKERS.filter(function(w){ return String(w.id) === String(selectedId); });
+      }
+
+      if(targetList.length === 0) {
+        container.innerHTML = '<div style="color:#64748b; font-size:13px;">Nessun dipendente inserito.</div>';
+        return;
+      }
+
+      targetList.forEach(function(w, index) {
+        var uId = 'badge_view_' + index + '_' + w.id;
+        var wrapper = document.createElement('div');
+        wrapper.innerHTML = createBadgeCardHTML(w, uId);
+        container.appendChild(wrapper.firstChild);
+
+        setTimeout(function() {
+          var qrBox = document.getElementById('qr_' + uId);
+          if(qrBox) {
+            qrBox.innerHTML = '';
+            new QRCode(qrBox, { text: w.id, width: 75, height: 75 });
+          }
+        }, 50);
+      });
+    }
+
+    function stampaSingoloBadge(id) {
+      var w = WORKERS.find(function(x){ return String(x.id) === String(id); });
+      if(!w) return;
+
+      var printArea = document.getElementById('print-badges-area');
+      var uId = 'print_single_' + w.id;
+      printArea.innerHTML = createBadgeCardHTML(w, uId);
+
+      setTimeout(function() {
+        var qrBox = document.getElementById('qr_' + uId);
+        if(qrBox) {
+          qrBox.innerHTML = '';
+          new QRCode(qrBox, { text: w.id, width: 75, height: 75 });
+        }
+        window.print();
+      }, 100);
+    }
+
+    function stampaBadgesVistaAttuale() {
+      var selectedId = document.getElementById('badges-filter-select').value;
+      var targetList = WORKERS;
+      if (selectedId && selectedId !== 'ALL') {
+        targetList = WORKERS.filter(function(w){ return String(w.id) === String(selectedId); });
+      }
+
+      var printArea = document.getElementById('print-badges-area');
+      printArea.innerHTML = '';
+
+      targetList.forEach(function(w, index) {
+        var uId = 'print_multi_' + index + '_' + w.id;
+        var wrapper = document.createElement('div');
+        wrapper.innerHTML = createBadgeCardHTML(w, uId);
+        printArea.appendChild(wrapper.firstChild);
+      });
+
+      setTimeout(function() {
+        targetList.forEach(function(w, index) {
+          var uId = 'print_multi_' + index + '_' + w.id;
+          var qrBox = document.getElementById('qr_' + uId);
+          if(qrBox) {
+            qrBox.innerHTML = '';
+            new QRCode(qrBox, { text: w.id, width: 75, height: 75 });
+          }
+        });
+        window.print();
+      }, 150);
+    }
+
+    function aggiornaOrologio() {
+      var d = new Date();
+      document.getElementById('clock').innerText = d.toLocaleTimeString('it-IT');
+      document.getElementById('date').innerText = d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    }
+
+    function getTodayDayName() {
+      var d = new Date().getDay();
+      if(d === 1) return "Lunedì";
+      if(d === 2) return "Martedì";
+      if(d === 3) return "Mercoledì";
+      if(d === 4) return "Giovedì";
+      if(d === 5) return "Venerdì";
+      if(d === 6) return "Sabato";
+      return "Domenica";
+    }
+
+    function ordinaDipendenti() {
+      WORKERS.sort(function(a, b){ return a.name.localeCompare(b.name, 'it'); });
+    }
+
+    function renderWeeklyScheduleForm() {
+      var container = document.getElementById('weekly-schedule-container');
+      var html = '';
+      for(var i=0; i<DAYS.length; i++) {
+        var day = DAYS[i];
+        html += '<div class="day-schedule-card">' +
+                '<div style="font-size:12px; font-weight:bold; color:#1e3a8a; margin-bottom:4px;">📌 ' + day + '</div>' +
+                '<div style="display:flex; gap:10px;">' +
+                  '<div style="flex:1;"><label style="margin:0;">Inizio 1</label><input type="time" id="sch_' + day + '_start1" value="08:00"></div>' +
+                  '<div style="flex:1;"><label style="margin:0;">Fine 1</label><input type="time" id="sch_' + day + '_end1" value="14:00"></div>' +
+                '</div>' +
+                '<div style="margin-top:4px;">' +
+                  '<label style="display:flex; align-items:center; gap:4px; font-size:10px; text-transform:none; margin:0;">' +
+                    '<input type="checkbox" id="sch_' + day + '_hasSec" onchange="toggleDaySecInput(\'' + day + '\')"> Aggiungi Rientro Pomeridiano' +
+                  '</label>' +
+                '</div>' +
+                '<div id="sch_' + day + '_secBox" class="hidden" style="display:flex; gap:10px; margin-top:4px;">' +
+                  '<div style="flex:1;"><label style="margin:0;">Inizio 2</label><input type="time" id="sch_' + day + '_start2" value="14:30"></div>' +
+                  '<div style="flex:1;"><label style="margin:0;">Fine 2</label><input type="time" id="sch_' + day + '_end2" value="17:30"></div>' +
+                '</div>' +
+              '</div>';
+      }
+      container.innerHTML = html;
+    }
+
+    function toggleDaySecInput(day) {
+      var chk = document.getElementById('sch_' + day + '_hasSec').checked;
+      var box = document.getElementById('sch_' + day + '_secBox');
+      if(chk) box.classList.remove('hidden'); else box.classList.add('hidden');
+    }
+
+    function popolaMenuSediForm() {
+      var mainSel = document.getElementById('worker-main-site');
+      var secondSel = document.getElementById('worker-second-site');
+      mainSel.innerHTML = '';
+      secondSel.innerHTML = '<option value="">-- Nessun Secondo Plesso --</option>';
+
+      for(var i=0; i<SITES.length; i++) {
+        var opt1 = document.createElement('option');
+        opt1.value = SITES[i].id;
+        opt1.innerText = SITES[i].name;
+        mainSel.appendChild(opt1);
+
+        var opt2 = document.createElement('option');
+        opt2.value = SITES[i].id;
+        opt2.innerText = SITES[i].name;
+        secondSel.appendChild(opt2);
+      }
+    }
+
+    function caricaDipendenti() {
+      ordinaDipendenti();
+      var sel = document.getElementById('kiosk-worker');
+      sel.innerHTML = '';
+      for(var i=0; i<WORKERS.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = WORKERS[i].id;
+        opt.innerText = WORKERS[i].name + ' - ' + WORKERS[i].profile + ' (' + WORKERS[i].roleType + ')';
+        sel.appendChild(opt);
+      }
+      renderWorkersList();
+      onWorkerSelected();
+    }
+
+    function onWorkerSelected() {
+      var id = document.getElementById('kiosk-worker').value;
+      var w = WORKERS.find(function(x){ return String(x.id) === String(id); });
+      var today = getTodayDayName();
+      document.getElementById('current-day-name').innerText = today;
+
+      if(w) {
+        var daySch = (w.schedule && w.schedule[today]) ? w.schedule[today] : { start1: "08:00", end1: "14:00", hasSec: false };
+        document.getElementById('shift-hours-text').innerText = (daySch.start1||'08:00') + ' - ' + (daySch.end1||'14:00');
+        
+        var secWrapper = document.getElementById('shift-hours-sec-wrapper');
+        if(daySch.hasSec && daySch.start2 && daySch.end2) {
+          secWrapper.style.display = 'inline';
+          document.getElementById('shift-hours-sec-text').innerText = daySch.start2 + ' - ' + daySch.end2;
+        } else {
+          secWrapper.style.display = 'none';
+        }
+      }
+    }
+
+    function editTodayShiftModal() {
+      var id = document.getElementById('kiosk-worker').value;
+      var w = WORKERS.find(function(x){ return String(x.id) === String(id); });
+      var today = getTodayDayName();
+      if(!w) return;
+
+      var currentShift1 = document.getElementById('shift-hours-text').innerText;
+      var newShift1 = prompt("⚙️ Modifica TURNO 1 per " + w.name + " di OGGI (" + today + "):", currentShift1);
+      if(newShift1 === null) return;
+
+      var secWrapper = document.getElementById('shift-hours-sec-wrapper');
+      var currentShift2 = (secWrapper.style.display !== 'none') ? document.getElementById('shift-hours-sec-text').innerText : "";
+      var newShift2 = prompt("⚙️ Modifica TURNO 2 / RIENTRO per " + w.name + " di OGGI (lascia vuoto se non c'è rientro):", currentShift2);
+
+      document.getElementById('shift-hours-text').innerText = newShift1;
+      if(newShift2 && newShift2.trim() !== "") {
+        document.getElementById('shift-hours-sec-text').innerText = newShift2.trim();
+        secWrapper.style.display = 'inline';
+      } else {
+        secWrapper.style.display = 'none';
+      }
+      alert("✅ Turno del giorno aggiornato!");
+    }
+
+    function selectSiteCard(id) {
+      activeSiteId = id;
+      var cards = document.querySelectorAll('.site-card');
+      for(var i=0; i<cards.length; i++) cards[i].classList.remove('selected');
+      
+      var elem = document.getElementById('card-' + id);
+      if(elem) elem.classList.add('selected');
+      
+      var site = SITES.find(function(s){ return String(s.id) === String(id); });
+      if(site) {
+        document.getElementById('active-site-badge').innerText = 'SEDE SELEZIONATA: ' + site.name;
+      }
+      calcolaGeofencing();
+    }
+
+    function getDist(lat1, lon1, lat2, lon2) {
+      var R = 6371e3;
+      var φ1 = lat1 * Math.PI/180, φ2 = lat2 * Math.PI/180;
+      var Δφ = (lat2-lat1) * Math.PI/180, Δλ = (lon2-lon1) * Math.PI/180;
+      var a = Math.sin(Δφ/2)*Math.sin(Δφ/2) + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)*Math.sin(Δλ/2);
+      return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+    }
+
+    function calcolaGeofencing() {
+      var site = SITES.find(function(s){ return String(s.id) === String(activeSiteId); });
+      var btnIn = document.getElementById('btn-in');
+      var btnPause = document.getElementById('btn-pause');
+      var btnOut = document.getElementById('btn-out');
+      if(!site) return;
+
+      if(site.id === "s_casa") {
+        document.getElementById('gps-info').innerHTML = '<span style="color:#16a34a;">🧪 CASA TEST: Sei nel plesso (Timbratura Abilitata)</span>';
+        btnIn.disabled = false; btnPause.disabled = false; btnOut.disabled = false;
+        return;
+      }
+
+      var dist = getDist(posCorrente.lat, posCorrente.lng, site.lat, site.lng);
+      if(dist <= 150) {
+        document.getElementById('gps-info').innerHTML = '<span style="color:#16a34a;">📍 Distanza da ' + site.name + ': <b>' + dist + 'm</b> (In raggio di 150m)</span>';
+        btnIn.disabled = false; btnPause.disabled = false; btnOut.disabled = false;
+      } else {
+        document.getElementById('gps-info').innerHTML = '<span style="color:#dc2626;">⛔ FUORI RAGGIO: <b>' + dist + 'm</b> da ' + site.name + ' (Max 150m)</span>';
+        btnIn.disabled = true; btnPause.disabled = true; btnOut.disabled = true;
+      }
+    }
+
+    function press(n) {
+      var input = document.getElementById('kiosk-pin');
+      if(input.value.length < 4) input.value += n;
+    }
+    function clearPin() { document.getElementById('kiosk-pin').value = ''; }
+
+    function clock(type) {
+      initAudioContext();
+      var wId = document.getElementById('kiosk-worker').value;
+      var pin = document.getElementById('kiosk-pin').value;
+      var note = document.getElementById('kiosk-note').value;
+      var worker = WORKERS.find(function(w){ return String(w.id) === String(wId); });
+      var site = SITES.find(function(s){ return String(s.id) === String(activeSiteId); });
+
+      if(!worker) return alert("Seleziona un dipendente!");
+      if(worker.pin && worker.pin !== pin) return alert("PIN Errato!");
+
+      var dist = getDist(posCorrente.lat, posCorrente.lng, site.lat, site.lng);
+      if(site.id !== "s_casa" && dist > 150) {
+        return alert("⛔ Timbratura rifiutata! Ti trovi a " + dist + " metri dal plesso (limite 150m).");
+      }
+
+      var newLog = {
+        time: new Date().toISOString(),
+        worker: worker.name,
+        profile: worker.profile + ' (' + worker.roleType + ')',
+        siteDisplay: site.name,
+        type: type,
+        dist: site.id === "s_casa" ? 0 : dist,
+        note: note
+      };
+
+      refLogs.push(newLog, function(err) {
+        if(err) {
+          alert("Errore salvataggio: " + err.message);
+        } else {
+          playBeep(type);
+          clearPin();
+          document.getElementById('kiosk-note').value = '';
+          alert("✅ Timbratura [" + type + "] registrata con successo per " + worker.name + "!");
+        }
+      });
+    }
+
+    function saveWorker(e) {
+      e.preventDefault();
+      var id = document.getElementById('worker-id').value || 'w_' + Date.now();
+      
+      var sch = {};
+      for(var i=0; i<DAYS.length; i++) {
+        var day = DAYS[i];
+        sch[day] = {
+          start1: document.getElementById('sch_' + day + '_start1').value,
+          end1: document.getElementById('sch_' + day + '_end1').value,
+          hasSec: document.getElementById('sch_' + day + '_hasSec').checked,
+          start2: document.getElementById('sch_' + day + '_start2').value,
+          end2: document.getElementById('sch_' + day + '_end2').value
+        };
+      }
+
+      var wObj = {
+        id: id,
+        name: document.getElementById('worker-name').value.trim(),
+        profile: document.getElementById('worker-profile').value,
+        roleType: document.getElementById('worker-role-type').value,
+        mainSiteId: document.getElementById('worker-main-site').value,
+        secondSiteId: document.getElementById('worker-second-site').value,
+        schedule: sch,
+        pin: document.getElementById('worker-pin-input').value.trim()
+      };
+
+      refWorkers.child(id).set(wObj, function(err) {
+        if(err) {
+          alert("Errore salvataggio: " + err.message);
+        } else {
+          resetWorkerForm();
+          alert("Dipendente salvato con successo su tutti i dispositivi!");
+        }
+      });
+    }
+
+    function editWorker(id) {
+      var w = WORKERS.find(function(x){ return String(x.id) === String(id); });
+      if(!w) return;
+      document.getElementById('worker-id').value = w.id;
+      document.getElementById('worker-name').value = w.name;
+      document.getElementById('worker-profile').value = w.profile;
+      document.getElementById('worker-role-type').value = w.roleType;
+      document.getElementById('worker-main-site').value = w.mainSiteId || SITES[0].id;
+      document.getElementById('worker-second-site').value = w.secondSiteId || '';
+      
+      if(w.schedule) {
+        for(var i=0; i<DAYS.length; i++) {
+          var day = DAYS[i];
+          if(w.schedule[day]) {
+            document.getElementById('sch_' + day + '_start1').value = w.schedule[day].start1 || '08:00';
+            document.getElementById('sch_' + day + '_end1').value = w.schedule[day].end1 || '14:00';
+            document.getElementById('sch_' + day + '_hasSec').checked = !!w.schedule[day].hasSec;
+            toggleDaySecInput(day);
+            document.getElementById('sch_' + day + '_start2').value = w.schedule[day].start2 || '14:30';
+            document.getElementById('sch_' + day + '_end2').value = w.schedule[day].end2 || '17:30';
+          }
+        }
+      }
+
+      document.getElementById('worker-pin-input').value = w.pin;
+      document.getElementById('worker-form-title').innerText = "Modifica Dipendente ATA";
+      showTab('settings');
+    }
+
+    function deleteWorker(id) {
+      if(confirm("Eliminare questo dipendente ATA?")) {
+        refWorkers.child(id).remove();
+      }
+    }
+
+    function eliminaLog(key) {
+      if(confirm("Vuoi cancellare questa timbratura di prova?")) {
+        refLogs.child(key).remove().then(function() {
+          alert("Timbratura eliminata!");
+        });
+      }
+    }
+
+    function svuotaTuttiILogs() {
+      if(confirm("⚠️ Sei sicuro di voler cancellare TUTTO lo storico delle timbrature di prova?")) {
+        refLogs.remove().then(function() {
+          alert("Tutte le timbrature di prova sono state cancellate!");
+        });
+      }
+    }
+
+    function resetWorkerForm() {
+      document.getElementById('worker-id').value = '';
+      document.getElementById('worker-name').value = '';
+      document.getElementById('worker-pin-input').value = '';
+      document.getElementById('worker-form-title').innerText = "Aggiungi / Modifica Dipendente ATA";
+    }
+
+    function renderWorkersList() {
+      var html = '';
+      if(WORKERS.length === 0) {
+        html = '<div style="font-size:12px; color:#94a3b8;">Nessun dipendente inserito.</div>';
+      } else {
+        for(var i=0; i<WORKERS.length; i++) {
+          var w = WORKERS[i];
+          var ms = SITES.find(function(s){ return String(s.id) === String(w.mainSiteId); });
+          var msName = ms ? ms.name : 'N/D';
+
+          html += '<div style="padding:10px; border:1px solid #e2e8f0; border-radius:8px; display:flex; justify-content:space-between; align-items:center; background:#f8fafc;">' +
+                  '<div><b>👤 ' + w.name + '</b><div style="font-size:11px; color:#64748b;">Profilo: <b>' + w.profile + '</b> • Sede: <b>' + msName + '</b></div></div>' +
+                  '<div style="display:flex; gap:5px;"><button onclick="editWorker(\'' + w.id + '\')" class="btn-small btn-edit">✏️ Modifica</button><button onclick="deleteWorker(\'' + w.id + '\')" class="btn-small btn-delete">🗑️ Elimina</button></div></div>';
+        }
+      }
+      document.getElementById('workers-list').innerHTML = html;
+    }
+
+    function renderLogs() {
+      var todayStr = new Date().toISOString().split('T')[0];
+      var todayLogs = logs.filter(function(l){ return l.time.startsWith(todayStr); });
+      
+      var html = '';
+      if(todayLogs.length === 0) {
+        html = '<div style="font-size:12px; color:#94a3b8; text-align:center; padding:15px;">Nessuna timbratura oggi.</div>';
+      } else {
+        for(var i=0; i<todayLogs.length; i++) {
+          var l = todayLogs[i];
+          html += '<div class="log-item"><div><b>' + l.worker + '</b> - <span class="badge badge-' + l.type.toLowerCase() + '">' + l.type + '</span><br><span style="font-size:11px; color:#64748b;">' + l.siteDisplay + '</span></div><div><b>' + new Date(l.time).toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit'}) + '</b></div></div>';
+        }
+      }
+      document.getElementById('today-logs').innerHTML = html;
+
+      var tableHtml = '';
+      for(var j=0; j<logs.length; j++) {
+        var log = logs[j];
+        tableHtml += '<tr><td>' + new Date(log.time).toLocaleString('it-IT') + '</td><td><b>' + log.worker + '</b></td><td>' + log.profile + '</td><td><b>' + log.type + '</b></td><td>' + log.siteDisplay + '</td><td>' + log.dist + 'm</td><td>' + (log.note||'-') + '</td><td><button onclick="eliminaLog(\'' + log._key + '\')" class="btn-small btn-delete">🗑️ Elimina</button></td></tr>';
+      }
+      document.querySelector('#logs-table tbody').innerHTML = tableHtml;
+    }
+
+    function showTab(tab) {
+      document.getElementById('tab-kiosk').classList.add('hidden');
+      document.getElementById('tab-logs').classList.add('hidden');
+      document.getElementById('tab-badges').classList.add('hidden');
+      document.getElementById('tab-settings').classList.add('hidden');
+
+      document.getElementById('nav-kiosk').classList.remove('active');
+      document.getElementById('nav-logs').classList.remove('active');
+      document.getElementById('nav-badges').classList.remove('active');
+      document.getElementById('nav-settings').classList.remove('active');
+
+      document.getElementById('tab-' + tab).classList.remove('hidden');
+      document.getElementById('nav-' + tab).classList.add('active');
+
+      if(tab === 'badges') {
+        renderBadgesTab();
+      }
+    }
+
+    aggiornaOrologio();
+    setInterval(aggiornaOrologio, 1000);
+    renderWeeklyScheduleForm();
+    popolaMenuSediForm();
+    selectSiteCard('s_casa');
+  </script>
+</body>
+</html>
