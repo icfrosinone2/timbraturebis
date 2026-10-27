@@ -58,7 +58,7 @@
     .btn-maps-mini { background: #0284c7; color: white; text-decoration: none; font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 6px; display: inline-block; margin-top: 6px; }
 
     .camera-container { background: #0f172a; border-radius: 12px; overflow: hidden; margin-bottom: 15px; text-align: center; padding: 10px; color: white; }
-    video { width: 100%; max-height: 220px; object-fit: cover; border-radius: 8px; background: #1e293b; display: block; margin: 0 auto; }
+    #reader { width: 100%; max-width: 380px; margin: 0 auto; min-height: 200px; background: #1e293b; border-radius: 8px; overflow: hidden; }
 
     .log-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; font-size: 12px; }
     .badge { padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; color: white; }
@@ -110,14 +110,10 @@
 
     .hidden { display: none !important; }
 
-    /* REGOLE STAMPA BIANCO RISPARMIA INCHIOSTRO FORZATE */
+    /* REGOLE STAMPA BIANCO RISPARMIA INCHIOSTRO */
     @media print {
-      body * {
-        visibility: hidden !important;
-      }
-      #print-badges-area, #print-badges-area * {
-        visibility: visible !important;
-      }
+      body * { visibility: hidden !important; }
+      #print-badges-area, #print-badges-area * { visibility: visible !important; }
       #print-badges-area {
         position: absolute !important;
         left: 0 !important;
@@ -128,9 +124,7 @@
         gap: 20px !important;
         justify-content: flex-start !important;
       }
-      .no-print {
-        display: none !important;
-      }
+      .no-print { display: none !important; }
       
       .blue-badge {
         background-color: #ffffff !important;
@@ -141,35 +135,18 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
-      .blue-badge-header {
-        border-bottom: 1px solid #000000 !important;
-        color: #000000 !important;
-      }
-      .blue-badge-header span {
-        background: none !important;
-        color: #000000 !important;
-      }
-      .photo-placeholder {
-        border: 1px dashed #000000 !important;
-        color: #000000 !important;
-        background: #ffffff !important;
-      }
-      .badge-details h3, .badge-details p {
-        color: #000000 !important;
-      }
-      .blue-badge-footer {
-        border-top: 1px solid #000000 !important;
-      }
-      .pin-badge-tag {
-        background: #ffffff !important;
-        color: #000000 !important;
-        border: 1px solid #000000 !important;
-      }
+      .blue-badge-header { border-bottom: 1px solid #000000 !important; color: #000000 !important; }
+      .blue-badge-header span { background: none !important; color: #000000 !important; }
+      .photo-placeholder { border: 1px dashed #000000 !important; color: #000000 !important; background: #ffffff !important; }
+      .badge-details h3, .badge-details p { color: #000000 !important; }
+      .blue-badge-footer { border-top: 1px solid #000000 !important; }
+      .pin-badge-tag { background: #ffffff !important; color: #000000 !important; border: 1px solid #000000 !important; }
     }
   </style>
 
-  <!-- QRCode.js -->
+  <!-- Generator QR & Scanner QR HTML5 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
   <!-- Firebase JavaScript SDK Mobile Compatible -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -208,23 +185,13 @@
         </div>
 
         <div class="camera-container">
-          <div style="font-size: 11px; margin-bottom: 6px; font-weight: bold;">📷 Scansione Badge / Fotoverifica</div>
+          <div style="font-size: 11px; margin-bottom: 6px; font-weight: bold;">📷 Scansione Badge QR Automatica</div>
           
-          <div style="margin-bottom:8px;">
-            <select id="camera-select" onchange="switchCamera()" style="padding:6px; font-size:12px; width:100%; max-width:280px; margin:0 auto; display:block;">
-              <option value="user">📱 Fotocamera Anteriore (Selfie)</option>
-              <option value="environment">📷 Fotocamera Posteriore (Principale)</option>
-            </select>
-          </div>
-
-          <video id="webcam" autoplay playsinline class="hidden"></video>
-          <div id="camera-placeholder" style="padding: 20px; background: #1e293b; border-radius: 8px; font-size: 12px; color: #94a3b8;">
-            📷 Fotocamera disattivata. Clicca su "Avvia Fotocamera".
-          </div>
+          <div id="reader"></div>
           
           <div style="margin-top: 10px; display: flex; justify-content: center; gap: 8px;">
-            <button onclick="startCamera()" class="btn-small btn-green">▶️ Avvia Fotocamera</button>
-            <button onclick="stopCamera()" class="btn-small btn-red">⏹️ Spegni Fotocamera</button>
+            <button onclick="startScanner()" class="btn-small btn-green">▶️ Avvia Lettore QR</button>
+            <button onclick="stopScanner()" class="btn-small btn-red">⏹️ Spegni Fotocamera</button>
           </div>
         </div>
 
@@ -421,6 +388,54 @@
     const refWorkers = db.ref('dipendenti');
     const refLogs = db.ref('timbrature');
 
+    var html5QrCode = null;
+
+    function startScanner() {
+      if (!html5QrCode) {
+        html5QrCode = new Html5Qrcode("reader");
+      }
+      
+      var config = { fps: 10, qrbox: { width: 220, height: 220 } };
+
+      html5QrCode.start(
+        { facingMode: "environment" },
+        config,
+        onScanSuccess,
+        onScanFailure
+      ).catch(function(err) {
+        html5QrCode.start({ facingMode: "user" }, config, onScanSuccess, onScanFailure).catch(function(err2) {
+          alert("Errore nell'avvio della fotocamera: " + err2);
+        });
+      });
+    }
+
+    function stopScanner() {
+      if (html5QrCode) {
+        html5QrCode.stop().then(function() {
+          console.log("Scanner fermato");
+        }).catch(function(err){});
+      }
+    }
+
+    function onScanSuccess(decodedText, decodedResult) {
+      var scannedId = decodedText.trim();
+      var w = WORKERS.find(function(x){ return String(x.id) === String(scannedId); });
+
+      if (w) {
+        document.getElementById('kiosk-worker').value = w.id;
+        onWorkerSelected();
+        if(w.pin) {
+          document.getElementById('kiosk-pin').value = w.pin;
+        }
+        playBeep('ENTRATA');
+        alert("🪪 Badge Scansionato! Selezionato dipendente: " + w.name);
+      } else {
+        alert("⚠️ QR Code non riconosciuto: " + scannedId);
+      }
+    }
+
+    function onScanFailure(error) {}
+
     var audioCtx = null;
     function initAudioContext() {
       if (!audioCtx) {
@@ -499,7 +514,6 @@
     var logs = [];
     var activeSiteId = "s_casa";
     var posCorrente = { lat: 41.6333, lng: 13.3389 };
-    var webcamStream = null;
 
     refWorkers.on('value', function(snapshot) {
       var val = snapshot.val();
@@ -668,55 +682,6 @@
       var d = new Date();
       document.getElementById('clock').innerText = d.toLocaleTimeString('it-IT');
       document.getElementById('date').innerText = d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-    }
-
-    function startCamera() {
-      stopCamera();
-      var video = document.getElementById('webcam');
-      var placeholder = document.getElementById('camera-placeholder');
-      var selVal = document.getElementById('camera-select').value || 'user';
-
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert("Il browser utilizzato non supporta l'accesso diretto alla fotocamera.");
-        return;
-      }
-
-      var videoConstraints = {
-        facingMode: selVal,
-        width: { ideal: 640 },
-        height: { ideal: 480 }
-      };
-
-      navigator.mediaDevices.getUserMedia({ video: videoConstraints, audio: false })
-        .then(function(stream) {
-          webcamStream = stream;
-          video.srcObject = stream;
-          video.classList.remove('hidden');
-          placeholder.classList.add('hidden');
-        })
-        .catch(function(err1) {
-          navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-            .then(function(stream) {
-              webcamStream = stream;
-              video.srcObject = stream;
-              video.classList.remove('hidden');
-              placeholder.classList.add('hidden');
-            })
-            .catch(function(err2) {
-              alert("⛔ Impossibile accedere alla fotocamera!");
-            });
-        });
-    }
-
-    function switchCamera() { if (webcamStream) startCamera(); }
-
-    function stopCamera() {
-      if (webcamStream) {
-        webcamStream.getTracks().forEach(function(track) { track.stop(); });
-        webcamStream = null;
-      }
-      document.getElementById('webcam').classList.add('hidden');
-      document.getElementById('camera-placeholder').classList.remove('hidden');
     }
 
     function getTodayDayName() {
@@ -890,182 +855,4 @@
       var pin = document.getElementById('kiosk-pin').value;
       var note = document.getElementById('kiosk-note').value;
       var worker = WORKERS.find(function(w){ return String(w.id) === String(wId); });
-      var site = SITES.find(function(s){ return String(s.id) === String(activeSiteId); });
-
-      if(!worker) return alert("Seleziona un dipendente!");
-      if(worker.pin && worker.pin !== pin) return alert("PIN Errato!");
-
-      var dist = getDist(posCorrente.lat, posCorrente.lng, site.lat, site.lng);
-      if(site.id !== "s_casa" && dist > 150) {
-        return alert("⛔ Timbratura rifiutata! Ti trovi a " + dist + " metri dal plesso (limite 150m).");
-      }
-
-      var newLog = {
-        time: new Date().toISOString(),
-        worker: worker.name,
-        profile: worker.profile + ' (' + worker.roleType + ')',
-        siteDisplay: site.name,
-        type: type,
-        dist: site.id === "s_casa" ? 0 : dist,
-        note: note
-      };
-
-      refLogs.push(newLog, function(err) {
-        if(err) {
-          alert("Errore salvataggio: " + err.message);
-        } else {
-          playBeep(type);
-          clearPin();
-          document.getElementById('kiosk-note').value = '';
-          alert("✅ Timbratura [" + type + "] registrata con successo per " + worker.name + "!");
-        }
-      });
-    }
-
-    function saveWorker(e) {
-      e.preventDefault();
-      var id = document.getElementById('worker-id').value || 'w_' + Date.now();
-      
-      var sch = {};
-      for(var i=0; i<DAYS.length; i++) {
-        var day = DAYS[i];
-        sch[day] = {
-          start1: document.getElementById('sch_' + day + '_start1').value,
-          end1: document.getElementById('sch_' + day + '_end1').value,
-          hasSec: document.getElementById('sch_' + day + '_hasSec').checked,
-          start2: document.getElementById('sch_' + day + '_start2').value,
-          end2: document.getElementById('sch_' + day + '_end2').value
-        };
-      }
-
-      var wObj = {
-        id: id,
-        name: document.getElementById('worker-name').value.trim(),
-        profile: document.getElementById('worker-profile').value,
-        roleType: document.getElementById('worker-role-type').value,
-        mainSiteId: document.getElementById('worker-main-site').value,
-        secondSiteId: document.getElementById('worker-second-site').value,
-        schedule: sch,
-        pin: document.getElementById('worker-pin-input').value.trim()
-      };
-
-      refWorkers.child(id).set(wObj, function(err) {
-        if(err) {
-          alert("Errore salvataggio: " + err.message);
-        } else {
-          resetWorkerForm();
-          alert("Dipendente salvato con successo su tutti i dispositivi!");
-        }
-      });
-    }
-
-    function editWorker(id) {
-      var w = WORKERS.find(function(x){ return String(x.id) === String(id); });
-      if(!w) return;
-      document.getElementById('worker-id').value = w.id;
-      document.getElementById('worker-name').value = w.name;
-      document.getElementById('worker-profile').value = w.profile;
-      document.getElementById('worker-role-type').value = w.roleType;
-      document.getElementById('worker-main-site').value = w.mainSiteId || SITES[0].id;
-      document.getElementById('worker-second-site').value = w.secondSiteId || '';
-      
-      if(w.schedule) {
-        for(var i=0; i<DAYS.length; i++) {
-          var day = DAYS[i];
-          if(w.schedule[day]) {
-            document.getElementById('sch_' + day + '_start1').value = w.schedule[day].start1 || '08:00';
-            document.getElementById('sch_' + day + '_end1').value = w.schedule[day].end1 || '14:00';
-            document.getElementById('sch_' + day + '_hasSec').checked = !!w.schedule[day].hasSec;
-            toggleDaySecInput(day);
-            document.getElementById('sch_' + day + '_start2').value = w.schedule[day].start2 || '14:30';
-            document.getElementById('sch_' + day + '_end2').value = w.schedule[day].end2 || '17:30';
-          }
-        }
-      }
-
-      document.getElementById('worker-pin-input').value = w.pin;
-      document.getElementById('worker-form-title').innerText = "Modifica Dipendente ATA";
-      showTab('settings');
-    }
-
-    function deleteWorker(id) {
-      if(confirm("Eliminare questo dipendente ATA?")) {
-        refWorkers.child(id).remove();
-      }
-    }
-
-    function resetWorkerForm() {
-      document.getElementById('worker-id').value = '';
-      document.getElementById('worker-name').value = '';
-      document.getElementById('worker-pin-input').value = '';
-      document.getElementById('worker-form-title').innerText = "Aggiungi / Modifica Dipendente ATA";
-    }
-
-    function renderWorkersList() {
-      var html = '';
-      if(WORKERS.length === 0) {
-        html = '<div style="font-size:12px; color:#94a3b8;">Nessun dipendente inserito.</div>';
-      } else {
-        for(var i=0; i<WORKERS.length; i++) {
-          var w = WORKERS[i];
-          var ms = SITES.find(function(s){ return String(s.id) === String(w.mainSiteId); });
-          var msName = ms ? ms.name : 'N/D';
-
-          html += '<div style="padding:10px; border:1px solid #e2e8f0; border-radius:8px; display:flex; justify-content:space-between; align-items:center; background:#f8fafc;">' +
-                  '<div><b>👤 ' + w.name + '</b><div style="font-size:11px; color:#64748b;">Profilo: <b>' + w.profile + '</b> • Sede: <b>' + msName + '</b></div></div>' +
-                  '<div style="display:flex; gap:5px;"><button onclick="editWorker(\'' + w.id + '\')" class="btn-small btn-edit">✏️ Modifica</button><button onclick="deleteWorker(\'' + w.id + '\')" class="btn-small btn-delete">🗑️ Elimina</button></div></div>';
-        }
-      }
-      document.getElementById('workers-list').innerHTML = html;
-    }
-
-    function renderLogs() {
-      var todayStr = new Date().toISOString().split('T')[0];
-      var todayLogs = logs.filter(function(l){ return l.time.startsWith(todayStr); });
-      
-      var html = '';
-      if(todayLogs.length === 0) {
-        html = '<div style="font-size:12px; color:#94a3b8; text-align:center; padding:15px;">Nessuna timbratura oggi.</div>';
-      } else {
-        for(var i=0; i<todayLogs.length; i++) {
-          var l = todayLogs[i];
-          html += '<div class="log-item"><div><b>' + l.worker + '</b> - <span class="badge badge-' + l.type.toLowerCase() + '">' + l.type + '</span><br><span style="font-size:11px; color:#64748b;">' + l.siteDisplay + '</span></div><div><b>' + new Date(l.time).toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit'}) + '</b></div></div>';
-        }
-      }
-      document.getElementById('today-logs').innerHTML = html;
-
-      var tableHtml = '';
-      for(var j=0; j<logs.length; j++) {
-        var log = logs[j];
-        tableHtml += '<tr><td>' + new Date(log.time).toLocaleString('it-IT') + '</td><td><b>' + log.worker + '</b></td><td>' + log.profile + '</td><td><b>' + log.type + '</b></td><td>' + log.siteDisplay + '</td><td>' + log.dist + 'm</td><td>' + (log.note||'-') + '</td></tr>';
-      }
-      document.querySelector('#logs-table tbody').innerHTML = tableHtml;
-    }
-
-    function showTab(tab) {
-      document.getElementById('tab-kiosk').classList.add('hidden');
-      document.getElementById('tab-logs').classList.add('hidden');
-      document.getElementById('tab-badges').classList.add('hidden');
-      document.getElementById('tab-settings').classList.add('hidden');
-
-      document.getElementById('nav-kiosk').classList.remove('active');
-      document.getElementById('nav-logs').classList.remove('active');
-      document.getElementById('nav-badges').classList.remove('active');
-      document.getElementById('nav-settings').classList.remove('active');
-
-      document.getElementById('tab-' + tab).classList.remove('hidden');
-      document.getElementById('nav-' + tab).classList.add('active');
-
-      if(tab === 'badges') {
-        renderBadgesTab();
-      }
-    }
-
-    aggiornaOrologio();
-    setInterval(aggiornaOrologio, 1000);
-    renderWeeklyScheduleForm();
-    popolaMenuSediForm();
-    selectSiteCard('s_casa');
-  </script>
-</body>
-</html>
+      var site = S
