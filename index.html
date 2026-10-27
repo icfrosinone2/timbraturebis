@@ -80,20 +80,96 @@
 
     .day-schedule-card { border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 8px; padding: 8px; margin-bottom: 6px; }
 
-    /* Badge QR Code Modal & Card */
-    .qr-badge-card {
-      border: 2px dashed #2563eb;
-      background: #ffffff;
-      padding: 15px;
-      border-radius: 12px;
-      text-align: center;
+    /* LAYOUT DEL TESSERINO BADGE */
+    .badge-print-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
       margin-top: 15px;
     }
 
+    .single-badge {
+      width: 330px;
+      height: 210px;
+      border: 2px solid #1e3a8a;
+      border-radius: 12px;
+      padding: 12px;
+      background: #ffffff;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      box-sizing: border-box;
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    }
+
+    .badge-header {
+      border-bottom: 2px solid #1e3a8a;
+      padding-bottom: 4px;
+      text-align: center;
+    }
+    .badge-header h4 { font-size: 12px; color: #1e3a8a; text-transform: uppercase; font-weight: 800; }
+    .badge-header p { font-size: 9px; color: #64748b; font-weight: 600; }
+
+    .badge-body {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .photo-frame {
+      width: 65px;
+      height: 75px;
+      border: 1px dashed #94a3b8;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      color: #94a3b8;
+      background: #f1f5f9;
+      text-align: center;
+    }
+
+    .badge-info { flex: 1; }
+    .badge-info .worker-name-title { font-size: 13px; font-weight: 800; color: #0f172a; line-height: 1.2; }
+    .badge-info .worker-prof-subtitle { font-size: 10px; color: #2563eb; font-weight: 700; margin-top: 2px; }
+    .badge-info .worker-site-sub { font-size: 9px; color: #64748b; margin-top: 2px; }
+
+    .badge-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 6px;
+    }
+    .badge-pin-box { font-size: 11px; font-weight: 800; color: #0f172a; background: #e0f2fe; padding: 2px 6px; border-radius: 4px; }
+
     .hidden { display: none !important; }
+
+    /* REGOLE DI STAMPA PER STAMPARE SOLO IL TESSERINO BADGE */
+    @media print {
+      body * { visibility: hidden; }
+      #print-area, #print-area * { visibility: visible; }
+      #print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        display: flex !important;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: flex-start;
+      }
+      .no-print { display: none !important; }
+    }
   </style>
 
-  <!-- Libreria QRCode.js per generare Badge QR -->
+  <!-- Libreria QRCode.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <!-- Firebase App & Realtime Database SDK (Compat Mode) -->
@@ -102,7 +178,7 @@
 </head>
 <body>
 
-  <header>
+  <header class="no-print">
     <div class="brand">Gestione Oraria ATA - IC Frosinone 2</div>
     <nav>
       <button id="nav-kiosk" class="active" onclick="showTab('kiosk')">Timbra</button>
@@ -111,7 +187,7 @@
     </nav>
   </header>
 
-  <div class="container">
+  <div class="container no-print">
     <div id="tab-kiosk" class="grid-main">
       <div class="card">
         <div class="clock-box">
@@ -308,19 +384,32 @@
       </div>
 
       <div class="card">
-        <h3>🪪 Stampa Badge QR Code Dipendente</h3>
-        <p style="font-size:12px; color:#64748b; margin-bottom:10px;">Seleziona un dipendente dall'elenco per generare e stampare il Badge personale con QR Code per il tablet.</p>
+        <h3>🪪 Stampa Badge Professionale QR Code</h3>
+        <p style="font-size:12px; color:#64748b; margin-bottom:10px;">Seleziona un dipendente e quante copie stampare.</p>
         
-        <div id="qr-badge-wrapper" class="qr-badge-card hidden">
-          <h4 id="qr-worker-name" style="color:#1e3a8a; font-size:16px; margin-bottom:4px;">---</h4>
-          <div id="qr-worker-profile" style="font-size:12px; color:#475569; margin-bottom:10px;">---</div>
-          <div id="qrcode" style="display:flex; justify-content:center; margin:15px 0;"></div>
-          <div id="qr-worker-pin" style="font-size:13px; font-weight:bold; color:#0f172a; margin-bottom:12px;">PIN: ****</div>
-          <button onclick="window.print()" class="btn-small btn-green">🖨️ Stampa Badge</button>
+        <div style="display:flex; gap:10px; margin-bottom:15px; align-items:center;">
+          <div style="flex:1;">
+            <label style="margin:0;">Numero di Copie per Foglio</label>
+            <select id="badge-copies-count" style="padding:6px;">
+              <option value="1">1 Badge</option>
+              <option value="2" selected>2 Badge</option>
+              <option value="4">4 Badge</option>
+              <option value="6">6 Badge</option>
+            </select>
+          </div>
+          <button onclick="stampaBadgeAttivo()" id="btn-print-badge" class="btn-small btn-green" style="margin-top:15px; padding:10px 15px;" disabled>🖨️ Stampa Badge</button>
+        </div>
+
+        <!-- ANTEPRIMA BADGE -->
+        <div id="badge-preview-wrapper" class="hidden">
+          <div id="badge-single-preview"></div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- AREA DEDICATA SOLTANTO ALLA STAMPA DEI BADGE -->
+  <div id="print-area"></div>
 
   <script>
     // -------------------------------------------------------------
@@ -342,7 +431,58 @@
     const refLogs = db.ref('timbrature');
 
     // -------------------------------------------------------------
-    // 2. VARIABILI E DATI BASE
+    // 2. SUONI TIMBRATURA (AUDIO SYNTHESIS AD ALTO VOLUME)
+    // -------------------------------------------------------------
+    function playBeep(type) {
+      try {
+        var AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        var ctx = new AudioContext();
+
+        if (type === 'ENTRATA') {
+          // Suono squillante di successo (doppio tono ascendente)
+          var osc1 = ctx.createOscillator();
+          var gain1 = ctx.createGain();
+          osc1.type = 'sine';
+          osc1.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+          osc1.frequency.setValueAtTime(880, ctx.currentTime + 0.12); // A5
+          gain1.gain.setValueAtTime(0.3, ctx.currentTime);
+          gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+          osc1.connect(gain1);
+          gain1.connect(ctx.destination);
+          osc1.start();
+          osc1.stop(ctx.currentTime + 0.4);
+        } else if (type === 'USCITA') {
+          // Suono profondo di uscita (tono descendente)
+          var osc2 = ctx.createOscillator();
+          var gain2 = ctx.createGain();
+          osc2.type = 'triangle';
+          osc2.frequency.setValueAtTime(659.25, ctx.currentTime); // E5
+          osc2.frequency.setValueAtTime(440, ctx.currentTime + 0.15); // A4
+          gain2.gain.setValueAtTime(0.3, ctx.currentTime);
+          gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.45);
+          osc2.connect(gain2);
+          gain2.connect(ctx.destination);
+          osc2.start();
+          osc2.stop(ctx.currentTime + 0.45);
+        } else {
+          // Pausa / Altro
+          var osc3 = ctx.createOscillator();
+          var gain3 = ctx.createGain();
+          osc3.type = 'sine';
+          osc3.frequency.setValueAtTime(523.25, ctx.currentTime);
+          gain3.gain.setValueAtTime(0.2, ctx.currentTime);
+          gain3.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+          osc3.connect(gain3);
+          gain3.connect(ctx.destination);
+          osc3.start();
+          osc3.stop(ctx.currentTime + 0.25);
+        }
+      } catch(e){}
+    }
+
+    // -------------------------------------------------------------
+    // 3. VARIABILI E DATI BASE
     // -------------------------------------------------------------
     var DAYS = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
 
@@ -375,10 +515,10 @@
     var activeSiteId = "s_casa";
     var posCorrente = { lat: 41.6333, lng: 13.3389 };
     var webcamStream = null;
-    var qrCodeObj = null;
+    var selectedBadgeWorker = null;
 
     // -------------------------------------------------------------
-    // 3. SINCRONIZZAZIONE IN TEMPO REALE FIREBASE
+    // 4. SINCRONIZZAZIONE IN TEMPO REALE FIREBASE
     // -------------------------------------------------------------
     refWorkers.on('value', function(snapshot) {
       var val = snapshot.val();
@@ -403,7 +543,7 @@
     });
 
     // -------------------------------------------------------------
-    // 4. FUNZIONE PER COPIARE L'ORARIO DEL LUNEDÌ
+    // 5. COPIA LUNEDÌ SU TUTTI I GIORNI
     // -------------------------------------------------------------
     function copyMondayScheduleToAll() {
       var monStart1 = document.getElementById('sch_Lunedì_start1').value;
@@ -425,7 +565,75 @@
     }
 
     // -------------------------------------------------------------
-    // 5. FUNZIONALITÀ INTERFACCIA ED UTILITÀ
+    // 6. GENERAZIONE E STAMPA BADGE PROFESSIONALE
+    // -------------------------------------------------------------
+    function generateBadgeHTML(worker) {
+      var ms = SITES.find(function(s){ return String(s.id) === String(worker.mainSiteId); });
+      var msName = ms ? ms.name : 'Sede Centrale';
+
+      return '<div class="single-badge">' +
+        '<div class="badge-header">' +
+          '<h4>IC FROSINONE 2</h4>' +
+          '<p>Tessera di Riconoscimento ATA</p>' +
+        '</div>' +
+        '<div class="badge-body">' +
+          '<div class="photo-frame">FOTO<br>FOTO TESSERA</div>' +
+          '<div class="badge-info">' +
+            '<div class="worker-name-title">' + worker.name + '</div>' +
+            '<div class="worker-prof-subtitle">' + worker.profile + '</div>' +
+            '<div class="worker-site-sub">Sede: ' + msName + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="badge-footer">' +
+          '<div class="qr-target-box" id="qr_box_' + Math.random().toString(36).substr(2, 9) + '" data-code="' + worker.id + '"></div>' +
+          '<div class="badge-pin-box">PIN: ' + worker.pin + '</div>' +
+        '</div>' +
+      '</div>';
+    }
+
+    function generateBadge(id) {
+      var w = WORKERS.find(function(x){ return String(x.id) === String(id); });
+      if(!w) return;
+      selectedBadgeWorker = w;
+
+      var previewDiv = document.getElementById('badge-single-preview');
+      previewDiv.innerHTML = generateBadgeHTML(w);
+
+      // Render QR
+      var qrBox = previewDiv.querySelector('.qr-target-box');
+      new QRCode(qrBox, { text: w.id, width: 55, height: 55 });
+
+      document.getElementById('badge-preview-wrapper').classList.remove('hidden');
+      document.getElementById('btn-print-badge').disabled = false;
+    }
+
+    function stampaBadgeAttivo() {
+      if(!selectedBadgeWorker) return;
+
+      var copiesCount = parseInt(document.getElementById('badge-copies-count').value || "2");
+      var printArea = document.getElementById('print-area');
+      printArea.innerHTML = '';
+
+      for(var i=0; i<copiesCount; i++) {
+        var wrapper = document.createElement('div');
+        wrapper.innerHTML = generateBadgeHTML(selectedBadgeWorker);
+        printArea.appendChild(wrapper.firstChild);
+      }
+
+      // Render QR su tutti i badge da stampare
+      var qrBoxes = printArea.querySelectorAll('.qr-target-box');
+      qrBoxes.forEach(function(box) {
+        new QRCode(box, { text: selectedBadgeWorker.id, width: 55, height: 55 });
+      });
+
+      // Avvia stampa pulita
+      setTimeout(function() {
+        window.print();
+      }, 300);
+    }
+
+    // -------------------------------------------------------------
+    // 7. FUNZIONALITÀ BASE INTERFACCIA
     // -------------------------------------------------------------
     function aggiornaOrologio() {
       var d = new Date();
@@ -647,7 +855,7 @@
     }
     function clearPin() { document.getElementById('kiosk-pin').value = ''; }
 
-    // Registrazione Timbratura con Salvataggio Firebase
+    // Registrazione Timbratura con Salvataggio Firebase & Suono Acustico
     function clock(type) {
       var wId = document.getElementById('kiosk-worker').value;
       var pin = document.getElementById('kiosk-pin').value;
@@ -674,6 +882,7 @@
       };
 
       refLogs.push(newLog).then(function() {
+        playBeep(type); // Riproduzione Suono Forte
         clearPin();
         document.getElementById('kiosk-note').value = '';
         alert("✅ Timbratura [" + type + "] registrata con successo per " + worker.name + "!");
@@ -750,25 +959,6 @@
           alert("Dipendente eliminato!");
         });
       }
-    }
-
-    function generateBadge(id) {
-      var w = WORKERS.find(function(x){ return String(x.id) === String(id); });
-      if(!w) return;
-
-      document.getElementById('qr-worker-name').innerText = w.name;
-      document.getElementById('qr-worker-profile').innerText = w.profile + ' (' + w.roleType + ')';
-      document.getElementById('qr-worker-pin').innerText = "PIN: " + w.pin;
-
-      var qrContainer = document.getElementById('qrcode');
-      qrContainer.innerHTML = '';
-      new QRCode(qrContainer, {
-        text: w.id,
-        width: 140,
-        height: 140
-      });
-
-      document.getElementById('qr-badge-wrapper').classList.remove('hidden');
     }
 
     function resetWorkerForm() {
