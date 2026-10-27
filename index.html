@@ -80,82 +80,100 @@
 
     .day-schedule-card { border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 8px; padding: 8px; margin-bottom: 6px; }
 
-    /* LAYOUT DEL TESSERINO BADGE */
-    .badge-print-container {
+    /* LAYOUT TESSERINO BADGE BLU ORIGINALE */
+    .badges-grid {
       display: flex;
       flex-wrap: wrap;
       gap: 20px;
-      justify-content: center;
-      margin-top: 15px;
+      margin-top: 20px;
     }
 
-    .single-badge {
-      width: 330px;
-      height: 210px;
-      border: 2px solid #1e3a8a;
+    .badge-card-container {
+      width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .blue-badge {
+      background: #1e40af;
+      color: white;
       border-radius: 12px;
-      padding: 12px;
-      background: #ffffff;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      padding: 14px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      position: relative;
+      box-sizing: border-box;
+      height: 185px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      position: relative;
-      box-sizing: border-box;
-      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
     }
 
-    .badge-header {
-      border-bottom: 2px solid #1e3a8a;
-      padding-bottom: 4px;
-      text-align: center;
-    }
-    .badge-header h4 { font-size: 12px; color: #1e3a8a; text-transform: uppercase; font-weight: 800; }
-    .badge-header p { font-size: 9px; color: #64748b; font-weight: 600; }
-
-    .badge-body {
+    .blue-badge-header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      align-items: center;
+      font-size: 10px;
+      font-weight: bold;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding-bottom: 6px;
+    }
+
+    .blue-badge-body {
+      display: flex;
+      gap: 12px;
+      align-items: center;
       margin-top: 6px;
     }
 
-    .photo-frame {
-      width: 65px;
-      height: 75px;
-      border: 1px dashed #94a3b8;
+    .photo-placeholder {
+      width: 60px;
+      height: 70px;
+      border: 1px dashed rgba(255,255,255,0.5);
       border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 9px;
-      color: #94a3b8;
-      background: #f1f5f9;
+      font-size: 8px;
       text-align: center;
+      color: rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.05);
     }
 
-    .badge-info { flex: 1; }
-    .badge-info .worker-name-title { font-size: 13px; font-weight: 800; color: #0f172a; line-height: 1.2; }
-    .badge-info .worker-prof-subtitle { font-size: 10px; color: #2563eb; font-weight: 700; margin-top: 2px; }
-    .badge-info .worker-site-sub { font-size: 9px; color: #64748b; margin-top: 2px; }
+    .badge-details { flex: 1; }
+    .badge-details h3 { font-size: 13px; font-weight: 800; text-transform: uppercase; line-height: 1.2; margin-bottom: 3px; }
+    .badge-details p { font-size: 10px; opacity: 0.9; margin-bottom: 2px; }
 
-    .badge-footer {
+    .blue-badge-footer {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      border-top: 1px solid #e2e8f0;
+      border-top: 1px solid rgba(255,255,255,0.2);
       padding-top: 6px;
     }
-    .badge-pin-box { font-size: 11px; font-weight: 800; color: #0f172a; background: #e0f2fe; padding: 2px 6px; border-radius: 4px; }
+
+    .pin-badge-tag {
+      background: rgba(0,0,0,0.3);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .qr-box-bg {
+      background: white;
+      padding: 4px;
+      border-radius: 6px;
+    }
 
     .hidden { display: none !important; }
 
-    /* REGOLE DI STAMPA PER STAMPARE SOLO IL TESSERINO BADGE */
+    /* REGOLE DI STAMPA ISOLATA PER BADGES */
     @media print {
       body * { visibility: hidden; }
-      #print-area, #print-area * { visibility: visible; }
-      #print-area {
+      #print-badges-area, #print-badges-area * { visibility: visible; }
+      #print-badges-area {
         position: absolute;
         left: 0;
         top: 0;
@@ -166,6 +184,10 @@
         justify-content: flex-start;
       }
       .no-print { display: none !important; }
+      .blue-badge {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
     }
   </style>
 
@@ -182,12 +204,14 @@
     <div class="brand">Gestione Oraria ATA - IC Frosinone 2</div>
     <nav>
       <button id="nav-kiosk" class="active" onclick="showTab('kiosk')">Timbra</button>
-      <button id="nav-logs" onclick="showTab('logs')">Registro & Report</button>
+      <button id="nav-logs" onclick="showTab('logs')">Registro & Report DSGA</button>
+      <button id="nav-badges" onclick="showTab('badges')">🪪 Stampa Badges</button>
       <button id="nav-settings" onclick="showTab('settings')">⚙️ Impostazioni Sedi & Dipendenti</button>
     </nav>
   </header>
 
   <div class="container no-print">
+    <!-- TAB TIMBRA -->
     <div id="tab-kiosk" class="grid-main">
       <div class="card">
         <div class="clock-box">
@@ -207,7 +231,6 @@
           </div>
         </div>
 
-        <!-- WEBCAM / SELEZIONE CAMERA -->
         <div class="camera-container">
           <div style="font-size: 11px; margin-bottom: 6px; font-weight: bold;">📷 Scansione Badge / Fotoverifica</div>
           
@@ -311,6 +334,7 @@
       </div>
     </div>
 
+    <!-- TAB REGISTRO -->
     <div id="tab-logs" class="card hidden">
       <h3>Registro Storico Timbrature ATA</h3>
       <table id="logs-table">
@@ -329,6 +353,25 @@
       </table>
     </div>
 
+    <!-- TAB STAMPA BADGES (IDENTICA ALLA GRAFICA RICHIESTA) -->
+    <div id="tab-badges" class="card hidden">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:15px;">
+        <div>
+          <h3 style="font-size:16px;">🪪 Tesserini e Badges Personali ATA</h3>
+          <p style="font-size:12px; color:#64748b;">Stampa singoli tesserini o l'elenco completo dei dipendenti.</p>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <select id="badges-filter-select" onchange="renderBadgesTab()" style="padding:8px; min-width:200px;">
+            <option value="ALL">-- Mostra Tutti i Badge --</option>
+          </select>
+          <button onclick="stampaBadgesVistaAttuale()" class="btn-small btn-blue" style="padding:10px 15px;">🖨️ Stampa Vista Attuale</button>
+        </div>
+      </div>
+
+      <div id="badges-container" class="badges-grid"></div>
+    </div>
+
+    <!-- TAB IMPOSTAZIONI -->
     <div id="tab-settings" class="grid-main hidden">
       <div class="card">
         <h3 id="worker-form-title">Aggiungi / Modifica Dipendente ATA</h3>
@@ -382,34 +425,11 @@
         <h4 style="margin-top:20px; margin-bottom:10px;">Dipendenti ATA Registrati (Ordine Alfabetico)</h4>
         <div id="workers-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
       </div>
-
-      <div class="card">
-        <h3>🪪 Stampa Badge Professionale QR Code</h3>
-        <p style="font-size:12px; color:#64748b; margin-bottom:10px;">Seleziona un dipendente e quante copie stampare.</p>
-        
-        <div style="display:flex; gap:10px; margin-bottom:15px; align-items:center;">
-          <div style="flex:1;">
-            <label style="margin:0;">Numero di Copie per Foglio</label>
-            <select id="badge-copies-count" style="padding:6px;">
-              <option value="1">1 Badge</option>
-              <option value="2" selected>2 Badge</option>
-              <option value="4">4 Badge</option>
-              <option value="6">6 Badge</option>
-            </select>
-          </div>
-          <button onclick="stampaBadgeAttivo()" id="btn-print-badge" class="btn-small btn-green" style="margin-top:15px; padding:10px 15px;" disabled>🖨️ Stampa Badge</button>
-        </div>
-
-        <!-- ANTEPRIMA BADGE -->
-        <div id="badge-preview-wrapper" class="hidden">
-          <div id="badge-single-preview"></div>
-        </div>
-      </div>
     </div>
   </div>
 
-  <!-- AREA DEDICATA SOLTANTO ALLA STAMPA DEI BADGE -->
-  <div id="print-area"></div>
+  <!-- AREA PER LA STAMPA ISOLATA DEI BADGES -->
+  <div id="print-badges-area"></div>
 
   <script>
     // -------------------------------------------------------------
@@ -431,7 +451,7 @@
     const refLogs = db.ref('timbrature');
 
     // -------------------------------------------------------------
-    // 2. SUONI TIMBRATURA (AUDIO SYNTHESIS AD ALTO VOLUME)
+    // 2. SUONI TIMBRATURA ENTRATA / USCITA
     // -------------------------------------------------------------
     function playBeep(type) {
       try {
@@ -440,12 +460,11 @@
         var ctx = new AudioContext();
 
         if (type === 'ENTRATA') {
-          // Suono squillante di successo (doppio tono ascendente)
           var osc1 = ctx.createOscillator();
           var gain1 = ctx.createGain();
           osc1.type = 'sine';
-          osc1.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
-          osc1.frequency.setValueAtTime(880, ctx.currentTime + 0.12); // A5
+          osc1.frequency.setValueAtTime(587.33, ctx.currentTime);
+          osc1.frequency.setValueAtTime(880, ctx.currentTime + 0.12);
           gain1.gain.setValueAtTime(0.3, ctx.currentTime);
           gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
           osc1.connect(gain1);
@@ -453,12 +472,11 @@
           osc1.start();
           osc1.stop(ctx.currentTime + 0.4);
         } else if (type === 'USCITA') {
-          // Suono profondo di uscita (tono descendente)
           var osc2 = ctx.createOscillator();
           var gain2 = ctx.createGain();
           osc2.type = 'triangle';
-          osc2.frequency.setValueAtTime(659.25, ctx.currentTime); // E5
-          osc2.frequency.setValueAtTime(440, ctx.currentTime + 0.15); // A4
+          osc2.frequency.setValueAtTime(659.25, ctx.currentTime);
+          osc2.frequency.setValueAtTime(440, ctx.currentTime + 0.15);
           gain2.gain.setValueAtTime(0.3, ctx.currentTime);
           gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.45);
           osc2.connect(gain2);
@@ -466,7 +484,6 @@
           osc2.start();
           osc2.stop(ctx.currentTime + 0.45);
         } else {
-          // Pausa / Altro
           var osc3 = ctx.createOscillator();
           var gain3 = ctx.createGain();
           osc3.type = 'sine';
@@ -515,7 +532,6 @@
     var activeSiteId = "s_casa";
     var posCorrente = { lat: 41.6333, lng: 13.3389 };
     var webcamStream = null;
-    var selectedBadgeWorker = null;
 
     // -------------------------------------------------------------
     // 4. SINCRONIZZAZIONE IN TEMPO REALE FIREBASE
@@ -529,6 +545,8 @@
         DEFAULT_WORKERS.forEach(function(w) { refWorkers.child(w.id).set(w); });
       }
       caricaDipendenti();
+      popolaFiltroBadges();
+      renderBadgesTab();
     });
 
     refLogs.on('value', function(snapshot) {
@@ -565,468 +583,87 @@
     }
 
     // -------------------------------------------------------------
-    // 6. GENERAZIONE E STAMPA BADGE PROFESSIONALE
+    // 6. LOGICA E RENDER SEZIONE BADGES
     // -------------------------------------------------------------
-    function generateBadgeHTML(worker) {
+    function popolaFiltroBadges() {
+      var sel = document.getElementById('badges-filter-select');
+      var currVal = sel.value || 'ALL';
+      sel.innerHTML = '<option value="ALL">-- Mostra Tutti i Badge --</option>';
+      WORKERS.forEach(function(w) {
+        var opt = document.createElement('option');
+        opt.value = w.id;
+        opt.innerText = w.name;
+        sel.appendChild(opt);
+      });
+      sel.value = currVal;
+    }
+
+    function createBadgeCardHTML(worker, uniqueId) {
       var ms = SITES.find(function(s){ return String(s.id) === String(worker.mainSiteId); });
       var msName = ms ? ms.name : 'Sede Centrale';
 
-      return '<div class="single-badge">' +
-        '<div class="badge-header">' +
-          '<h4>IC FROSINONE 2</h4>' +
-          '<p>Tessera di Riconoscimento ATA</p>' +
-        '</div>' +
-        '<div class="badge-body">' +
-          '<div class="photo-frame">FOTO<br>FOTO TESSERA</div>' +
-          '<div class="badge-info">' +
-            '<div class="worker-name-title">' + worker.name + '</div>' +
-            '<div class="worker-prof-subtitle">' + worker.profile + '</div>' +
-            '<div class="worker-site-sub">Sede: ' + msName + '</div>' +
+      return '<div class="badge-card-container" id="container_' + uniqueId + '">' +
+        '<div class="blue-badge">' +
+          '<div class="blue-badge-header">' +
+            '<span>🏛️ IC FROSINONE 2</span>' +
+            '<span style="background:rgba(255,255,255,0.2); padding:2px 6px; border-radius:4px;">TESSERA ATA</span>' +
+          '</div>' +
+          '<div class="blue-badge-body">' +
+            '<div class="photo-placeholder">SPAZIO FOTO</div>' +
+            '<div class="badge-details">' +
+              '<h3>' + worker.name + '</h3>' +
+              '<p><b>' + worker.profile + '</b></p>' +
+              '<p style="font-size:9px; opacity:0.8;">' + worker.roleType + '</p>' +
+              '<p style="font-size:9px; opacity:0.8;">📍 ' + msName + '</p>' +
+            '</div>' +
+          '</div>' +
+          '<div class="blue-badge-footer">' +
+            '<div class="pin-badge-tag">PIN: ' + worker.pin + '</div>' +
+            '<div class="qr-box-bg"><div class="qr-target-box" id="qr_' + uniqueId + '"></div></div>' +
           '</div>' +
         '</div>' +
-        '<div class="badge-footer">' +
-          '<div class="qr-target-box" id="qr_box_' + Math.random().toString(36).substr(2, 9) + '" data-code="' + worker.id + '"></div>' +
-          '<div class="badge-pin-box">PIN: ' + worker.pin + '</div>' +
-        '</div>' +
+        '<button onclick="stampaSingoloBadge(\'' + worker.id + '\')" class="btn-small btn-blue no-print" style="width:100%;">🖨️ Stampa Questo Badge</button>' +
       '</div>';
     }
 
-    function generateBadge(id) {
-      var w = WORKERS.find(function(x){ return String(x.id) === String(id); });
-      if(!w) return;
-      selectedBadgeWorker = w;
+    function renderBadgesTab() {
+      var container = document.getElementById('badges-container');
+      container.innerHTML = '';
+      var selectedId = document.getElementById('badges-filter-select').value;
 
-      var previewDiv = document.getElementById('badge-single-preview');
-      previewDiv.innerHTML = generateBadgeHTML(w);
+      var targetList = WORKERS;
+      if (selectedId && selectedId !== 'ALL') {
+        targetList = WORKERS.filter(function(w){ return String(w.id) === String(selectedId); });
+      }
 
-      // Render QR
-      var qrBox = previewDiv.querySelector('.qr-target-box');
-      new QRCode(qrBox, { text: w.id, width: 55, height: 55 });
+      if(targetList.length === 0) {
+        container.innerHTML = '<div style="color:#64748b; font-size:13px;">Nessun dipendente selezionato.</div>';
+        return;
+      }
 
-      document.getElementById('badge-preview-wrapper').classList.remove('hidden');
-      document.getElementById('btn-print-badge').disabled = false;
-    }
-
-    function stampaBadgeAttivo() {
-      if(!selectedBadgeWorker) return;
-
-      var copiesCount = parseInt(document.getElementById('badge-copies-count').value || "2");
-      var printArea = document.getElementById('print-area');
-      printArea.innerHTML = '';
-
-      for(var i=0; i<copiesCount; i++) {
+      targetList.forEach(function(w, index) {
+        var uId = 'badge_view_' + index + '_' + w.id;
         var wrapper = document.createElement('div');
-        wrapper.innerHTML = generateBadgeHTML(selectedBadgeWorker);
-        printArea.appendChild(wrapper.firstChild);
-      }
+        wrapper.innerHTML = createBadgeCardHTML(w, uId);
+        container.appendChild(wrapper.firstChild);
 
-      // Render QR su tutti i badge da stampare
-      var qrBoxes = printArea.querySelectorAll('.qr-target-box');
-      qrBoxes.forEach(function(box) {
-        new QRCode(box, { text: selectedBadgeWorker.id, width: 55, height: 55 });
-      });
-
-      // Avvia stampa pulita
-      setTimeout(function() {
-        window.print();
-      }, 300);
-    }
-
-    // -------------------------------------------------------------
-    // 7. FUNZIONALITÀ BASE INTERFACCIA
-    // -------------------------------------------------------------
-    function aggiornaOrologio() {
-      var d = new Date();
-      document.getElementById('clock').innerText = d.toLocaleTimeString('it-IT');
-      document.getElementById('date').innerText = d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-    }
-
-    function startCamera() {
-      stopCamera();
-      var video = document.getElementById('webcam');
-      var placeholder = document.getElementById('camera-placeholder');
-      var selVal = document.getElementById('camera-select').value || 'user';
-
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert("Il browser utilizzato non supporta l'accesso diretto alla fotocamera.");
-        return;
-      }
-
-      var videoConstraints = {
-        facingMode: selVal,
-        width: { ideal: 640 },
-        height: { ideal: 480 }
-      };
-
-      navigator.mediaDevices.getUserMedia({ video: videoConstraints, audio: false })
-        .then(function(stream) {
-          webcamStream = stream;
-          video.srcObject = stream;
-          video.classList.remove('hidden');
-          placeholder.classList.add('hidden');
-        })
-        .catch(function(err1) {
-          navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-            .then(function(stream) {
-              webcamStream = stream;
-              video.srcObject = stream;
-              video.classList.remove('hidden');
-              placeholder.classList.add('hidden');
-            })
-            .catch(function(err2) {
-              alert("⛔ Impossibile accedere alla fotocamera!");
-            });
-        });
-    }
-
-    function switchCamera() { if (webcamStream) startCamera(); }
-
-    function stopCamera() {
-      if (webcamStream) {
-        webcamStream.getTracks().forEach(function(track) { track.stop(); });
-        webcamStream = null;
-      }
-      document.getElementById('webcam').classList.add('hidden');
-      document.getElementById('camera-placeholder').classList.remove('hidden');
-    }
-
-    function getTodayDayName() {
-      var d = new Date().getDay();
-      if(d === 1) return "Lunedì";
-      if(d === 2) return "Martedì";
-      if(d === 3) return "Mercoledì";
-      if(d === 4) return "Giovedì";
-      if(d === 5) return "Venerdì";
-      if(d === 6) return "Sabato";
-      return "Domenica";
-    }
-
-    function ordinaDipendenti() {
-      WORKERS.sort(function(a, b){ return a.name.localeCompare(b.name, 'it'); });
-    }
-
-    function renderWeeklyScheduleForm() {
-      var container = document.getElementById('weekly-schedule-container');
-      var html = '';
-      for(var i=0; i<DAYS.length; i++) {
-        var day = DAYS[i];
-        html += '<div class="day-schedule-card">' +
-                '<div style="font-size:12px; font-weight:bold; color:#1e3a8a; margin-bottom:4px;">📌 ' + day + '</div>' +
-                '<div style="display:flex; gap:10px;">' +
-                  '<div style="flex:1;"><label style="margin:0;">Inizio 1</label><input type="time" id="sch_' + day + '_start1" value="08:00"></div>' +
-                  '<div style="flex:1;"><label style="margin:0;">Fine 1</label><input type="time" id="sch_' + day + '_end1" value="14:00"></div>' +
-                '</div>' +
-                '<div style="margin-top:4px;">' +
-                  '<label style="display:flex; align-items:center; gap:4px; font-size:10px; text-transform:none; margin:0;">' +
-                    '<input type="checkbox" id="sch_' + day + '_hasSec" onchange="toggleDaySecInput(\'' + day + '\')"> Aggiungi Rientro Pomeridiano' +
-                  '</label>' +
-                '</div>' +
-                '<div id="sch_' + day + '_secBox" class="hidden" style="display:flex; gap:10px; margin-top:4px;">' +
-                  '<div style="flex:1;"><label style="margin:0;">Inizio 2</label><input type="time" id="sch_' + day + '_start2" value="14:30"></div>' +
-                  '<div style="flex:1;"><label style="margin:0;">Fine 2</label><input type="time" id="sch_' + day + '_end2" value="17:30"></div>' +
-                '</div>' +
-              '</div>';
-      }
-      container.innerHTML = html;
-    }
-
-    function toggleDaySecInput(day) {
-      var chk = document.getElementById('sch_' + day + '_hasSec').checked;
-      var box = document.getElementById('sch_' + day + '_secBox');
-      if(chk) box.classList.remove('hidden'); else box.classList.add('hidden');
-    }
-
-    function popolaMenuSediForm() {
-      var mainSel = document.getElementById('worker-main-site');
-      var secondSel = document.getElementById('worker-second-site');
-      mainSel.innerHTML = '';
-      secondSel.innerHTML = '<option value="">-- Nessun Secondo Plesso --</option>';
-
-      for(var i=0; i<SITES.length; i++) {
-        var opt1 = document.createElement('option');
-        opt1.value = SITES[i].id;
-        opt1.innerText = SITES[i].name;
-        mainSel.appendChild(opt1);
-
-        var opt2 = document.createElement('option');
-        opt2.value = SITES[i].id;
-        opt2.innerText = SITES[i].name;
-        secondSel.appendChild(opt2);
-      }
-    }
-
-    function caricaDipendenti() {
-      ordinaDipendenti();
-      var sel = document.getElementById('kiosk-worker');
-      sel.innerHTML = '';
-      for(var i=0; i<WORKERS.length; i++) {
-        var opt = document.createElement('option');
-        opt.value = WORKERS[i].id;
-        opt.innerText = WORKERS[i].name + ' - ' + WORKERS[i].profile + ' (' + WORKERS[i].roleType + ')';
-        sel.appendChild(opt);
-      }
-      renderWorkersList();
-      onWorkerSelected();
-    }
-
-    function onWorkerSelected() {
-      var id = document.getElementById('kiosk-worker').value;
-      var w = WORKERS.find(function(x){ return String(x.id) === String(id); });
-      var today = getTodayDayName();
-      document.getElementById('current-day-name').innerText = today;
-
-      if(w) {
-        var daySch = (w.schedule && w.schedule[today]) ? w.schedule[today] : { start1: "08:00", end1: "14:00", hasSec: false };
-        document.getElementById('shift-hours-text').innerText = (daySch.start1||'08:00') + ' - ' + (daySch.end1||'14:00');
-        
-        var secWrapper = document.getElementById('shift-hours-sec-wrapper');
-        if(daySch.hasSec && daySch.start2 && daySch.end2) {
-          secWrapper.style.display = 'inline';
-          document.getElementById('shift-hours-sec-text').innerText = daySch.start2 + ' - ' + daySch.end2;
-        } else {
-          secWrapper.style.display = 'none';
-        }
-      }
-    }
-
-    function editTodayShiftModal() {
-      var id = document.getElementById('kiosk-worker').value;
-      var w = WORKERS.find(function(x){ return String(x.id) === String(id); });
-      var today = getTodayDayName();
-      if(!w) return;
-
-      var currentShift1 = document.getElementById('shift-hours-text').innerText;
-      var newShift = prompt("Modifica l'orario di servizio per " + w.name + " di OGGI (" + today + "):", currentShift1);
-      if(newShift) {
-        document.getElementById('shift-hours-text').innerText = newShift;
-        alert("Turno del giorno aggiornato!");
-      }
-    }
-
-    function selectSiteCard(id) {
-      activeSiteId = id;
-      var cards = document.querySelectorAll('.site-card');
-      for(var i=0; i<cards.length; i++) cards[i].classList.remove('selected');
-      
-      var elem = document.getElementById('card-' + id);
-      if(elem) elem.classList.add('selected');
-      
-      var site = SITES.find(function(s){ return String(s.id) === String(id); });
-      if(site) {
-        document.getElementById('active-site-badge').innerText = 'SEDE SELEZIONATA: ' + site.name;
-      }
-      calcolaGeofencing();
-    }
-
-    function getDist(lat1, lon1, lat2, lon2) {
-      var R = 6371e3;
-      var φ1 = lat1 * Math.PI/180, φ2 = lat2 * Math.PI/180;
-      var Δφ = (lat2-lat1) * Math.PI/180, Δλ = (lon2-lon1) * Math.PI/180;
-      var a = Math.sin(Δφ/2)*Math.sin(Δφ/2) + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)*Math.sin(Δλ/2);
-      return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
-    }
-
-    function calcolaGeofencing() {
-      var site = SITES.find(function(s){ return String(s.id) === String(activeSiteId); });
-      var btnIn = document.getElementById('btn-in');
-      var btnPause = document.getElementById('btn-pause');
-      var btnOut = document.getElementById('btn-out');
-      if(!site) return;
-
-      if(site.id === "s_casa") {
-        document.getElementById('gps-info').innerHTML = '<span style="color:#16a34a;">🧪 CASA TEST: Sei nel plesso (Timbratura Abilitata)</span>';
-        btnIn.disabled = false; btnPause.disabled = false; btnOut.disabled = false;
-        return;
-      }
-
-      var dist = getDist(posCorrente.lat, posCorrente.lng, site.lat, site.lng);
-      if(dist <= 150) {
-        document.getElementById('gps-info').innerHTML = '<span style="color:#16a34a;">📍 Distanza da ' + site.name + ': <b>' + dist + 'm</b> (In raggio di 150m)</span>';
-        btnIn.disabled = false; btnPause.disabled = false; btnOut.disabled = false;
-      } else {
-        document.getElementById('gps-info').innerHTML = '<span style="color:#dc2626;">⛔ FUORI RAGGIO: <b>' + dist + 'm</b> da ' + site.name + ' (Max 150m)</span>';
-        btnIn.disabled = true; btnPause.disabled = true; btnOut.disabled = true;
-      }
-    }
-
-    function press(n) {
-      var input = document.getElementById('kiosk-pin');
-      if(input.value.length < 4) input.value += n;
-    }
-    function clearPin() { document.getElementById('kiosk-pin').value = ''; }
-
-    // Registrazione Timbratura con Salvataggio Firebase & Suono Acustico
-    function clock(type) {
-      var wId = document.getElementById('kiosk-worker').value;
-      var pin = document.getElementById('kiosk-pin').value;
-      var note = document.getElementById('kiosk-note').value;
-      var worker = WORKERS.find(function(w){ return String(w.id) === String(wId); });
-      var site = SITES.find(function(s){ return String(s.id) === String(activeSiteId); });
-
-      if(!worker) return alert("Seleziona un dipendente!");
-      if(worker.pin && worker.pin !== pin) return alert("PIN Errato!");
-
-      var dist = getDist(posCorrente.lat, posCorrente.lng, site.lat, site.lng);
-      if(site.id !== "s_casa" && dist > 150) {
-        return alert("⛔ Timbratura rifiutata! Ti trovi a " + dist + " metri dal plesso (limite 150m).");
-      }
-
-      var newLog = {
-        time: new Date().toISOString(),
-        worker: worker.name,
-        profile: worker.profile + ' (' + worker.roleType + ')',
-        siteDisplay: site.name,
-        type: type,
-        dist: site.id === "s_casa" ? 0 : dist,
-        note: note
-      };
-
-      refLogs.push(newLog).then(function() {
-        playBeep(type); // Riproduzione Suono Forte
-        clearPin();
-        document.getElementById('kiosk-note').value = '';
-        alert("✅ Timbratura [" + type + "] registrata con successo per " + worker.name + "!");
-      });
-    }
-
-    // Salvataggio Dipendente con Sincronizzazione Firebase
-    function saveWorker(e) {
-      e.preventDefault();
-      var id = document.getElementById('worker-id').value || 'w_' + Date.now();
-      
-      var sch = {};
-      for(var i=0; i<DAYS.length; i++) {
-        var day = DAYS[i];
-        sch[day] = {
-          start1: document.getElementById('sch_' + day + '_start1').value,
-          end1: document.getElementById('sch_' + day + '_end1').value,
-          hasSec: document.getElementById('sch_' + day + '_hasSec').checked,
-          start2: document.getElementById('sch_' + day + '_start2').value,
-          end2: document.getElementById('sch_' + day + '_end2').value
-        };
-      }
-
-      var wObj = {
-        id: id,
-        name: document.getElementById('worker-name').value.trim(),
-        profile: document.getElementById('worker-profile').value,
-        roleType: document.getElementById('worker-role-type').value,
-        mainSiteId: document.getElementById('worker-main-site').value,
-        secondSiteId: document.getElementById('worker-second-site').value,
-        schedule: sch,
-        pin: document.getElementById('worker-pin-input').value.trim()
-      };
-
-      refWorkers.child(id).set(wObj).then(function() {
-        resetWorkerForm();
-        alert("Dipendente salvato con successo su tutti i tablet!");
-      }).catch(function(err) {
-        alert("Errore nel salvataggio: " + err.message);
-      });
-    }
-
-    function editWorker(id) {
-      var w = WORKERS.find(function(x){ return String(x.id) === String(id); });
-      if(!w) return;
-      document.getElementById('worker-id').value = w.id;
-      document.getElementById('worker-name').value = w.name;
-      document.getElementById('worker-profile').value = w.profile;
-      document.getElementById('worker-role-type').value = w.roleType;
-      document.getElementById('worker-main-site').value = w.mainSiteId || SITES[0].id;
-      document.getElementById('worker-second-site').value = w.secondSiteId || '';
-      
-      if(w.schedule) {
-        for(var i=0; i<DAYS.length; i++) {
-          var day = DAYS[i];
-          if(w.schedule[day]) {
-            document.getElementById('sch_' + day + '_start1').value = w.schedule[day].start1 || '08:00';
-            document.getElementById('sch_' + day + '_end1').value = w.schedule[day].end1 || '14:00';
-            document.getElementById('sch_' + day + '_hasSec').checked = !!w.schedule[day].hasSec;
-            toggleDaySecInput(day);
-            document.getElementById('sch_' + day + '_start2').value = w.schedule[day].start2 || '14:30';
-            document.getElementById('sch_' + day + '_end2').value = w.schedule[day].end2 || '17:30';
+        setTimeout(function() {
+          var qrBox = document.getElementById('qr_' + uId);
+          if(qrBox) {
+            qrBox.innerHTML = '';
+            new QRCode(qrBox, { text: w.id, width: 42, height: 42 });
           }
-        }
-      }
-
-      document.getElementById('worker-pin-input').value = w.pin;
-      document.getElementById('worker-form-title').innerText = "Modifica Dipendente ATA";
+        }, 50);
+      });
     }
 
-    function deleteWorker(id) {
-      if(confirm("Eliminare questo dipendente ATA?")) {
-        refWorkers.child(id).remove().then(function() {
-          alert("Dipendente eliminato!");
-        });
-      }
-    }
+    function stampaSingoloBadge(id) {
+      var w = WORKERS.find(function(x){ return String(x.id) === String(id); });
+      if(!w) return;
 
-    function resetWorkerForm() {
-      document.getElementById('worker-id').value = '';
-      document.getElementById('worker-name').value = '';
-      document.getElementById('worker-pin-input').value = '';
-      document.getElementById('worker-form-title').innerText = "Aggiungi / Modifica Dipendente ATA";
-    }
+      var printArea = document.getElementById('print-badges-area');
+      var uId = 'print_single_' + w.id;
+      printArea.innerHTML = createBadgeCardHTML(w, uId);
 
-    function renderWorkersList() {
-      var html = '';
-      if(WORKERS.length === 0) {
-        html = '<div style="font-size:12px; color:#94a3b8;">Nessun dipendente inserito.</div>';
-      } else {
-        for(var i=0; i<WORKERS.length; i++) {
-          var w = WORKERS[i];
-          var ms = SITES.find(function(s){ return String(s.id) === String(w.mainSiteId); });
-          var msName = ms ? ms.name : 'N/D';
-
-          html += '<div style="padding:10px; border:1px solid #e2e8f0; border-radius:8px; display:flex; justify-content:space-between; align-items:center; background:#f8fafc;">' +
-                  '<div><b>👤 ' + w.name + '</b><div style="font-size:11px; color:#64748b;">Profilo: <b>' + w.profile + '</b> • Sede: <b>' + msName + '</b></div></div>' +
-                  '<div style="display:flex; gap:5px;"><button onclick="generateBadge(\'' + w.id + '\')" class="btn-small btn-green">🪪 Badge</button><button onclick="editWorker(\'' + w.id + '\')" class="btn-small btn-edit">✏️ Modifica</button><button onclick="deleteWorker(\'' + w.id + '\')" class="btn-small btn-delete">🗑️ Elimina</button></div></div>';
-        }
-      }
-      document.getElementById('workers-list').innerHTML = html;
-    }
-
-    function renderLogs() {
-      var todayStr = new Date().toISOString().split('T')[0];
-      var todayLogs = logs.filter(function(l){ return l.time.startsWith(todayStr); });
-      
-      var html = '';
-      if(todayLogs.length === 0) {
-        html = '<div style="font-size:12px; color:#94a3b8; text-align:center; padding:15px;">Nessuna timbratura oggi.</div>';
-      } else {
-        for(var i=0; i<todayLogs.length; i++) {
-          var l = todayLogs[i];
-          html += '<div class="log-item"><div><b>' + l.worker + '</b> - <span class="badge badge-' + l.type.toLowerCase() + '">' + l.type + '</span><br><span style="font-size:11px; color:#64748b;">' + l.siteDisplay + '</span></div><div><b>' + new Date(l.time).toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit'}) + '</b></div></div>';
-        }
-      }
-      document.getElementById('today-logs').innerHTML = html;
-
-      var tableHtml = '';
-      for(var j=0; j<logs.length; j++) {
-        var log = logs[j];
-        tableHtml += '<tr><td>' + new Date(log.time).toLocaleString('it-IT') + '</td><td><b>' + log.worker + '</b></td><td>' + log.profile + '</td><td><b>' + log.type + '</b></td><td>' + log.siteDisplay + '</td><td>' + log.dist + 'm</td><td>' + (log.note||'-') + '</td></tr>';
-      }
-      document.querySelector('#logs-table tbody').innerHTML = tableHtml;
-    }
-
-    function showTab(tab) {
-      document.getElementById('tab-kiosk').classList.add('hidden');
-      document.getElementById('tab-logs').classList.add('hidden');
-      document.getElementById('tab-settings').classList.add('hidden');
-      document.getElementById('nav-kiosk').classList.remove('active');
-      document.getElementById('nav-logs').classList.remove('active');
-      document.getElementById('nav-settings').classList.remove('active');
-
-      document.getElementById('tab-' + tab).classList.remove('hidden');
-      document.getElementById('nav-' + tab).classList.add('active');
-    }
-
-    // AVVIO
-    aggiornaOrologio();
-    setInterval(aggiornaOrologio, 1000);
-    renderWeeklyScheduleForm();
-    popolaMenuSediForm();
-    selectSiteCard('s_casa');
-  </script>
-</body>
-</html>
+      setTimeout(function() {
+        var qrBox = document.getElementById('qr_' + uId
