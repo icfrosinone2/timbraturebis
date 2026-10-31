@@ -8,34 +8,37 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: #f1f5f9; color: #0f172a; padding-bottom: 30px; }
     
-    header { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
-    .brand { font-size: 18px; font-weight: bold; color: #1e3a8a; }
+    header { background: #ffffff; border-bottom: 2px solid #e2e8f0; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .brand { font-size: 20px; font-weight: 800; color: #1e3a8a; display: flex; align-items: center; gap: 8px; }
     nav { display: flex; gap: 8px; }
-    nav button { background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; }
-    nav button.active { background: #2563eb; color: white; border-color: #2563eb; }
+    nav button { background: #f8fafc; border: 1px solid #cbd5e1; padding: 10px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+    nav button:hover { background: #e2e8f0; }
+    nav button.active { background: #2563eb; color: white; border-color: #2563eb; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2); }
 
     .container { max-width: 1250px; margin: 25px auto; padding: 0 15px; }
     .grid-main { display: grid; grid-template-columns: 6.5fr 5.5fr; gap: 20px; }
     @media (max-width: 900px) { .grid-main { grid-template-columns: 1fr; } }
 
-    .card { background: white; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .card { background: white; border-radius: 14px; padding: 22px; border: 1px solid #e2e8f0; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
     
-    .clock-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .time { font-size: 36px; font-weight: 800; color: #0f172a; }
-    .date { color: #64748b; font-size: 13px; text-transform: capitalize; }
+    .clock-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #f8fafc; padding: 12px 18px; border-radius: 10px; border: 1px solid #e2e8f0; }
+    .time { font-size: 38px; font-weight: 800; color: #1e3a8a; font-family: monospace; }
+    .date { color: #64748b; font-size: 13px; font-weight: 600; text-transform: capitalize; }
 
-    .gps-bar { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 600; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+    .gps-bar { background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 600; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; }
     
-    label { display: block; font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 4px; margin-top: 10px; }
-    select, input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; background: #fff; }
-    
-    .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 15px; }
-    .keypad button { padding: 14px; font-size: 18px; font-weight: bold; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; }
+    label { display: block; font-size: 11px; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 6px; margin-top: 14px; letter-spacing: 0.5px; }
+    select, input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; outline: none; background: #fff; transition: border-color 0.2s; }
+    select:focus, input:focus { border-color: #2563eb; }
+
+    .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+    .keypad button { padding: 16px; font-size: 20px; font-weight: 800; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; cursor: pointer; transition: background 0.15s; }
     .keypad button:active { background: #cbd5e1; }
 
-    .btn-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
-    .btn-action { padding: 14px; border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 13px; cursor: pointer; text-transform: uppercase; transition: opacity 0.2s; }
-    .btn-action:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
+    .btn-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
+    .btn-action { padding: 16px; border: none; border-radius: 10px; color: white; font-weight: 800; font-size: 14px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: transform 0.1s, opacity 0.2s; }
+    .btn-action:active { transform: scale(0.98); }
+    .btn-action:disabled { opacity: 0.35; cursor: not-allowed; filter: grayscale(1); box-shadow: none; }
     .btn-in { background: #16a34a; }
     .btn-pause { background: #d97706; }
     .btn-out { background: #dc2626; }
@@ -43,8 +46,8 @@
     .sites-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
     @media (max-width: 600px) { .sites-grid { grid-template-columns: repeat(2, 1fr); } }
 
-    .site-card { border: 2px solid #cbd5e1; border-radius: 12px; padding: 10px; cursor: pointer; transition: all 0.2s; position: relative; background: #f8fafc; }
-    .site-card.selected { border-color: #2563eb; background: #eff6ff; }
+    .site-card { border: 2px solid #cbd5e1; border-radius: 12px; padding: 12px; cursor: pointer; transition: all 0.2s; position: relative; background: #f8fafc; }
+    .site-card.selected { border-color: #2563eb; background: #eff6ff; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2); }
     
     .site-card-pietrobono { border-color: #93c5fd; background: #eff6ff; }
     .site-card-rinascita { border-color: #86efac; background: #f0fdf4; }
@@ -55,22 +58,22 @@
     .site-card-casa { border: 2px dashed #16a34a; background: #f0fdf4; }
 
     .site-title { font-weight: 800; font-size: 13px; color: #0f172a; display: flex; align-items: center; gap: 4px; }
-    .btn-maps-mini { background: #0284c7; color: white; text-decoration: none; font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 6px; display: inline-block; margin-top: 6px; }
+    .btn-maps-mini { background: #0284c7; color: white; text-decoration: none; font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 6px; display: inline-block; margin-top: 6px; }
 
-    .camera-container { background: #0f172a; border-radius: 12px; overflow: hidden; margin-bottom: 15px; text-align: center; padding: 10px; color: white; }
-    video { width: 100%; max-height: 220px; object-fit: cover; border-radius: 8px; background: #1e293b; display: block; margin: 0 auto; }
+    .camera-container { background: #0f172a; border-radius: 12px; overflow: hidden; margin-bottom: 15px; text-align: center; padding: 12px; color: white; }
+    video { width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px; background: #1e293b; display: block; margin: 0 auto; }
 
-    .log-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; font-size: 12px; }
-    .badge { padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; color: white; }
+    .log-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+    .badge { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; color: white; }
     .badge-entrata { background: #16a34a; }
     .badge-pausa { background: #d97706; }
     .badge-uscita { background: #dc2626; }
 
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
-    th, td { padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; }
-    th { background: #f8fafc; font-weight: bold; color: #475569; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
+    th, td { padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: left; }
+    th { background: #f8fafc; font-weight: 700; color: #475569; }
 
-    .btn-small { padding: 6px 10px; font-size: 11px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; text-decoration: none; display: inline-block; }
+    .btn-small { padding: 7px 12px; font-size: 11px; font-weight: 700; border-radius: 6px; border: none; cursor: pointer; text-decoration: none; display: inline-block; transition: background 0.2s; }
     .btn-blue { background: #2563eb; color: white; }
     .btn-green { background: #16a34a; color: white; }
     .btn-orange { background: #ea580c; color: white; }
@@ -78,7 +81,7 @@
     .btn-edit { background: #e0f2fe; color: #0369a1; }
     .btn-delete { background: #fee2e2; color: #b91c1c; }
 
-    .day-schedule-card { border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 8px; padding: 8px; margin-bottom: 6px; }
+    .day-schedule-card { border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 8px; padding: 10px; margin-bottom: 6px; }
 
     .badges-grid { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px; }
     .badge-card-container { width: 340px; display: flex; flex-direction: column; gap: 8px; }
@@ -86,9 +89,9 @@
     .blue-badge { 
       background: #1e40af; 
       color: white; 
-      border-radius: 12px; 
-      padding: 14px; 
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+      border-radius: 14px; 
+      padding: 16px; 
+      box-shadow: 0 4px 8px rgba(0,0,0,0.12); 
       position: relative; 
       box-sizing: border-box; 
       height: 220px; 
@@ -97,15 +100,15 @@
       justify-content: space-between; 
       border: 2px solid #1e40af;
     }
-    .blue-badge-header { display: flex; justify-content: space-between; align-items: center; font-size: 10px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 6px; }
-    .blue-badge-body { display: flex; gap: 12px; align-items: center; margin-top: 6px; }
-    .photo-placeholder { width: 60px; height: 75px; border: 1px dashed rgba(255,255,255,0.5); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 8px; text-align: center; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.05); }
+    .blue-badge-header { display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 6px; }
+    .blue-badge-body { display: flex; gap: 14px; align-items: center; margin-top: 6px; }
+    .photo-placeholder { width: 65px; height: 80px; border: 1px dashed rgba(255,255,255,0.5); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 9px; text-align: center; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.05); }
     .badge-details { flex: 1; }
-    .badge-details h3 { font-size: 13px; font-weight: 800; text-transform: uppercase; line-height: 1.2; margin-bottom: 3px; }
-    .badge-details p { font-size: 10px; opacity: 0.9; margin-bottom: 2px; }
+    .badge-details h3 { font-size: 14px; font-weight: 800; text-transform: uppercase; line-height: 1.2; margin-bottom: 4px; }
+    .badge-details p { font-size: 11px; opacity: 0.9; margin-bottom: 2px; }
     
     .blue-badge-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 6px; }
-    .pin-badge-tag { background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; letter-spacing: 1px; }
+    .pin-badge-tag { background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 800; letter-spacing: 1px; }
     .qr-box-bg { background: white; padding: 6px; border-radius: 8px; border: 2px solid #0f172a; display: inline-block; }
 
     .hidden { display: none !important; }
@@ -114,25 +117,14 @@
       body * { visibility: hidden !important; }
       #print-badges-area, #print-badges-area * { visibility: visible !important; }
       #print-badges-area {
-        position: absolute !important;
-        left: 0 !important;
-        top: 0 !important;
-        width: 100% !important;
-        display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 20px !important;
-        justify-content: flex-start !important;
+        position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important;
+        display: flex !important; flex-wrap: wrap !important; gap: 20px !important; justify-content: flex-start !important;
       }
       .no-print { display: none !important; }
-      
       .blue-badge {
-        background-color: #ffffff !important;
-        background: #ffffff !important;
-        color: #000000 !important;
-        border: 2px solid #000000 !important;
-        box-shadow: none !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
+        background-color: #ffffff !important; background: #ffffff !important; color: #000000 !important;
+        border: 2px solid #000000 !important; box-shadow: none !important;
+        -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
       }
       .blue-badge-header { border-bottom: 1px solid #000000 !important; color: #000000 !important; }
       .blue-badge-header span { background: none !important; color: #000000 !important; }
@@ -150,12 +142,12 @@
 <body onclick="initAudioContext()">
 
   <header class="no-print">
-    <div class="brand">Gestione Oraria ATA - IC Frosinone 2</div>
+    <div class="brand">🏛️ Gestione Oraria ATA - IC Frosinone 2</div>
     <nav>
-      <button id="nav-kiosk" class="active" onclick="showTab('kiosk')">Timbra</button>
-      <button id="nav-logs" onclick="showTab('logs')">Registro & Report</button>
+      <button id="nav-kiosk" class="active" onclick="showTab('kiosk')">⏱️ Timbra</button>
+      <button id="nav-logs" onclick="showTab('logs')">📋 Registro & Report</button>
       <button id="nav-badges" onclick="showTab('badges')">🪪 Stampa Badges</button>
-      <button id="nav-settings" onclick="showTab('settings')">⚙️ Impostazioni Sedi & Dipendenti</button>
+      <button id="nav-settings" onclick="checkAdminAccess('settings')">⚙️ Gestione & Dipendenti 🔒</button>
     </nav>
   </header>
 
@@ -168,55 +160,55 @@
             <div id="date" class="date">--</div>
           </div>
           <div>
-            <span id="active-site-badge" style="background:#dbeafe; color:#1e40af; padding:6px 12px; border-radius:12px; font-weight:bold; font-size:12px;">SELEZIONA DIPENDENTE</span>
+            <span id="active-site-badge" style="background:#dbeafe; color:#1e40af; padding:8px 14px; border-radius:12px; font-weight:800; font-size:12px;">SELEZIONA SEDE</span>
           </div>
         </div>
 
         <div class="gps-bar">
           <span id="gps-info">📍 Posizione Rilevata: Casa Test - Viale Portogallo 4</span>
           <div>
-            <button onclick="calcolaGeofencing()" class="btn-small btn-blue">Aggiorna Posizione</button>
+            <button onclick="calcolaGeofencing()" class="btn-small btn-blue">Aggiorna GPS</button>
           </div>
         </div>
 
-        <!-- FOTOCAMERA CON SELEZIONE CAM ANTERIORE / POSTERIORE -->
+        <!-- FOTOCAMERA OPZIONALE -->
         <div class="camera-container">
-          <div style="font-size: 11px; margin-bottom: 6px; font-weight: bold;">📷 Fotocamera / Scatto Riscontro</div>
+          <div style="font-size: 11px; margin-bottom: 6px; font-weight: 800;">📷 Fotocamera Opzionale (Scatto Riscontro)</div>
           
           <div style="margin-bottom:8px;">
-            <select id="camera-select" onchange="switchCamera()" style="padding:6px; font-size:12px; width:100%; max-width:280px; margin:0 auto; display:block;">
+            <select id="camera-select" onchange="switchCamera()" style="padding:6px; font-size:12px; width:100%; max-width:280px; margin:0 auto; display:block; color:#0f172a; background:#fff;">
               <option value="user">📱 Fotocamera Anteriore (Selfie)</option>
               <option value="environment">📷 Fotocamera Posteriore (Principale)</option>
             </select>
           </div>
 
           <video id="webcam" autoplay playsinline class="hidden"></video>
-          <div id="camera-placeholder" style="padding: 20px; background: #1e293b; border-radius: 8px; font-size: 12px; color: #94a3b8;">
-            📷 Fotocamera disattivata. Clicca su "Avvia Fotocamera".
+          <div id="camera-placeholder" style="padding: 15px; background: #1e293b; border-radius: 8px; font-size: 11px; color: #94a3b8;">
+            📷 Fotocamera disattivata. Puoi timbrare liberamente col PIN.
           </div>
           
           <div style="margin-top: 10px; display: flex; justify-content: center; gap: 8px;">
-            <button onclick="startCamera()" class="btn-small btn-green">▶️ Avvia Fotocamera</button>
+            <button onclick="startCamera()" class="btn-small btn-green">▶️ Accendi Fotocamera</button>
             <button onclick="stopCamera()" class="btn-small btn-red">⏹️ Spegni Fotocamera</button>
           </div>
         </div>
 
-        <label>Seleziona Dipendente ATA (Ordine Alfabetico)</label>
+        <label>Seleziona Dipendente ATA (Ordine Alfabetico) *</label>
         <select id="kiosk-worker" onchange="onWorkerSelected()"></select>
 
-        <div id="worker-shift-info" style="margin-top:8px; padding:10px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; font-size:12px; color:#1e40af;">
+        <div id="worker-shift-info" style="margin-top:10px; padding:12px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; font-size:13px; color:#1e40af;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <span>📅 Orario Previsto Oggi (<b id="current-day-name">--</b>):</span>
-            <button onclick="editTodayShiftModal()" class="btn-small" style="background:#dbeafe; color:#1e40af; border:1px solid #93c5fd;">✏️ Modifica Turno di Oggi</button>
+            <button onclick="editTodayShiftModal()" class="btn-small" style="background:#dbeafe; color:#1e40af; border:1px solid #93c5fd;">✏️ Modifica Turno 🔒</button>
           </div>
-          <div style="margin-top:4px;">
+          <div style="margin-top:6px;">
             ⏱️ <b>Turno 1:</b> <span id="shift-hours-text">08:00 - 14:00</span>
             <span id="shift-hours-sec-wrapper" style="display:none;"> | ⏱️ <b>Turno 2 (Rientro):</b> <span id="shift-hours-sec-text">14:30 - 17:30</span></span>
           </div>
         </div>
 
-        <label>PIN Personale (4 cifre)</label>
-        <input type="password" id="kiosk-pin" maxlength="4" placeholder="••••" style="text-align: center; font-size: 24px; letter-spacing: 5px;" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+        <label>PIN Personale (4 cifre) *</label>
+        <input type="password" id="kiosk-pin" maxlength="4" placeholder="••••" style="text-align: center; font-size: 26px; font-weight:bold; letter-spacing: 6px;" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
 
         <div class="keypad">
           <button onclick="press('1')">1</button><button onclick="press('2')">2</button><button onclick="press('3')">3</button>
@@ -238,9 +230,9 @@
       </div>
 
       <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-          <h3 style="font-size:15px;">📍 6 Plessi + Test</h3>
-          <span style="font-size:11px; color:#64748b;">Clicca sulla scheda per selezionare la sede</span>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <h3 style="font-size:16px; font-weight:800;">📍 Selezione Plesso Scolastico</h3>
+          <span style="font-size:11px; color:#64748b; font-weight:600;">Clicca per selezionare</span>
         </div>
 
         <div class="sites-grid">
@@ -271,22 +263,26 @@
         </div>
 
         <div id="casa-test-container">
-          <div class="site-card site-card-casa selected" id="card-s_casa" onclick="selectSiteCard('s_casa')" style="margin-bottom:10px;">
+          <div class="site-card site-card-casa selected" id="card-s_casa" onclick="selectSiteCard('s_casa')" style="margin-bottom:15px;">
             <div class="site-title">🏠 Casa Test - Viale Portogallo 4</div>
             <a href="https://maps.app.goo.gl/iTijwKKyjkakmTkD9" target="_blank" onclick="event.stopPropagation()" class="btn-maps-mini">Maps</a>
-            <span style="font-size:9px; background:#16a34a; color:white; padding:1px 4px; border-radius:4px; margin-left:5px;">TEST LIBERO</span>
+            <span style="font-size:9px; background:#16a34a; color:white; padding:2px 6px; border-radius:4px; margin-left:6px; font-weight:bold;">TEST LIBERO</span>
           </div>
         </div>
 
-        <h4 style="font-size:13px; margin-bottom:8px; border-top:1px solid #e2e8f0; padding-top:10px;">Timbrature ATA di Oggi</h4>
+        <h4 style="font-size:14px; margin-bottom:10px; border-top:1px solid #e2e8f0; padding-top:12px; font-weight:800;">📋 Timbrature ATA di Oggi</h4>
         <div id="today-logs"></div>
       </div>
     </div>
 
+    <!-- TAB REGISTRO CON ESPORTAZIONE EXCEL/CSV -->
     <div id="tab-logs" class="card hidden">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-        <h3>Registro Storico Timbrature ATA</h3>
-        <button onclick="svuotaTuttiILogs()" class="btn-small btn-red">🗑️ Elimina TUTTE le Timbrature di Prova</button>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+        <h3 style="font-size:18px; font-weight:800;">📋 Registro Storico Timbrature ATA</h3>
+        <div style="display:flex; gap:10px;">
+          <button onclick="esportaCSV()" class="btn-small btn-green" style="padding:10px 14px; font-size:12px;">📥 Esporta Registro (CSV / Excel)</button>
+          <button onclick="svuotaTuttiILogsAdmin()" class="btn-small btn-red" style="padding:10px 14px; font-size:12px;">🗑️ Elimina Timbrature 🔒</button>
+        </div>
       </div>
       <table id="logs-table">
         <thead>
@@ -295,7 +291,7 @@
             <th>Dipendente</th>
             <th>Profilo / Contratto</th>
             <th>Evento</th>
-            <th>Sede Effettiva (Titolarità)</th>
+            <th>Sede Rilevata</th>
             <th>Distanza GPS</th>
             <th>Note</th>
             <th>Azione</th>
@@ -305,10 +301,11 @@
       </table>
     </div>
 
+    <!-- TAB BADGES -->
     <div id="tab-badges" class="card hidden">
       <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
         <div>
-          <h3 style="font-size:16px;">🪪 Tesserini e Badges Personali ATA</h3>
+          <h3 style="font-size:18px; font-weight:800;">🪪 Tesserini e Badges Personali ATA</h3>
           <p style="font-size:12px; color:#64748b;">Stampa singoli tesserini o l'elenco completo dei dipendenti.</p>
         </div>
         <div style="display:flex; gap:10px; align-items:center;">
@@ -322,9 +319,14 @@
       <div id="badges-container" class="badges-grid"></div>
     </div>
 
+    <!-- TAB SETTINGS (PROTETTA DA PIN AMMINISTRATORE) -->
     <div id="tab-settings" class="grid-main hidden">
       <div class="card">
-        <h3 id="worker-form-title">Aggiungi / Modifica Dipendente ATA</h3>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h3 id="worker-form-title" style="font-size:16px; font-weight:800;">Aggiungi / Modifica Dipendente ATA</h3>
+          <button onclick="cambiaPinAdmin()" class="btn-small btn-orange">🔑 Cambia PIN Amministratore</button>
+        </div>
+
         <form id="worker-form" onsubmit="saveWorker(event)">
           <input type="hidden" id="worker-id">
           <label>Nome e Cognome *</label>
@@ -358,21 +360,21 @@
           </div>
 
           <div style="margin-top:15px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #bfdbfe; padding-bottom:4px;">
-            <span style="font-weight:bold; font-size:12px; color:#1e40af;">📅 PLANIMETRIA ORARI SETTIMANALI</span>
+            <span style="font-weight:800; font-size:12px; color:#1e40af;">📅 PLANIMETRIA ORARI SETTIMANALI</span>
             <button type="button" onclick="copyMondayScheduleToAll()" class="btn-small btn-blue" style="font-size:10px;">📋 Copia Lunedì su tutti i giorni</button>
           </div>
           <div id="weekly-schedule-container" style="margin-top:8px;"></div>
 
-          <label>PIN Personale (4 Cifre) *</label>
+          <label>PIN Personale Dipendente (4 Cifre) *</label>
           <input type="text" id="worker-pin-input" maxlength="4" required placeholder="1234" pattern="\d{4}">
           
-          <div style="display: flex; gap: 10px; margin-top: 15px;">
-            <button type="submit" class="btn-small btn-blue" style="flex:1; padding:10px;">Salva Dipendente</button>
-            <button type="button" onclick="resetWorkerForm()" class="btn-small" style="background:#e2e8f0; padding:10px;">Annulla</button>
+          <div style="display: flex; gap: 10px; margin-top: 18px;">
+            <button type="submit" class="btn-small btn-blue" style="flex:1; padding:12px; font-size:13px;">Salva Dipendente</button>
+            <button type="button" onclick="resetWorkerForm()" class="btn-small" style="background:#e2e8f0; padding:12px; font-size:13px;">Annulla</button>
           </div>
         </form>
 
-        <h4 style="margin-top:20px; margin-bottom:10px;">Dipendenti ATA Registrati (Ordine Alfabetico)</h4>
+        <h4 style="margin-top:22px; margin-bottom:10px; font-weight:800;">Dipendenti ATA Registrati (Ordine Alfabetico)</h4>
         <div id="workers-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
       </div>
     </div>
@@ -397,8 +399,114 @@
     const db = firebase.database();
     const refWorkers = db.ref('dipendenti');
     const refLogs = db.ref('timbrature');
+    const refSettings = db.ref('impostazioni');
 
+    var ADMIN_PIN = "9999"; // PIN Amministratore Predefinito
     var webcamStream = null;
+
+    refSettings.child('adminPin').on('value', function(snapshot) {
+      var val = snapshot.val();
+      if (val) ADMIN_PIN = String(val);
+    });
+
+    function checkAdminAccess(targetTab) {
+      var inputPin = prompt("🔒 Area Riservata al Dirigente/DSGA.\nInserisci il PIN Amministratore:");
+      if (inputPin === ADMIN_PIN) {
+        showTab(targetTab);
+      } else if (inputPin !== null) {
+        alert("⛔ PIN Amministratore Errato!");
+      }
+    }
+
+    function cambiaPinAdmin() {
+      var inputPin = prompt("Inserisci l'ATTUALE PIN Amministratore:");
+      if (inputPin === ADMIN_PIN) {
+        var newPin = prompt("Inserisci il NUOVO PIN Amministratore (4 cifre):");
+        if (newPin && newPin.length === 4 && /^\d+$/.test(newPin)) {
+          refSettings.child('adminPin').set(newPin).then(function() {
+            alert("✅ PIN Amministratore aggiornato con successo!");
+          });
+        } else {
+          alert("⛔ Errore: Il PIN deve essere composto da esattamente 4 cifre numeriche.");
+        }
+      } else if(inputPin !== null) {
+        alert("⛔ PIN Attuale Errato!");
+      }
+    }
+
+    function esportaCSV() {
+      if (logs.length === 0) {
+        alert("Nessuna timbratura presente nel registro da esportare.");
+        return;
+      }
+
+      var csvContent = "data:text/csv;charset=utf-8,\uFEFF"; // \uFEFF aggiunge il BOM per la compatibilità con Excel
+      csvContent += "Data e Ora;Dipendente;Profilo e Contratto;Evento;Sede Rilevata;Distanza GPS (m);Note\n";
+
+      logs.forEach(function(l) {
+        var row = [
+          '"' + new Date(l.time).toLocaleString('it-IT') + '"',
+          '"' + l.worker + '"',
+          '"' + l.profile + '"',
+          '"' + l.type + '"',
+          '"' + l.siteDisplay + '"',
+          '"' + l.dist + '"',
+          '"' + (l.note || '') + '"'
+        ].join(";");
+        csvContent += row + "\n";
+      });
+
+      var encodedUri = encodeURI(csvContent);
+      var link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "Registro_Timbrature_ATA_" + new Date().toISOString().split('T')[0] + ".csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function svuotaTuttiILogsAdmin() {
+      var inputPin = prompt("🔒 Operazione protetta!\nInserisci il PIN Amministratore per cancellare l'intero storico:");
+      if (inputPin === ADMIN_PIN) {
+        if(confirm("⚠️ Sei sicuro di voler cancellare DEFINITIVAMENTE TUTTO il registro timbrature?")) {
+          refLogs.remove().then(function() {
+            alert("Tutte le timbrature sono state cancellate!");
+          });
+        }
+      } else if (inputPin !== null) {
+        alert("⛔ PIN Amministratore Errato!");
+      }
+    }
+
+    function editTodayShiftModal() {
+      var inputPin = prompt("🔒 Inserisci il PIN Amministratore per modificare il turno:");
+      if (inputPin !== ADMIN_PIN) {
+        if(inputPin !== null) alert("⛔ PIN Amministratore Errato!");
+        return;
+      }
+
+      var id = document.getElementById('kiosk-worker').value;
+      var w = WORKERS.find(function(x){ return String(x.id) === String(id); });
+      var today = getTodayDayName();
+      if(!w) return;
+
+      var currentShift1 = document.getElementById('shift-hours-text').innerText;
+      var newShift1 = prompt("⚙️ Modifica TURNO 1 per " + w.name + " di OGGI (" + today + "):", currentShift1);
+      if(newShift1 === null) return;
+
+      var secWrapper = document.getElementById('shift-hours-sec-wrapper');
+      var currentShift2 = (secWrapper.style.display !== 'none') ? document.getElementById('shift-hours-sec-text').innerText : "";
+      var newShift2 = prompt("⚙️ Modifica TURNO 2 / RIENTRO per " + w.name + " di OGGI (lascia vuoto se non c'è rientro):", currentShift2);
+
+      document.getElementById('shift-hours-text').innerText = newShift1;
+      if(newShift2 && newShift2.trim() !== "") {
+        document.getElementById('shift-hours-sec-text').innerText = newShift2.trim();
+        secWrapper.style.display = 'inline';
+      } else {
+        secWrapper.style.display = 'none';
+      }
+      alert("✅ Turno del giorno aggiornato!");
+    }
 
     function startCamera() {
       stopCamera();
@@ -407,7 +515,7 @@
       var selVal = document.getElementById('camera-select').value || 'user';
 
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert("Il browser non supporta l'accesso diretto alla fotocamera.");
+        alert("Il browser non supporta l'accesso alla fotocamera.");
         return;
       }
 
@@ -429,7 +537,7 @@
               placeholder.classList.add('hidden');
             })
             .catch(function(err2) {
-              alert("⛔ Impossibile accedere alla fotocamera!");
+              alert("Impossibile accedere alla fotocamera. Puoi continuare a timbrare normalmente col PIN!");
             });
         });
     }
@@ -796,30 +904,6 @@
       }
     }
 
-    function editTodayShiftModal() {
-      var id = document.getElementById('kiosk-worker').value;
-      var w = WORKERS.find(function(x){ return String(x.id) === String(id); });
-      var today = getTodayDayName();
-      if(!w) return;
-
-      var currentShift1 = document.getElementById('shift-hours-text').innerText;
-      var newShift1 = prompt("⚙️ Modifica TURNO 1 per " + w.name + " di OGGI (" + today + "):", currentShift1);
-      if(newShift1 === null) return;
-
-      var secWrapper = document.getElementById('shift-hours-sec-wrapper');
-      var currentShift2 = (secWrapper.style.display !== 'none') ? document.getElementById('shift-hours-sec-text').innerText : "";
-      var newShift2 = prompt("⚙️ Modifica TURNO 2 / RIENTRO per " + w.name + " di OGGI (lascia vuoto se non c'è rientro):", currentShift2);
-
-      document.getElementById('shift-hours-text').innerText = newShift1;
-      if(newShift2 && newShift2.trim() !== "") {
-        document.getElementById('shift-hours-sec-text').innerText = newShift2.trim();
-        secWrapper.style.display = 'inline';
-      } else {
-        secWrapper.style.display = 'none';
-      }
-      alert("✅ Turno del giorno aggiornato!");
-    }
-
     function selectSiteCard(id) {
       activeSiteId = id;
       var cards = document.querySelectorAll('.site-card');
@@ -942,7 +1026,7 @@
           alert("Errore salvataggio: " + err.message);
         } else {
           resetWorkerForm();
-          alert("Dipendente salvato con successo su tutti i dispositivi!");
+          alert("Dipendente salvato con successo!");
         }
       });
     }
@@ -983,18 +1067,13 @@
     }
 
     function eliminaLog(key) {
-      if(confirm("Vuoi cancellare questa timbratura di prova?")) {
+      var inputPin = prompt("🔒 Inserisci il PIN Amministratore per eliminare questa singola timbratura:");
+      if (inputPin === ADMIN_PIN) {
         refLogs.child(key).remove().then(function() {
           alert("Timbratura eliminata!");
         });
-      }
-    }
-
-    function svuotaTuttiILogs() {
-      if(confirm("⚠️ Sei sicuro di voler cancellare TUTTO lo storico delle timbrature di prova?")) {
-        refLogs.remove().then(function() {
-          alert("Tutte le timbrature di prova sono state cancellate!");
-        });
+      } else if (inputPin !== null) {
+        alert("⛔ PIN Amministratore Errato!");
       }
     }
 
@@ -1041,7 +1120,7 @@
       var tableHtml = '';
       for(var j=0; j<logs.length; j++) {
         var log = logs[j];
-        tableHtml += '<tr><td>' + new Date(log.time).toLocaleString('it-IT') + '</td><td><b>' + log.worker + '</b></td><td>' + log.profile + '</td><td><b>' + log.type + '</b></td><td>' + log.siteDisplay + '</td><td>' + log.dist + 'm</td><td>' + (log.note||'-') + '</td><td><button onclick="eliminaLog(\'' + log._key + '\')" class="btn-small btn-delete">🗑️ Elimina</button></td></tr>';
+        tableHtml += '<tr><td>' + new Date(log.time).toLocaleString('it-IT') + '</td><td><b>' + log.worker + '</b></td><td>' + log.profile + '</td><td><b>' + log.type + '</b></td><td>' + log.siteDisplay + '</td><td>' + log.dist + 'm</td><td>' + (log.note||'-') + '</td><td><button onclick="eliminaLog(\'' + log._key + '\')" class="btn-small btn-delete">🗑️ Elimina 🔒</button></td></tr>';
       }
       document.querySelector('#logs-table tbody').innerHTML = tableHtml;
     }
