@@ -5,23 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Gestione Oraria ATA - IC Frosinone 2</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: #f1f5f9; color: #0f172a; padding: 15px; padding-bottom: 30px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background-color: #f1f5f9; color: #0f172a; padding: 15px; }
     
-    header { background: #ffffff; border-bottom: 2px solid #e2e8f0; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    header { background: #ffffff; padding: 15px 20px; border-bottom: 2px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
     .brand { font-size: 18px; font-weight: 800; color: #1e3a8a; }
     nav { display: flex; gap: 8px; }
     nav button { background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; }
     nav button.active { background: #2563eb; color: white; border-color: #2563eb; }
 
-    .container { max-width: 1200px; margin: 0 auto; }
     .card { background: white; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 15px; }
-    
     .clock-box { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px 18px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 15px; }
-    .time { font-size: 36px; font-weight: 800; color: #1e3a8a; font-family: monospace; }
+    .time { font-size: 32px; font-weight: 800; color: #1e3a8a; font-family: monospace; }
     .date { color: #64748b; font-size: 13px; font-weight: 600; text-transform: capitalize; }
 
-    label { display: block; font-size: 11px; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 6px; margin-top: 12px; letter-spacing: 0.5px; }
+    label { display: block; font-size: 11px; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 6px; margin-top: 14px; }
     select, input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; outline: none; background: #fff; }
 
     .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
@@ -43,14 +41,206 @@
     .hidden { display: none !important; }
   </style>
 
-  <!-- DIPENDENZA UNICA E LEGGERA: FIREBASE -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
-<body onclick="initAudioContext()">
+<body>
 
-  <div class="container">
-    <header>
-      <div class="brand">🏛️ IC Frosinone 2 - Gestione ATA</div>
-      <nav>
-        <button id="nav-kiosk" class="active" onclick="showTab('k
+  <header>
+    <div class="brand">🏛️ IC Frosinone 2 - Gestione ATA</div>
+    <nav>
+      <button id="nav-kiosk" class="active" onclick="showTab('kiosk')">⏱️ Timbra</button>
+      <button id="nav-logs" onclick="showTab('logs')">📋 Registro</button>
+      <button id="nav-settings" onclick="checkAdminAccess()">⚙️ Gestione 🔒</button>
+    </nav>
+  </header>
+
+  <div id="tab-kiosk" class="card">
+    <div class="clock-box">
+      <div>
+        <div id="clock" class="time">--:--:--</div>
+        <div id="date" class="date">--</div>
+      </div>
+      <span style="background:#dbeafe; color:#1e40af; padding:8px 12px; border-radius:8px; font-weight:800; font-size:12px;">Sede Attiva</span>
+    </div>
+
+    <label>1. Seleziona Dipendente ATA *</label>
+    <select id="kiosk-worker">
+      <option value="">Caricamento dipendenti in corso...</option>
+    </select>
+
+    <label>2. PIN Personale (4 cifre) *</label>
+    <input type="password" id="kiosk-pin" maxlength="4" placeholder="••••" style="text-align:center; font-size:26px; font-weight:bold; letter-spacing:6px;" readonly>
+
+    <div class="keypad">
+      <button onclick="press('1')">1</button><button onclick="press('2')">2</button><button onclick="press('3')">3</button>
+      <button onclick="press('4')">4</button><button onclick="press('5')">5</button><button onclick="press('6')">6</button>
+      <button onclick="press('7')">7</button><button onclick="press('8')">8</button><button onclick="press('9')">9</button>
+      <button onclick="clearPin()" style="background:#e2e8f0;">C</button>
+      <button onclick="press('0')">0</button>
+      <button onclick="clearPin()" style="background:#fee2e2; color:#dc2626;">⌫</button>
+    </div>
+
+    <label>Note Facoltative</label>
+    <input type="text" id="kiosk-note" placeholder="es. Permesso, Straordinario, Sostituzione...">
+
+    <div class="btn-group">
+      <button class="btn-action btn-in" onclick="clock('ENTRATA')">Entrata</button>
+      <button class="btn-action btn-pause" onclick="clock('PAUSA')">Pausa</button>
+      <button class="btn-action btn-out" onclick="clock('USCITA')">Uscita</button>
+    </div>
+  </div>
+
+  <div id="tab-logs" class="card hidden">
+    <h3 style="font-size:16px; font-weight:800; margin-bottom:12px;">📋 Timbrature Registrate Oggi</h3>
+    <div id="today-logs"></div>
+  </div>
+
+  <div id="tab-settings" class="card hidden">
+    <h3 style="font-size:16px; font-weight:800; margin-bottom:8px;">⚙️ Pannello Gestione</h3>
+    <p style="font-size:13px; color:#64748b;">Area riservata all'amministrazione.</p>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBIIiRDnBogsIC-Sf6VdV87UWfwZ0PuGgE",
+      authDomain: "gestione-orariaic2.firebaseapp.com",
+      databaseURL: "https://gestione-orariaic2-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "gestione-orariaic2",
+      storageBucket: "gestione-orariaic2.firebasestorage.app",
+      messagingSenderId: "452915319978",
+      appId: "1:452915319978:web:6186d2022efa0a3a982cd3"
+    };
+
+    var db, refWorkers, refLogs;
+    var WORKERS = [];
+    var ADMIN_PIN = "9999";
+    var logs = [];
+
+    window.onload = function() {
+      if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.database();
+        refWorkers = db.ref('dipendenti');
+        refLogs = db.ref('timbrature');
+
+        refWorkers.on('value', function(snapshot) {
+          var val = snapshot.val();
+          if (val) {
+            WORKERS = Object.keys(val).map(function(k) { return val[k]; });
+            WORKERS.sort(function(a, b){ return a.name.localeCompare(b.name, 'it'); });
+            popolaMenu();
+          }
+        });
+
+        refLogs.on('value', function(snapshot) {
+          var val = snapshot.val();
+          logs = val ? Object.keys(val).map(function(k) { return val[k]; }) : [];
+          renderLogs();
+        });
+      }
+
+      aggiornaOrologio();
+      setInterval(aggiornaOrologio, 1000);
+    };
+
+    function aggiornaOrologio() {
+      var d = new Date();
+      var elemClock = document.getElementById('clock');
+      var elemDate = document.getElementById('date');
+      if(elemClock) elemClock.innerText = d.toLocaleTimeString('it-IT');
+      if(elemDate) elemDate.innerText = d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    }
+
+    function popolaMenu() {
+      var sel = document.getElementById('kiosk-worker');
+      if(!sel) return;
+      sel.innerHTML = '';
+      if(WORKERS.length === 0) {
+        sel.innerHTML = '<option value="">Nessun dipendente trovato</option>';
+        return;
+      }
+      WORKERS.forEach(function(w) {
+        var opt = document.createElement('option');
+        opt.value = w.id;
+        opt.innerText = w.name + ' (' + (w.profile || 'ATA') + ')';
+        sel.appendChild(opt);
+      });
+    }
+
+    function press(n) {
+      var input = document.getElementById('kiosk-pin');
+      if(input && input.value.length < 4) input.value += n;
+    }
+
+    function clearPin() {
+      var input = document.getElementById('kiosk-pin');
+      if(input) input.value = '';
+    }
+
+    function clock(type) {
+      var wId = document.getElementById('kiosk-worker').value;
+      var pin = document.getElementById('kiosk-pin').value;
+      var note = document.getElementById('kiosk-note').value;
+      var worker = WORKERS.find(function(w){ return String(w.id) === String(wId); });
+
+      if(!worker) return alert("Seleziona un dipendente!");
+      if(worker.pin && worker.pin !== pin) return alert("PIN Errato!");
+
+      var newLog = {
+        time: new Date().toISOString(),
+        worker: worker.name,
+        type: type,
+        note: note
+      };
+
+      if(refLogs) {
+        refLogs.push(newLog, function(err) {
+          if(!err) {
+            clearPin();
+            document.getElementById('kiosk-note').value = '';
+            alert("✅ Timbratura [" + type + "] registrata per " + worker.name + "!");
+          }
+        });
+      }
+    }
+
+    function renderLogs() {
+      var todayStr = new Date().toISOString().split('T')[0];
+      var todayLogs = logs.filter(function(l){ return l.time && l.time.startsWith(todayStr); });
+      var container = document.getElementById('today-logs');
+      if(!container) return;
+      
+      var html = '';
+      if(todayLogs.length === 0) {
+        html = '<div style="font-size:12px; color:#94a3b8; text-align:center; padding:15px;">Nessuna timbratura oggi.</div>';
+      } else {
+        todayLogs.reverse().forEach(function(l) {
+          var t = new Date(l.time).toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit'});
+          html += '<div class="log-item"><div><b>' + l.worker + '</b></div><div><span class="badge-tag badge-' + l.type.toLowerCase() + '">' + l.type + '</span> <b>' + t + '</b></div></div>';
+        });
+      }
+      container.innerHTML = html;
+    }
+
+    function checkAdminAccess() {
+      var p = prompt("🔒 Inserisci PIN Amministratore:");
+      if(p === ADMIN_PIN) showTab('settings');
+      else if(p !== null) alert("⛔ PIN Errato!");
+    }
+
+    function showTab(tab) {
+      document.getElementById('tab-kiosk').classList.add('hidden');
+      document.getElementById('tab-logs').classList.add('hidden');
+      document.getElementById('tab-settings').classList.add('hidden');
+
+      document.getElementById('nav-kiosk').classList.remove('active');
+      document.getElementById('nav-logs').classList.remove('active');
+      document.getElementById('nav-settings').classList.remove('active');
+
+      document.getElementById('tab-' + tab).classList.remove('hidden');
+      document.getElementById('nav-' + tab).classList.add('active');
+    }
+  </script>
+</body>
+</html>
