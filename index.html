@@ -62,7 +62,6 @@
     .hidden { display: none !important; }
   </style>
 
-  <!-- LIBRERIE ESTERNE CARICATE IN MODO SICURO -->
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -79,7 +78,6 @@
     </nav>
   </header>
 
-  <!-- SCHERMATA PRINCIPALE DI TIMBRATURA -->
   <div id="tab-kiosk" class="card">
     <div class="clock-box">
       <div>
@@ -124,7 +122,6 @@
     </div>
   </div>
 
-  <!-- REGISTRO STORICO E ESPORTAZIONE -->
   <div id="tab-logs" class="card hidden">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
       <h3 style="font-size:16px; font-weight:800;">📋 Registro Storico Timbrature ATA</h3>
@@ -144,7 +141,6 @@
     </table>
   </div>
 
-  <!-- STAMPA TESSERINI BADGE CON BARCODE -->
   <div id="tab-badges" class="card hidden">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
       <h3 style="font-size:16px; font-weight:800;">🪪 Tesserini Dipendenti (Codici a Barre CODE128)</h3>
@@ -153,7 +149,6 @@
     <div id="badges-container" class="badges-grid"></div>
   </div>
 
-  <!-- PANNELLO AMMINISTRAZIONE -->
   <div id="tab-settings" class="card hidden">
     <h3 style="font-size:16px; font-weight:800; margin-bottom:12px;">⚙️ Pannello Amministrazione ATA</h3>
     <form id="worker-form" onsubmit="saveWorker(event)">
@@ -191,11 +186,7 @@
     };
 
     var db, refWorkers, refLogs;
-    var WORKERS = [
-      { id: "w_1", name: "BELARDO GIOVANNI", profile: "Collaboratore Scolastico", pin: "1234" },
-      { id: "w_2", name: "NADDEI ELEONORA", profile: "Assistente Amministrativo", pin: "5678" },
-      { id: "w_3", name: "SANNA VITTORIA", profile: "Collaboratore Scolastico", pin: "9012" }
-    ];
+    var WORKERS = [];
     var ADMIN_PIN = "9999";
     var logs = [];
     var activeSiteName = "Pietrobono";
