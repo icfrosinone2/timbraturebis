@@ -5,151 +5,103 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Gestione Oraria ATA - IC Frosinone 2</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-    body { background-color: #f1f5f9; color: #0f172a; padding: 15px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #f1f5f9; color: #0f172a; padding-bottom: 30px; }
     
-    header { background: #ffffff; padding: 15px 20px; border-bottom: 2px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .brand { font-size: 18px; font-weight: 800; color: #1e3a8a; }
+    header { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-size: 18px; font-weight: bold; color: #1e3a8a; }
     nav { display: flex; gap: 8px; }
-    nav button { background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; }
+    nav button { background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; }
     nav button.active { background: #2563eb; color: white; border-color: #2563eb; }
 
-    .card { background: white; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 15px; }
-    .clock-box { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px 18px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 15px; }
-    .time { font-size: 32px; font-weight: 800; color: #1e3a8a; font-family: monospace; }
-    .date { color: #64748b; font-size: 13px; font-weight: 600; text-transform: capitalize; }
+    .container { max-width: 1250px; margin: 25px auto; padding: 0 15px; }
+    .grid-main { display: grid; grid-template-columns: 6.5fr 5.5fr; gap: 20px; }
+    @media (max-width: 900px) { .grid-main { grid-template-columns: 1fr; } }
 
-    label { display: block; font-size: 11px; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 6px; margin-top: 14px; }
-    select, input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; outline: none; background: #fff; }
+    .card { background: white; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    
+    .clock-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .time { font-size: 36px; font-weight: 800; color: #0f172a; }
+    .date { color: #64748b; font-size: 13px; text-transform: capitalize; }
 
-    .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
-    .keypad button { padding: 16px; font-size: 20px; font-weight: 800; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; cursor: pointer; }
+    .gps-bar { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 600; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+    
+    label { display: block; font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 4px; margin-top: 10px; }
+    select, input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; background: #fff; }
+    
+    .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 15px; }
+    .keypad button { padding: 14px; font-size: 18px; font-weight: bold; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; }
     .keypad button:active { background: #cbd5e1; }
 
-    .btn-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
-    .btn-action { padding: 16px; border: none; border-radius: 10px; color: white; font-weight: 800; font-size: 14px; cursor: pointer; text-transform: uppercase; }
+    .btn-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+    .btn-action { padding: 14px; border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 13px; cursor: pointer; text-transform: uppercase; transition: opacity 0.2s; }
+    .btn-action:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
     .btn-in { background: #16a34a; }
     .btn-pause { background: #d97706; }
     .btn-out { background: #dc2626; }
 
-    .hidden { display: none !important; }
-  </style>
-</head>
-<body>
+    .sites-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
+    @media (max-width: 600px) { .sites-grid { grid-template-columns: repeat(2, 1fr); } }
 
-  <header>
-    <div class="brand">🏛️ IC Frosinone 2 - Gestione ATA</div>
-    <nav>
-      <button id="nav-kiosk" class="active" onclick="showTab('kiosk')">⏱️ Timbra</button>
-      <button id="nav-logs" onclick="showTab('logs')">📋 Registro</button>
-      <button id="nav-settings" onclick="checkAdminAccess()">⚙️ Gestione 🔒</button>
-    </nav>
-  </header>
+    .site-card { border: 2px solid #cbd5e1; border-radius: 12px; padding: 10px; cursor: pointer; transition: all 0.2s; position: relative; background: #f8fafc; }
+    .site-card.selected { border-color: #2563eb; background: #eff6ff; }
+    
+    .site-card-pietrobono { border-color: #93c5fd; background: #eff6ff; }
+    .site-card-rinascita { border-color: #86efac; background: #f0fdf4; }
+    .site-card-xxiii { border-color: #fde047; background: #fefce8; }
+    .site-card-verdi { border-color: #c084fc; background: #faf5ff; }
+    .site-card-pinocchio { border-color: #f472b6; background: #fdf2f8; }
+    .site-card-spinelli { border-color: #fdba74; background: #fff7ed; }
+    .site-card-casa { border: 2px dashed #16a34a; background: #f0fdf4; }
 
-  <div id="tab-kiosk" class="card">
-    <div class="clock-box">
-      <div>
-        <div id="clock" class="time">00:00:00</div>
-        <div id="date" class="date">--</div>
-      </div>
-      <span style="background:#dbeafe; color:#1e40af; padding:8px 12px; border-radius:8px; font-weight:800; font-size:12px;">Plesso Attivo</span>
-    </div>
+    .site-title { font-weight: 800; font-size: 13px; color: #0f172a; display: flex; align-items: center; gap: 4px; }
+    .btn-maps-mini { background: #0284c7; color: white; text-decoration: none; font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 6px; display: inline-block; margin-top: 6px; }
 
-    <label>1. Seleziona Dipendente ATA *</label>
-    <select id="kiosk-worker">
-      <option value="1">BELARDO GIOVANNI (Collaboratore Scolastico)</option>
-      <option value="2">NADDEI ELEONORA (Assistente Amministrativo)</option>
-      <option value="3">SANNA VITTORIA (Collaboratore Scolastico)</option>
-    </select>
+    .camera-container { background: #0f172a; border-radius: 12px; overflow: hidden; margin-bottom: 15px; text-align: center; padding: 10px; color: white; }
+    video { width: 100%; max-height: 220px; object-fit: cover; border-radius: 8px; background: #1e293b; display: block; margin: 0 auto; }
 
-    <label>2. PIN Personale (4 cifre) *</label>
-    <input type="password" id="kiosk-pin" maxlength="4" placeholder="••••" style="text-align:center; font-size:26px; font-weight:bold; letter-spacing:6px;" readonly>
+    .log-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; font-size: 12px; }
+    .badge { padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; color: white; }
+    .badge-entrata { background: #16a34a; }
+    .badge-pausa { background: #d97706; }
+    .badge-uscita { background: #dc2626; }
 
-    <div class="keypad">
-      <button onclick="press('1')">1</button><button onclick="press('2')">2</button><button onclick="press('3')">3</button>
-      <button onclick="press('4')">4</button><button onclick="press('5')">5</button><button onclick="press('6')">6</button>
-      <button onclick="press('7')">7</button><button onclick="press('8')">8</button><button onclick="press('9')">9</button>
-      <button onclick="clearPin()" style="background:#e2e8f0;">C</button>
-      <button onclick="press('0')">0</button>
-      <button onclick="clearPin()" style="background:#fee2e2; color:#dc2626;">⌫</button>
-    </div>
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
+    th, td { padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; }
+    th { background: #f8fafc; font-weight: bold; color: #475569; }
 
-    <label>Note Facoltative</label>
-    <input type="text" id="kiosk-note" placeholder="es. Permesso, Straordinario, Sostituzione...">
+    .btn-small { padding: 6px 10px; font-size: 11px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; text-decoration: none; display: inline-block; }
+    .btn-blue { background: #2563eb; color: white; }
+    .btn-green { background: #16a34a; color: white; }
+    .btn-orange { background: #ea580c; color: white; }
+    .btn-red { background: #dc2626; color: white; }
+    .btn-edit { background: #e0f2fe; color: #0369a1; }
+    .btn-delete { background: #fee2e2; color: #b91c1c; }
 
-    <div class="btn-group">
-      <button class="btn-action btn-in" onclick="clock('ENTRATA')">Entrata</button>
-      <button class="btn-action btn-pause" onclick="clock('PAUSA')">Pausa</button>
-      <button class="btn-action btn-out" onclick="clock('USCITA')">Uscita</button>
-    </div>
-  </div>
+    .day-schedule-card { border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 8px; padding: 8px; margin-bottom: 6px; }
 
-  <div id="tab-logs" class="card hidden">
-    <h3 style="font-size:16px; font-weight:800; margin-bottom:12px;">📋 Timbrature Registrate Oggi</h3>
-    <div id="today-logs">
-      <div style="font-size:12px; color:#94a3b8; text-align:center; padding:15px;">Nessuna timbratura oggi.</div>
-    </div>
-  </div>
-
-  <div id="tab-settings" class="card hidden">
-    <h3 style="font-size:16px; font-weight:800; margin-bottom:8px;">⚙️ Pannello Gestione</h3>
-    <p style="font-size:13px; color:#64748b;">Area riservata all'amministrazione.</p>
-  </div>
-
-  <script>
-    var ADMIN_PIN = "9999";
-
-    function aggiornaOrologio() {
-      var d = new Date();
-      var elemClock = document.getElementById('clock');
-      var elemDate = document.getElementById('date');
-      if(elemClock) elemClock.innerText = d.toLocaleTimeString('it-IT');
-      if(elemDate) elemDate.innerText = d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    .badges-grid { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px; }
+    .badge-card-container { width: 340px; display: flex; flex-direction: column; gap: 8px; }
+    
+    .blue-badge { 
+      background: #1e40af; 
+      color: white; 
+      border-radius: 12px; 
+      padding: 14px; 
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+      position: relative; 
+      box-sizing: border-box; 
+      height: 220px; 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: space-between; 
+      border: 2px solid #1e40af;
     }
-
-    function press(n) {
-      var input = document.getElementById('kiosk-pin');
-      if(input && input.value.length < 4) input.value += n;
-    }
-
-    function clearPin() {
-      var input = document.getElementById('kiosk-pin');
-      if(input) input.value = '';
-    }
-
-    function clock(type) {
-      var sel = document.getElementById('kiosk-worker');
-      var workerText = sel.options[sel.selectedIndex].text;
-      var pin = document.getElementById('kiosk-pin').value;
-
-      if(!pin || pin.length < 4) return alert("Inserisci il PIN di 4 cifre!");
-
-      clearPin();
-      document.getElementById('kiosk-note').value = '';
-      alert("✅ Timbratura [" + type + "] registrata per " + workerText + "!");
-    }
-
-    function checkAdminAccess() {
-      var p = prompt("🔒 Inserisci PIN Amministratore:");
-      if(p === ADMIN_PIN) showTab('settings');
-      else if(p !== null) alert("⛔ PIN Errato!");
-    }
-
-    function showTab(tab) {
-      document.getElementById('tab-kiosk').classList.add('hidden');
-      document.getElementById('tab-logs').classList.add('hidden');
-      document.getElementById('tab-settings').classList.add('hidden');
-
-      document.getElementById('nav-kiosk').classList.remove('active');
-      document.getElementById('nav-logs').classList.remove('active');
-      document.getElementById('nav-settings').classList.remove('active');
-
-      document.getElementById('tab-' + tab).classList.remove('hidden');
-      document.getElementById('nav-' + tab).classList.add('active');
-    }
-
-    setInterval(aggiornaOrologio, 1000);
-    aggiornaOrologio();
-  </script>
-</body>
-</html>
+    .blue-badge-header { display: flex; justify-content: space-between; align-items: center; font-size: 10px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 6px; }
+    .blue-badge-body { display: flex; gap: 12px; align-items: center; margin-top: 6px; }
+    .photo-placeholder { width: 60px; height: 75px; border: 1px dashed rgba(255,255,255,0.5); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 8px; text-align: center; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.05); }
+    .badge-details { flex: 1; }
+    .badge-details h3 { font-size: 13px; font-weight: 800; text-transform: uppercase; line-height: 1.2; margin-bottom: 3px; }
+    .badge-details p { font-size: 10px; opacity: 0.9; margin-bottom: 2px; }
+    
+    .blue-badge-footer { display: flex; justify-content:
