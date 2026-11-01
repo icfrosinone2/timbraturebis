@@ -40,9 +40,6 @@
 
     .hidden { display: none !important; }
   </style>
-
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
 
@@ -58,15 +55,17 @@
   <div id="tab-kiosk" class="card">
     <div class="clock-box">
       <div>
-        <div id="clock" class="time">--:--:--</div>
+        <div id="clock" class="time">00:00:00</div>
         <div id="date" class="date">--</div>
       </div>
-      <span style="background:#dbeafe; color:#1e40af; padding:8px 12px; border-radius:8px; font-weight:800; font-size:12px;">Sede Attiva</span>
+      <span style="background:#dbeafe; color:#1e40af; padding:8px 12px; border-radius:8px; font-weight:800; font-size:12px;">Plesso Attivo</span>
     </div>
 
     <label>1. Seleziona Dipendente ATA *</label>
     <select id="kiosk-worker">
-      <option value="">Caricamento dipendenti in corso...</option>
+      <option value="1">BELARDO GIOVANNI (Collaboratore Scolastico)</option>
+      <option value="2">NADDEI ELEONORA (Assistente Amministrativo)</option>
+      <option value="3">SANNA VITTORIA (Collaboratore Scolastico)</option>
     </select>
 
     <label>2. PIN Personale (4 cifre) *</label>
@@ -93,7 +92,9 @@
 
   <div id="tab-logs" class="card hidden">
     <h3 style="font-size:16px; font-weight:800; margin-bottom:12px;">📋 Timbrature Registrate Oggi</h3>
-    <div id="today-logs"></div>
+    <div id="today-logs">
+      <div style="font-size:12px; color:#94a3b8; text-align:center; padding:15px;">Nessuna timbratura oggi.</div>
+    </div>
   </div>
 
   <div id="tab-settings" class="card hidden">
@@ -102,47 +103,7 @@
   </div>
 
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBIIiRDnBogsIC-Sf6VdV87UWfwZ0PuGgE",
-      authDomain: "gestione-orariaic2.firebaseapp.com",
-      databaseURL: "https://gestione-orariaic2-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "gestione-orariaic2",
-      storageBucket: "gestione-orariaic2.firebasestorage.app",
-      messagingSenderId: "452915319978",
-      appId: "1:452915319978:web:6186d2022efa0a3a982cd3"
-    };
-
-    var db, refWorkers, refLogs;
-    var WORKERS = [];
     var ADMIN_PIN = "9999";
-    var logs = [];
-
-    window.onload = function() {
-      if (typeof firebase !== 'undefined' && !firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-        db = firebase.database();
-        refWorkers = db.ref('dipendenti');
-        refLogs = db.ref('timbrature');
-
-        refWorkers.on('value', function(snapshot) {
-          var val = snapshot.val();
-          if (val) {
-            WORKERS = Object.keys(val).map(function(k) { return val[k]; });
-            WORKERS.sort(function(a, b){ return a.name.localeCompare(b.name, 'it'); });
-            popolaMenu();
-          }
-        });
-
-        refLogs.on('value', function(snapshot) {
-          var val = snapshot.val();
-          logs = val ? Object.keys(val).map(function(k) { return val[k]; }) : [];
-          renderLogs();
-        });
-      }
-
-      aggiornaOrologio();
-      setInterval(aggiornaOrologio, 1000);
-    };
 
     function aggiornaOrologio() {
       var d = new Date();
@@ -150,22 +111,6 @@
       var elemDate = document.getElementById('date');
       if(elemClock) elemClock.innerText = d.toLocaleTimeString('it-IT');
       if(elemDate) elemDate.innerText = d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-    }
-
-    function popolaMenu() {
-      var sel = document.getElementById('kiosk-worker');
-      if(!sel) return;
-      sel.innerHTML = '';
-      if(WORKERS.length === 0) {
-        sel.innerHTML = '<option value="">Nessun dipendente trovato</option>';
-        return;
-      }
-      WORKERS.forEach(function(w) {
-        var opt = document.createElement('option');
-        opt.value = w.id;
-        opt.innerText = w.name + ' (' + (w.profile || 'ATA') + ')';
-        sel.appendChild(opt);
-      });
     }
 
     function press(n) {
@@ -179,48 +124,15 @@
     }
 
     function clock(type) {
-      var wId = document.getElementById('kiosk-worker').value;
+      var sel = document.getElementById('kiosk-worker');
+      var workerText = sel.options[sel.selectedIndex].text;
       var pin = document.getElementById('kiosk-pin').value;
-      var note = document.getElementById('kiosk-note').value;
-      var worker = WORKERS.find(function(w){ return String(w.id) === String(wId); });
 
-      if(!worker) return alert("Seleziona un dipendente!");
-      if(worker.pin && worker.pin !== pin) return alert("PIN Errato!");
+      if(!pin || pin.length < 4) return alert("Inserisci il PIN di 4 cifre!");
 
-      var newLog = {
-        time: new Date().toISOString(),
-        worker: worker.name,
-        type: type,
-        note: note
-      };
-
-      if(refLogs) {
-        refLogs.push(newLog, function(err) {
-          if(!err) {
-            clearPin();
-            document.getElementById('kiosk-note').value = '';
-            alert("✅ Timbratura [" + type + "] registrata per " + worker.name + "!");
-          }
-        });
-      }
-    }
-
-    function renderLogs() {
-      var todayStr = new Date().toISOString().split('T')[0];
-      var todayLogs = logs.filter(function(l){ return l.time && l.time.startsWith(todayStr); });
-      var container = document.getElementById('today-logs');
-      if(!container) return;
-      
-      var html = '';
-      if(todayLogs.length === 0) {
-        html = '<div style="font-size:12px; color:#94a3b8; text-align:center; padding:15px;">Nessuna timbratura oggi.</div>';
-      } else {
-        todayLogs.reverse().forEach(function(l) {
-          var t = new Date(l.time).toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit'});
-          html += '<div class="log-item"><div><b>' + l.worker + '</b></div><div><span class="badge-tag badge-' + l.type.toLowerCase() + '">' + l.type + '</span> <b>' + t + '</b></div></div>';
-        });
-      }
-      container.innerHTML = html;
+      clearPin();
+      document.getElementById('kiosk-note').value = '';
+      alert("✅ Timbratura [" + type + "] registrata per " + workerText + "!");
     }
 
     function checkAdminAccess() {
@@ -241,6 +153,9 @@
       document.getElementById('tab-' + tab).classList.remove('hidden');
       document.getElementById('nav-' + tab).classList.add('active');
     }
+
+    setInterval(aggiornaOrologio, 1000);
+    aggiornaOrologio();
   </script>
 </body>
 </html>
