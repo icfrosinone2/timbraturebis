@@ -6,7 +6,7 @@
   <title>Gestione Oraria ATA - IC Frosinone 2</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-    body { background-color: #f1f5f9; color: #0f172a; padding: 15px; }
+    body { background-color: #f1f5f9; color: #0f172a; padding: 15px; padding-bottom: 30px; }
     
     header { background: #ffffff; padding: 15px 20px; border-bottom: 2px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
     .brand { font-size: 18px; font-weight: 800; color: #1e3a8a; }
@@ -22,6 +22,11 @@
     label { display: block; font-size: 11px; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 6px; margin-top: 14px; }
     select, input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; outline: none; background: #fff; }
 
+    .sites-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
+    @media (max-width: 600px) { .sites-grid { grid-template-columns: repeat(2, 1fr); } }
+    .site-card { border: 2px solid #cbd5e1; border-radius: 10px; padding: 10px; cursor: pointer; background: #f8fafc; font-size: 12px; font-weight: bold; text-align: center; }
+    .site-card.selected { border-color: #2563eb; background: #eff6ff; color: #1e40af; }
+
     .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
     .keypad button { padding: 16px; font-size: 20px; font-weight: 800; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; cursor: pointer; }
     .keypad button:active { background: #cbd5e1; }
@@ -32,14 +37,35 @@
     .btn-pause { background: #d97706; }
     .btn-out { background: #dc2626; }
 
+    .btn-small { padding: 8px 12px; font-size: 11px; font-weight: 700; border-radius: 6px; border: none; cursor: pointer; }
+    .btn-blue { background: #2563eb; color: white; }
+    .btn-green { background: #16a34a; color: white; }
+    .btn-red { background: #dc2626; color: white; }
+
     .log-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
     .badge-tag { padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; color: white; }
     .badge-entrata { background: #16a34a; }
     .badge-pausa { background: #d97706; }
     .badge-uscita { background: #dc2626; }
 
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
+    th, td { padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; }
+    th { background: #f8fafc; font-weight: 700; color: #475569; }
+
+    .badges-grid { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 15px; }
+    .badge-card { width: 320px; background: #1e40af; color: white; border-radius: 12px; padding: 14px; border: 2px solid #1e3a8a; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .badge-card h3 { font-size: 14px; text-transform: uppercase; margin-bottom: 4px; }
+    .badge-card p { font-size: 11px; opacity: 0.9; }
+    .barcode-box { background: white; padding: 6px; border-radius: 6px; margin-top: 10px; text-align: center; }
+    .barcode-box svg { max-width: 100%; height: 45px; }
+
     .hidden { display: none !important; }
   </style>
+
+  <!-- LIBRERIE ESTERNE CARICATE IN MODO SICURO -->
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
 
@@ -48,25 +74,33 @@
     <nav>
       <button id="nav-kiosk" class="active" onclick="showTab('kiosk')">⏱️ Timbra</button>
       <button id="nav-logs" onclick="showTab('logs')">📋 Registro</button>
+      <button id="nav-badges" onclick="showTab('badges')">🪪 Badges ATA</button>
       <button id="nav-settings" onclick="checkAdminAccess()">⚙️ Gestione 🔒</button>
     </nav>
   </header>
 
+  <!-- SCHERMATA PRINCIPALE DI TIMBRATURA -->
   <div id="tab-kiosk" class="card">
     <div class="clock-box">
       <div>
         <div id="clock" class="time">00:00:00</div>
         <div id="date" class="date">--</div>
       </div>
-      <span style="background:#dbeafe; color:#1e40af; padding:8px 12px; border-radius:8px; font-weight:800; font-size:12px;">Plesso Attivo</span>
+      <span id="active-site-display" style="background:#dbeafe; color:#1e40af; padding:8px 12px; border-radius:8px; font-weight:800; font-size:12px;">Sede: Pietrobono</span>
+    </div>
+
+    <label>Seleziona Plesso Scolastico *</label>
+    <div class="sites-grid">
+      <div class="site-card selected" id="site-s_101" onclick="selectSite('s_101', 'Pietrobono')">🏛️ Pietrobono</div>
+      <div class="site-card" id="site-s_102" onclick="selectSite('s_102', 'Giovanni XXIII')">🏫 XXIII</div>
+      <div class="site-card" id="site-s_103" onclick="selectSite('s_103', 'Via Verdi')">🎵 Verdi</div>
+      <div class="site-card" id="site-s_104" onclick="selectSite('s_104', 'La Rinascita')">🌱 Rinascita</div>
+      <div class="site-card" id="site-s_105" onclick="selectSite('s_105', 'Pinocchio')">🐸 Pinocchio</div>
+      <div class="site-card" id="site-s_106" onclick="selectSite('s_106', 'Spinelli')">⭐ Spinelli</div>
     </div>
 
     <label>1. Seleziona Dipendente ATA *</label>
-    <select id="kiosk-worker">
-      <option value="1">BELARDO GIOVANNI (Collaboratore Scolastico)</option>
-      <option value="2">NADDEI ELEONORA (Assistente Amministrativo)</option>
-      <option value="3">SANNA VITTORIA (Collaboratore Scolastico)</option>
-    </select>
+    <select id="kiosk-worker"></select>
 
     <label>2. PIN Personale (4 cifre) *</label>
     <input type="password" id="kiosk-pin" maxlength="4" placeholder="••••" style="text-align:center; font-size:26px; font-weight:bold; letter-spacing:6px;" readonly>
@@ -90,20 +124,120 @@
     </div>
   </div>
 
+  <!-- REGISTRO STORICO E ESPORTAZIONE -->
   <div id="tab-logs" class="card hidden">
-    <h3 style="font-size:16px; font-weight:800; margin-bottom:12px;">📋 Timbrature Registrate Oggi</h3>
-    <div id="today-logs">
-      <div style="font-size:12px; color:#94a3b8; text-align:center; padding:15px;">Nessuna timbratura oggi.</div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="font-size:16px; font-weight:800;">📋 Registro Storico Timbrature ATA</h3>
+      <button onclick="esportaCSV()" class="btn-small btn-green">📥 Esporta Excel / CSV</button>
     </div>
+    <table id="logs-table">
+      <thead>
+        <tr>
+          <th>Data e Ora</th>
+          <th>Dipendente</th>
+          <th>Evento</th>
+          <th>Sede</th>
+          <th>Note</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 
+  <!-- STAMPA TESSERINI BADGE CON BARCODE -->
+  <div id="tab-badges" class="card hidden">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="font-size:16px; font-weight:800;">🪪 Tesserini Dipendenti (Codici a Barre CODE128)</h3>
+      <button onclick="window.print()" class="btn-small btn-blue">🖨️ Stampa Tesserini</button>
+    </div>
+    <div id="badges-container" class="badges-grid"></div>
+  </div>
+
+  <!-- PANNELLO AMMINISTRAZIONE -->
   <div id="tab-settings" class="card hidden">
-    <h3 style="font-size:16px; font-weight:800; margin-bottom:8px;">⚙️ Pannello Gestione</h3>
-    <p style="font-size:13px; color:#64748b;">Area riservata all'amministrazione.</p>
+    <h3 style="font-size:16px; font-weight:800; margin-bottom:12px;">⚙️ Pannello Amministrazione ATA</h3>
+    <form id="worker-form" onsubmit="saveWorker(event)">
+      <input type="hidden" id="worker-id">
+      <label>Nome e Cognome *</label>
+      <input type="text" id="worker-name" required placeholder="es. ROSSI MARIO">
+      
+      <label>Profilo ATA *</label>
+      <select id="worker-profile">
+        <option value="Collaboratore Scolastico">Collaboratore Scolastico</option>
+        <option value="Assistente Amministrativo">Assistente Amministrativo</option>
+        <option value="Assistente Tecnico">Assistente Tecnico</option>
+        <option value="DSGA">DSGA</option>
+      </select>
+
+      <label>PIN Dipendente (4 cifre) *</label>
+      <input type="text" id="worker-pin" maxlength="4" required placeholder="1234">
+
+      <div style="display:flex; gap:10px; margin-top:15px;">
+        <button type="submit" class="btn-small btn-blue" style="flex:1;">Salva Dipendente</button>
+        <button type="button" onclick="cambiaPinAdmin()" class="btn-small btn-red">🔑 Cambia PIN Admin</button>
+      </div>
+    </form>
   </div>
 
   <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBIIiRDnBogsIC-Sf6VdV87UWfwZ0PuGgE",
+      authDomain: "gestione-orariaic2.firebaseapp.com",
+      databaseURL: "https://gestione-orariaic2-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "gestione-orariaic2",
+      storageBucket: "gestione-orariaic2.firebasestorage.app",
+      messagingSenderId: "452915319978",
+      appId: "1:452915319978:web:6186d2022efa0a3a982cd3"
+    };
+
+    var db, refWorkers, refLogs;
+    var WORKERS = [
+      { id: "w_1", name: "BELARDO GIOVANNI", profile: "Collaboratore Scolastico", pin: "1234" },
+      { id: "w_2", name: "NADDEI ELEONORA", profile: "Assistente Amministrativo", pin: "5678" },
+      { id: "w_3", name: "SANNA VITTORIA", profile: "Collaboratore Scolastico", pin: "9012" }
+    ];
     var ADMIN_PIN = "9999";
+    var logs = [];
+    var activeSiteName = "Pietrobono";
+
+    window.onload = function() {
+      try {
+        if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+          firebase.initializeApp(firebaseConfig);
+          db = firebase.database();
+          refWorkers = db.ref('dipendenti');
+          refLogs = db.ref('timbrature');
+
+          refWorkers.on('value', function(snapshot) {
+            var val = snapshot.val();
+            if (val) {
+              WORKERS = Object.keys(val).map(function(k) { return val[k]; });
+            }
+            popolaMenu();
+            renderBadges();
+          });
+
+          refLogs.on('value', function(snapshot) {
+            var val = snapshot.val();
+            logs = val ? Object.keys(val).map(function(k) { return val[k]; }) : [];
+            renderLogs();
+          });
+        }
+      } catch(e) { console.log(e); }
+
+      popolaMenu();
+      renderBadges();
+      aggiornaOrologio();
+      setInterval(aggiornaOrologio, 1000);
+    };
+
+    function selectSite(id, name) {
+      activeSiteName = name;
+      document.querySelectorAll('.site-card').forEach(function(el){ el.classList.remove('selected'); });
+      var activeEl = document.getElementById('site-' + id);
+      if(activeEl) activeEl.classList.add('selected');
+      document.getElementById('active-site-display').innerText = 'Sede: ' + name;
+    }
 
     function aggiornaOrologio() {
       var d = new Date();
@@ -111,6 +245,18 @@
       var elemDate = document.getElementById('date');
       if(elemClock) elemClock.innerText = d.toLocaleTimeString('it-IT');
       if(elemDate) elemDate.innerText = d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    }
+
+    function popolaMenu() {
+      var sel = document.getElementById('kiosk-worker');
+      if(!sel) return;
+      sel.innerHTML = '';
+      WORKERS.forEach(function(w) {
+        var opt = document.createElement('option');
+        opt.value = w.id;
+        opt.innerText = w.name + ' (' + (w.profile || 'ATA') + ')';
+        sel.appendChild(opt);
+      });
     }
 
     function press(n) {
@@ -124,15 +270,89 @@
     }
 
     function clock(type) {
-      var sel = document.getElementById('kiosk-worker');
-      var workerText = sel.options[sel.selectedIndex].text;
+      var wId = document.getElementById('kiosk-worker').value;
       var pin = document.getElementById('kiosk-pin').value;
+      var note = document.getElementById('kiosk-note').value;
+      var worker = WORKERS.find(function(w){ return String(w.id) === String(wId); });
 
-      if(!pin || pin.length < 4) return alert("Inserisci il PIN di 4 cifre!");
+      if(!worker) return alert("Seleziona un dipendente!");
+      if(worker.pin && worker.pin !== pin) return alert("PIN Errato!");
+
+      var newLog = {
+        time: new Date().toISOString(),
+        worker: worker.name,
+        type: type,
+        site: activeSiteName,
+        note: note
+      };
+
+      if(refLogs) {
+        refLogs.push(newLog);
+      } else {
+        logs.push(newLog);
+        renderLogs();
+      }
 
       clearPin();
       document.getElementById('kiosk-note').value = '';
-      alert("✅ Timbratura [" + type + "] registrata per " + workerText + "!");
+      alert("✅ Timbratura [" + type + "] registrata per " + worker.name + " (" + activeSiteName + ")!");
+    }
+
+    function renderLogs() {
+      var tbody = document.querySelector('#logs-table tbody');
+      if(!tbody) return;
+      var html = '';
+      logs.slice().reverse().forEach(function(l) {
+        html += '<tr><td>' + new Date(l.time).toLocaleString('it-IT') + '</td><td><b>' + l.worker + '</b></td><td><span class="badge-tag badge-' + l.type.toLowerCase() + '">' + l.type + '</span></td><td>' + (l.site || 'Centrale') + '</td><td>' + (l.note || '-') + '</td></tr>';
+      });
+      tbody.innerHTML = html;
+    }
+
+    function renderBadges() {
+      var container = document.getElementById('badges-container');
+      if(!container) return;
+      container.innerHTML = '';
+      WORKERS.forEach(function(w, idx) {
+        var svgId = 'barcode_' + idx;
+        var card = document.createElement('div');
+        card.className = 'badge-card';
+        card.innerHTML = '<h3>' + w.name + '</h3><p>' + (w.profile || 'Personale ATA') + '</p><p>PIN: <b>' + w.pin + '</b></p><div class="barcode-box"><svg id="' + svgId + '"></svg></div>';
+        container.appendChild(card);
+
+        setTimeout(function() {
+          if(typeof JsBarcode !== 'undefined') {
+            JsBarcode("#" + svgId, w.id, { format: "CODE128", width: 1.8, height: 40, displayValue: false });
+          }
+        }, 50);
+      });
+    }
+
+    function esportaCSV() {
+      if(logs.length === 0) return alert("Nessuna timbratura da esportare.");
+      var csv = "Data e Ora;Dipendente;Evento;Sede;Note\n";
+      logs.forEach(function(l) {
+        csv += '"' + new Date(l.time).toLocaleString('it-IT') + '";"' + l.worker + '";"' + l.type + '";"' + (l.site||'') + '";"' + (l.note||'') + '"\n';
+      });
+      var blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+      var link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "Registro_Timbrature_ATA.csv";
+      link.click();
+    }
+
+    function saveWorker(e) {
+      e.preventDefault();
+      var id = document.getElementById('worker-id').value || 'w_' + Date.now();
+      var wObj = {
+        id: id,
+        name: document.getElementById('worker-name').value.trim(),
+        profile: document.getElementById('worker-profile').value,
+        pin: document.getElementById('worker-pin').value.trim()
+      };
+      if(refWorkers) refWorkers.child(id).set(wObj);
+      alert("Dipendente salvato con successo!");
+      document.getElementById('worker-name').value = '';
+      document.getElementById('worker-pin').value = '';
     }
 
     function checkAdminAccess() {
@@ -141,21 +361,30 @@
       else if(p !== null) alert("⛔ PIN Errato!");
     }
 
+    function cambiaPinAdmin() {
+      var np = prompt("Inserisci nuovo PIN Admin (4 cifre):");
+      if(np && np.length === 4) {
+        ADMIN_PIN = np;
+        alert("✅ PIN Amministratore aggiornato!");
+      }
+    }
+
     function showTab(tab) {
       document.getElementById('tab-kiosk').classList.add('hidden');
       document.getElementById('tab-logs').classList.add('hidden');
+      document.getElementById('tab-badges').classList.add('hidden');
       document.getElementById('tab-settings').classList.add('hidden');
 
       document.getElementById('nav-kiosk').classList.remove('active');
       document.getElementById('nav-logs').classList.remove('active');
+      document.getElementById('nav-badges').classList.remove('active');
       document.getElementById('nav-settings').classList.remove('active');
 
       document.getElementById('tab-' + tab).classList.remove('hidden');
       document.getElementById('nav-' + tab).classList.add('active');
-    }
 
-    setInterval(aggiornaOrologio, 1000);
-    aggiornaOrologio();
+      if(tab === 'badges') renderBadges();
+    }
   </script>
 </body>
 </html>
