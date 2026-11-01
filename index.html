@@ -6,52 +6,51 @@
   <title>Gestione Oraria ATA - IC Frosinone 2</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: #f1f5f9; color: #0f172a; padding-bottom: 30px; }
+    body { background-color: #f1f5f9; color: #0f172a; padding: 15px; padding-bottom: 30px; }
     
-    header { background: #ffffff; border-bottom: 2px solid #e2e8f0; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-    .brand { font-size: 20px; font-weight: 800; color: #1e3a8a; display: flex; align-items: center; gap: 8px; }
+    header { background: #ffffff; border-bottom: 2px solid #e2e8f0; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .brand { font-size: 18px; font-weight: 800; color: #1e3a8a; }
     nav { display: flex; gap: 8px; }
-    nav button { background: #f8fafc; border: 1px solid #cbd5e1; padding: 10px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; transition: all 0.2s; }
-    nav button:hover { background: #e2e8f0; }
-    nav button.active { background: #2563eb; color: white; border-color: #2563eb; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2); }
+    nav button { background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; }
+    nav button.active { background: #2563eb; color: white; border-color: #2563eb; }
 
-    .container { max-width: 1250px; margin: 25px auto; padding: 0 15px; }
-    .grid-main { display: grid; grid-template-columns: 6.5fr 5.5fr; gap: 20px; }
-    @media (max-width: 900px) { .grid-main { grid-template-columns: 1fr; } }
-
-    .card { background: white; border-radius: 14px; padding: 22px; border: 1px solid #e2e8f0; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .card { background: white; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 15px; }
     
-    .clock-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #f8fafc; padding: 12px 18px; border-radius: 10px; border: 1px solid #e2e8f0; }
-    .time { font-size: 38px; font-weight: 800; color: #1e3a8a; font-family: monospace; }
+    .clock-box { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px 18px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 15px; }
+    .time { font-size: 36px; font-weight: 800; color: #1e3a8a; font-family: monospace; }
     .date { color: #64748b; font-size: 13px; font-weight: 600; text-transform: capitalize; }
 
-    .gps-bar { background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 600; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; }
-    
-    label { display: block; font-size: 11px; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 6px; margin-top: 14px; letter-spacing: 0.5px; }
-    select, input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; outline: none; background: #fff; transition: border-color 0.2s; }
-    select:focus, input:focus { border-color: #2563eb; }
+    label { display: block; font-size: 11px; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 6px; margin-top: 12px; letter-spacing: 0.5px; }
+    select, input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; outline: none; background: #fff; }
 
-    .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
-    .keypad button { padding: 16px; font-size: 20px; font-weight: 800; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; cursor: pointer; transition: background 0.15s; }
+    .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+    .keypad button { padding: 16px; font-size: 20px; font-weight: 800; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; cursor: pointer; }
     .keypad button:active { background: #cbd5e1; }
 
     .btn-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
-    .btn-action { padding: 16px; border: none; border-radius: 10px; color: white; font-weight: 800; font-size: 14px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: transform 0.1s, opacity 0.2s; }
-    .btn-action:active { transform: scale(0.98); }
-    .btn-action:disabled { opacity: 0.35; cursor: not-allowed; filter: grayscale(1); box-shadow: none; }
+    .btn-action { padding: 16px; border: none; border-radius: 10px; color: white; font-weight: 800; font-size: 14px; cursor: pointer; text-transform: uppercase; }
     .btn-in { background: #16a34a; }
     .btn-pause { background: #d97706; }
     .btn-out { background: #dc2626; }
 
-    .sites-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
-    @media (max-width: 600px) { .sites-grid { grid-template-columns: repeat(2, 1fr); } }
+    .log-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+    .badge-tag { padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; color: white; }
+    .badge-entrata { background: #16a34a; }
+    .badge-pausa { background: #d97706; }
+    .badge-uscita { background: #dc2626; }
 
-    .site-card { border: 2px solid #cbd5e1; border-radius: 12px; padding: 12px; cursor: pointer; transition: all 0.2s; position: relative; background: #f8fafc; }
-    .site-card.selected { border-color: #2563eb; background: #eff6ff; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2); }
-    
-    .site-card-pietrobono { border-color: #93c5fd; background: #eff6ff; }
-    .site-card-rinascita { border-color: #86efac; background: #f0fdf4; }
-    .site-card-xxiii { border-color: #fde047; background: #fefce8; }
-    .site-card-verdi { border-color: #c084fc; background: #faf5ff; }
-    .site-card-pinocchio { border-color: #f472b6; background: #fdf2f8; }
-    .site-card-spinelli { border-color: #fdba74; background
+    .hidden { display: none !important; }
+  </style>
+
+  <!-- DIPENDENZA UNICA E LEGGERA: FIREBASE -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body onclick="initAudioContext()">
+
+  <div class="container">
+    <header>
+      <div class="brand">🏛️ IC Frosinone 2 - Gestione ATA</div>
+      <nav>
+        <button id="nav-kiosk" class="active" onclick="showTab('k
