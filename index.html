@@ -57,4 +57,90 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
     <button onclick="apriFormBacheca()" style="background:#f59e0b; color:white; border:0; border-radius:8px; padding:6px 12px; font-size:11px; font-weight:800">➕ Nuovo Avviso (PIN)</button>
   </div>
   <div id="bachecaList" style="max-height:140px; overflow:auto; font-size:12px; color:#334155">
-    ⏳ Caricamento avvisi dalla bacheca
+    ⏳ Caricamento avvisi dalla bacheca...
+  </div>
+</div>
+
+<div class="box-combinato">
+<div class="left-plessi">
+<b>📍 6 Plessi</b>
+<div id="gridPlessi" class="grid-plessi"></div>
+<div style="margin-top:10px; padding:8px; background:#f0fdf4; border:2.5px dashed #16a34a; border-radius:10px; text-align:center">
+<b>🏠 Casa Test</b><br>
+<button onclick="aggiungiCasaDaGPS()" style="background:#16a34a; color:white; border:0; border-radius:8px; padding:6px 12px; font-weight:800; margin:4px">📍 Usa mia posizione come Casa</button>
+<button onclick="rimuoviCasa()" id="btnRimuoviCasa" style="display:none; background:#ef4444; color:white; border:0; border-radius:8px; padding:6px 12px; font-weight:800; margin:4px">❌ Rimuovi Casa</button>
+<div id="casaStatus" style="font-size:11px; margin-top:4px"></div>
+</div>
+</div>
+<div class="right-gps">
+<div><b>📡 GPS</b> <span id="badgeStato" class="badge-rosso">GPS NON ATTIVO</span> <span id="precTop" style="font-size:11px; background:white; padding:2px 6px; border-radius:999px; border:1px solid #cbd5e1">--</span></div>
+<div id="vicinoBox" style="font-size:13px; font-weight:800; margin-top:6px">⏳ Clicca Aggiorna GPS e consenti posizione</div>
+<div id="listaDistanze" style="margin-top:6px"></div>
+<div id="coordBox" style="font-size:11px; color:#334155; background:white; padding:6px; border-radius:8px; border:1px solid #e2e8f0; margin-top:6px; text-align:center">Clicca Aggiorna GPS - Serve HTTPS e permesso Posizione</div>
+<div style="text-align:center; margin-top:8px">
+<button onclick="attivaGPS()" style="background:#0ea5e9; color:white; border:0; border-radius:8px; padding:10px 18px; font-weight:800; font-size:13px">📍 Aggiorna GPS</button>
+</div>
+</div>
+</div>
+
+<div id="bloccoBox" class="red-banner">⏳ Attendi GPS...</div>
+<div id="okBox" class="green-banner" style="display:none">✅ Sei dentro il plesso - Puoi timbrare</div>
+
+<div class="bottom-grid">
+<div class="card-timbra">
+<b>📷 Scanner + Timbratura</b>
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:8px 0">
+<button class="btn btn-gray" id="btnContinuo" onclick="avviaContinuo()">📷 Continuo</button>
+<button class="btn btn-dark" id="btnSingolo" onclick="avviaSingolo()">📷 Singola</button>
+</div>
+<div style="display:flex; gap:6px">
+<button class="btn" style="background:#64748b; display:none; flex:1" id="stopBtn" onclick="fermaScanner()">⏹️ Ferma</button>
+<button class="btn" style="background:#0ea5e9; color:white; display:none; flex:1" id="switchBtn" onclick="switchCamera()">🔄 Cambia Camera</button>
+</div>
+<div id="reader" style="width:100%; max-width:420px; margin:8px auto; border-radius:12px; overflow:hidden; display:none; border:3px solid #7c3aed"></div>
+<div id="qrResult" style="font-size:13px; text-align:center; font-weight:800; padding:4px"></div>
+<div id="ultimoScansionato" style="font-size:12px; background:#f0fdf4; padding:8px; border-radius:8px; text-align:center; border:2px solid #16a34a; font-weight:700">Nessuna scansione</div>
+
+<div style="border:2.5px solid #0ea5e9; border-radius:12px; padding:10px; background:#f0f9ff; margin-top:10px">
+<b>📋 Timbratura manuale</b>
+<select id="dipendente" class="select-big" style="margin-top:6px"><option>⏳ Caricamento...</option></select>
+<div id="orarioGiornoBox" style="background:#e0f2fe; border:2px solid #0ea5e9; border-radius:8px; padding:8px; margin:6px 0; font-size:13px; text-align:center; font-weight:700">Oggi: --</div>
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px">
+<button class="btn btn-entrata" id="btnEntrata" onclick="timbra('ENTRATA')">🟢 ENTRATA</button>
+<button class="btn btn-uscita" id="btnUscita" onclick="timbra('USCITA')">🔴 USCITA</button>
+</div>
+<div style="text-align:center; margin-top:8px">
+<button class="btn" style="background:#7c3aed; color:white; width:auto; padding:8px 14px" onclick="generaSchedeConQR()">📇 Badge con QR - 32 dip (QR VERI)</button>
+<button class="btn" style="background:#0ea5e9; color:white; width:auto; padding:8px 14px; margin-left:4px" onclick="generaResocontoDareAvere()">📊 Resoconto DARE/AVERE</button>
+</div>
+</div>
+
+<div style="margin-top:10px; background:white; border:2px solid #cbd5e1; border-radius:10px; padding:8px">
+<b>📜 Log timbrature (ultime 50)</b>
+<div id="log" style="max-height:300px; overflow:auto; margin-top:6px"></div>
+</div>
+</div>
+
+<div class="card-white">
+<b>👤 Anagrafica - Area protetta</b>
+<div style="background:#fffbeb; border:2px solid #fbbf24; border-radius:10px; padding:8px; margin:6px 0; display:flex; gap:6px">
+<input id="pinAnag" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Inserisci PIN" style="flex:1; padding:8px; border:2px solid #fbbf24; border-radius:8px" onkeydown="if(event.key==='Enter') sbloccaAnag()">
+<button onclick="sbloccaAnag()" style="background:#f59e0b; color:white; border:0; border-radius:8px; padding:8px 14px; font-weight:800">🔓 Sblocca</button>
+<button onclick="bloccaPIN()" style="background:#64748b; color:white; border:0; border-radius:8px; padding:8px 12px">🔒</button>
+</div>
+<div id="areaAnag" style="display:none">
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:6px">
+<input id="nomeAnag" placeholder="Nome e cognome" style="padding:8px; border:1.5px solid #cbd5e1; border-radius:8px">
+<select id="plessoAnagrafica" style="padding:8px; border:1.5px solid #cbd5e1; border-radius:8px"></select>
+</div>
+<input id="qualificaAnag" placeholder="Qualifica" style="width:100%; padding:8px; border:1.5px solid #cbd5e1; border-radius:8px; margin-top:6px; box-sizing:border-box">
+<button onclick="aggiungiAnagrafica()" style="background:#16a34a; color:white; border:0; border-radius:8px; padding:8px; font-weight:800; width:100%; margin-top:6px">➕ Aggiungi / Aggiorna</button>
+<div id="tabellaOrari" style="margin-top:8px"></div>
+</div>
+
+<div style="margin-top:12px; border:2.5px solid #0ea5e9; border-radius:12px; padding:10px; background:white; text-align:center">
+<b>🪪 Badge Personale - QR GRANDE 140px</b>
+<div id="badgeCartaBox" class="badge-carta" style="display:none">
+<div class="badge-carta-left">
+<img id="badgeFoto" class="badge-foto" style="display:none">
+<div id="badgeFotoPlaceholder" style="width:60px; height:74px; background:#
