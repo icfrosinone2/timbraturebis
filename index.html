@@ -341,7 +341,7 @@ function attivaGPS(){
   try{ navigator.geolocation.getCurrentPosition(success, error, {enableHighAccuracy:true, timeout:30000, maximumAge:0}); }catch(ex){ if(box) box.innerHTML='❌ Eccezione: '+ex.message; }
 }
 
-// QR SCANNER
+// QR SCANNER CON ENTRAMBE LE CAMERE
 function avviaScanner(opts){
   const reader=document.getElementById('reader'); 
   if(!reader){ alert('Reader non trovato'); return; }
@@ -352,7 +352,7 @@ function avviaScanner(opts){
   if(switchBtn) switchBtn.style.display='block';
   if(html5Qr){ try{ html5Qr.stop(); }catch(e){} }
   html5Qr=new Html5Qrcode("reader");
-  html5Qr.start(opts||{facingMode:"environment"}, {fps:15, qrbox:{width:300, height:300}}, (decoded)=>{
+  html5Qr.start(opts||{facingMode:currentFacing}, {fps:15, qrbox:{width:300, height:300}}, (decoded)=>{
     const ora=Date.now(); if(decoded===ultimoQR && (ora-ultimoTempo<2000)) return;
     ultimoQR=decoded; ultimoTempo=ora;
     var qrResultEl=document.getElementById('qrResult');
@@ -371,13 +371,16 @@ function avviaScanner(opts){
   }, (err)=>{}).catch(e=>{ var qrResultEl=document.getElementById('qrResult'); if(qrResultEl) qrResultEl.innerHTML='❌ Errore camera: '+e; });
 }
 
-function avviaContinuo(){ avviaScanner({facingMode:"environment"}); }
-function avviaSingolo(){ avviaScanner({facingMode:"environment"}); }
+function avviaContinuo(){ avviaScanner({facingMode:currentFacing}); }
+function avviaSingolo(){ avviaScanner({facingMode:currentFacing}); }
 function fermaScanner(){ 
   if(html5Qr){ try{ html5Qr.stop().then(()=>{ document.getElementById('reader').style.display='none'; document.getElementById('stopBtn').style.display='none'; document.getElementById('switchBtn').style.display='none'; }); }catch(e){} }
   else { document.getElementById('reader').style.display='none'; }
 }
-function switchCamera(){ currentFacing = currentFacing==='environment' ? 'user' : 'environment'; avviaScanner({facingMode: currentFacing}); }
+function switchCamera(){ 
+  currentFacing = currentFacing==='environment' ? 'user' : 'environment'; 
+  avviaScanner({facingMode: currentFacing}); 
+}
 
 // TIMBRATURE
 function timbra(tipo){
@@ -456,9 +459,8 @@ function eliminaTimbratura(idx){
 }
 
 function eliminaTutteTimbratureProva(){
-  if(!confirm('Eliminare TUTTE le prove (Casa Test, Test Cloud) locali + cloud?')) return;
   var pin=prompt('Scrivi ELIMINA 211285 per confermare');
-  if(pin!=='ELIMINA 211285'){ alert('Annullato'); return; }
+  if(pin!=='ELIMINA 211285'){ alert('Conferma annullata (scrivi esattamente ELIMINA 211285)'); return; }
   var prima = timbratureSalvate.length;
   timbratureSalvate=timbratureSalvate.filter(function(t){ return (t.plesso||'').indexOf('Casa Test')<0 && (t.plesso||'').indexOf('Test')<0 && t.nome!=='Test Cloud'; });
   var eliminateLocali = prima - timbratureSalvate.length;
@@ -653,7 +655,6 @@ function sbloccaAnag(){
   var area=document.getElementById('areaAnag');
   if(!area) return;
   area.style.display='block'; 
-  pinEl.value=''; 
   try{ render(); filtraElenco(); }catch(e){}
   alert('✅ Anagrafica SBLOCCATA!');
 }
