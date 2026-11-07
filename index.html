@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IC Frosinone 2 - V127 - LOG CONDIVISO + BACHECA DIGITALE</title>
+<title>IC Frosinone 2 - V128 - LOG CONDIVISO + BACHECA DIGITALE</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -46,7 +46,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <body>
 
 <div class="top-verde">
-<div class="top-left"><b>✅ IC FROSINONE 2 - V127 - LOG CONDIVISO & BACHECA DIGITALE</b><br><small>GPS attivo - Scanner QR HD - Sincronizzazione cloud in tempo reale</small></div>
+<div class="top-left"><b>✅ IC FROSINONE 2 - V128 - LOG CONDIVISO & BACHECA DIGITALE</b><br><small>GPS attivo - Scanner QR HD - Sincronizzazione cloud in tempo reale</small></div>
 <div class="top-right"><div class="istituto">Istituto Comprensivo<br>Frosinone 2°</div></div>
 </div>
 
@@ -56,7 +56,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
     <b>📢 Bacheca Avvisi e Circolari (Condivisa)</b>
     <button onclick="apriFormBacheca()" style="background:#f59e0b; color:white; border:0; border-radius:8px; padding:6px 12px; font-size:11px; font-weight:800">➕ Nuovo Avviso (PIN)</button>
   </div>
-  <div id="bachecaList" style="max-height:140px; overflow:auto; font-size:12px; color:#334155">
+  <div id="bachecaList" style="max-height:160px; overflow:auto; font-size:12px; color:#334155">
     ⏳ Caricamento avvisi dalla bacheca...
   </div>
 </div>
@@ -859,7 +859,9 @@ async function salvaCondivisa(t){
   }catch(e){}
 }
 
-// Sincronizzazione Bacheca Avvisi
+// Sincronizzazione Bacheca Avvisi con Modifica ed Eliminazione
+let bachecaFirebaseKeys = {};
+
 async function caricaBacheca(){
   try{
     let val = await fetchWithFallback("/bacheca.json");
@@ -867,19 +869,34 @@ async function caricaBacheca(){
     if(!bachecaDiv) return;
     
     if(val){
-      let arr = Array.isArray(val) ? val : Object.values(val);
-      arr = arr.filter(x => x && x.testo);
+      bachecaFirebaseKeys = {};
+      let keys = Object.keys(val);
+      let arr = [];
+      keys.forEach(k => {
+        if(val[k] && val[k].testo){
+          bachecaFirebaseKeys[val[k].timestamp] = k;
+          arr.push(val[k]);
+        }
+      });
+      
       arr.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
       bachecaMessaggi = arr;
       
       let html = '';
-      bachecaMessaggi.forEach((m, idx) => {
-        html += `<div style="background:#fffbeb; border-left:3px solid #f59e0b; padding:6px 8px; margin-bottom:4px; border-radius:6px">
-          <div style="display:flex; justify-content:space-between; font-size:10px; color:#94a3b8">
-            <b>${m.autore || 'Dirigenza / Segreteria'}</b><span>${m.data || ''}</span>
+      bachecaMessaggi.forEach((m) => {
+        let ts = m.timestamp;
+        html += `<div style="background:#fffbeb; border-left:3px solid #f59e0b; padding:6px 8px; margin-bottom:6px; border-radius:6px; display:flex; justify-content:space-between; align-items:flex-start; gap:6px">
+          <div style="flex:1">
+            <div style="display:flex; justify-content:space-between; font-size:10px; color:#94a3b8">
+              <b>${m.autore || 'Dirigenza / Segreteria'}</b><span>${m.data || ''}</span>
+            </div>
+            <div style="font-weight:700; color:#1e293b; margin-top:2px">${m.titolo || 'Avviso'}</div>
+            <div style="font-size:11px; color:#475569">${m.testo}</div>
           </div>
-          <div style="font-weight:700; color:#1e293b; margin-top:2px">${m.titolo || 'Avviso'}</div>
-          <div style="font-size:11px; color:#475569">${m.testo}</div>
+          <div style="display:flex; gap:4px; flex-shrink:0">
+            <button onclick="modificaAvvisoBacheca(${ts})" style="background:#f59e0b; color:white; border:0; border-radius:4px; padding:4px 6px; font-size:10px; font-weight:800; cursor:pointer">Mod</button>
+            <button onclick="eliminaAvvisoBacheca(${ts})" style="background:#ef4444; color:white; border:0; border-radius:4px; padding:4px 6px; font-size:10px; font-weight:800; cursor:pointer">Del</button>
+          </div>
         </div>`;
       });
       bachecaDiv.innerHTML = html || '<div style="color:#94a3b8; text-align:center">Nessun avviso in bacheca</div>';
@@ -921,6 +938,64 @@ async function pubblicaAvvisoCloud(avviso){
     caricaBacheca();
   }catch(e){
     alert("Errore di pubblicazione: " + e.message);
+  }
+}
+
+async function modificaAvvisoBacheca(ts){
+  var pin = prompt("Inserisci il PIN per modificare l'avviso (211285):");
+  if(pin !== "211285"){ alert("PIN errato!"); return; }
+  
+  var avviso = bachecaMessaggi.find(function(m){ return m.timestamp === ts; });
+  if(!avviso) return;
+  
+  var nuovoTitolo = prompt("Modifica titolo:", avviso.titolo);
+  if(nuovoTitolo === null) return;
+  var nuovoTesto = prompt("Modifica testo:", avviso.testo);
+  if(nuovoTesto === null) return;
+  
+  avviso.titolo = nuovoTitolo;
+  avviso.testo = nuovoTesto;
+  
+  var firebaseKey = bachecaFirebaseKeys[ts];
+  if(firebaseKey){
+    try{
+      await fetch(DB_URL + "/bacheca/" + firebaseKey + ".json", {
+        method: "PUT",
+        body: JSON.stringify(avviso),
+        headers: {"Content-Type":"application/json"}
+      });
+      alert("✅ Avviso modificato con successo!");
+      caricaBacheca();
+    }catch(e){
+      alert("Errore modifica: " + e.message);
+    }
+  } else {
+    alert("Chiave cloud non trovata");
+  }
+}
+
+async function eliminaAvvisoBacheca(ts){
+  var pin = prompt("Inserisci il PIN per eliminare l'avviso (211285):");
+  if(pin !== "211285"){ alert("PIN errato!"); return; }
+  
+  var avviso = bachecaMessaggi.find(function(m){ return m.timestamp === ts; });
+  if(!avviso) return;
+  
+  if(!confirm("Eliminare l'avviso:\n\n" + avviso.titolo + "?")) return;
+  
+  var firebaseKey = bachecaFirebaseKeys[ts];
+  if(firebaseKey){
+    try{
+      await fetch(DB_URL + "/bacheca/" + firebaseKey + ".json", {
+        method: "DELETE"
+      });
+      alert("✅ Avviso eliminato!");
+      caricaBacheca();
+    }catch(e){
+      alert("Errore eliminazione: " + e.message);
+    }
+  } else {
+    alert("Chiave cloud non trovata");
   }
 }
 
