@@ -46,7 +46,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <body>
 
 <div class="top-verde">
-<div class="top-left"><b>✅ IC FROSINONE 2 - V124 - LOG CONDIVISO & BACHECA DIGITALE</b><br><small>GPS attivo - Scanner QR HD - Sincronizzazione cloud in tempo reale</small></div>
+<div class="top-left"><b>✅ IC FROSINONE 2 - V126 - LOG CONDIVISO & BACHECA DIGITALE</b><br><small>GPS attivo - Scanner QR HD - Sincronizzazione cloud in tempo reale</small></div>
 <div class="top-right"><div class="istituto">Istituto Comprensivo<br>Frosinone 2°</div></div>
 </div>
 
@@ -123,7 +123,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <div class="card-white">
 <b>👤 Anagrafica - Area protetta</b>
 <div style="background:#fffbeb; border:2px solid #fbbf24; border-radius:10px; padding:8px; margin:6px 0; display:flex; gap:6px">
-<input id="pinAnag" type="password" autocomplete="current-password" value="211285" style="flex:1; padding:8px; border:2px solid #fbbf24; border-radius:8px" onkeydown="if(event.key==='Enter') sbloccaAnag()">
+<input id="pinAnag" type="password" autocomplete="new-password" placeholder="Inserisci PIN" style="flex:1; padding:8px; border:2px solid #fbbf24; border-radius:8px" onkeydown="if(event.key==='Enter') sbloccaAnag()">
 <button onclick="sbloccaAnag()" style="background:#f59e0b; color:white; border:0; border-radius:8px; padding:8px 14px; font-weight:800">🔓 Sblocca</button>
 <button onclick="bloccaPIN()" style="background:#64748b; color:white; border:0; border-radius:8px; padding:8px 12px">🔒</button>
 </div>
@@ -698,6 +698,8 @@ function sbloccaAnag(){
 function bloccaPIN(){ 
   var area=document.getElementById('areaAnag'); 
   if(area) area.style.display='none'; 
+  var pinEl=document.getElementById('pinAnag'); 
+  if(pinEl) pinEl.value=''; 
 }
 
 function creaBadgeDa(nome){
