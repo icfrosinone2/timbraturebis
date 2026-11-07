@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IC Frosinone 2 - V124 - LOG CONDIVISO + BACHECA DIGITALE</title>
+<title>IC Frosinone 2 - V127 - LOG CONDIVISO + BACHECA DIGITALE</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -46,7 +46,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <body>
 
 <div class="top-verde">
-<div class="top-left"><b>✅ IC FROSINONE 2 - V126 - LOG CONDIVISO & BACHECA DIGITALE</b><br><small>GPS attivo - Scanner QR HD - Sincronizzazione cloud in tempo reale</small></div>
+<div class="top-left"><b>✅ IC FROSINONE 2 - V127 - LOG CONDIVISO & BACHECA DIGITALE</b><br><small>GPS attivo - Scanner QR HD - Sincronizzazione cloud in tempo reale</small></div>
 <div class="top-right"><div class="istituto">Istituto Comprensivo<br>Frosinone 2°</div></div>
 </div>
 
@@ -123,7 +123,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <div class="card-white">
 <b>👤 Anagrafica - Area protetta</b>
 <div style="background:#fffbeb; border:2px solid #fbbf24; border-radius:10px; padding:8px; margin:6px 0; display:flex; gap:6px">
-<input id="pinAnag" type="password" autocomplete="new-password" placeholder="Inserisci PIN" style="flex:1; padding:8px; border:2px solid #fbbf24; border-radius:8px" onkeydown="if(event.key==='Enter') sbloccaAnag()">
+<input id="pinAnag" type="password" autocomplete="off" placeholder="Inserisci PIN" style="flex:1; padding:8px; border:2px solid #fbbf24; border-radius:8px" onkeydown="if(event.key==='Enter') sbloccaAnag()">
 <button onclick="sbloccaAnag()" style="background:#f59e0b; color:white; border:0; border-radius:8px; padding:8px 14px; font-weight:800">🔓 Sblocca</button>
 <button onclick="bloccaPIN()" style="background:#64748b; color:white; border:0; border-radius:8px; padding:8px 12px">🔒</button>
 </div>
@@ -341,7 +341,7 @@ function attivaGPS(){
   try{ navigator.geolocation.getCurrentPosition(success, error, {enableHighAccuracy:true, timeout:30000, maximumAge:0}); }catch(ex){ if(box) box.innerHTML='❌ Eccezione: '+ex.message; }
 }
 
-// QR SCANNER OTTIMIZZATO SENZA CONTINUO
+// QR SCANNER ROBUSTO
 async function avviaScanner(){
   const reader=document.getElementById('reader'); 
   if(!reader){ alert('Reader non trovato'); return; }
