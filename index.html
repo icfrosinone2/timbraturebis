@@ -89,9 +89,8 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <div class="bottom-grid">
 <div class="card-timbra">
 <b>📷 Scanner + Timbratura</b>
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:8px 0">
-<button class="btn btn-gray" id="btnContinuo" onclick="avviaContinuo()">📷 Continuo</button>
-<button class="btn btn-dark" id="btnSingolo" onclick="avviaSingolo()">📷 Singola</button>
+<div style="margin:8px 0">
+<button class="btn btn-dark" onclick="avviaScanner()">📷 Avvia Fotocamera</button>
 </div>
 <div style="display:flex; gap:6px">
 <button class="btn" style="background:#64748b; display:none; flex:1" id="stopBtn" onclick="fermaScanner()">⏹️ Ferma</button>
@@ -124,7 +123,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <div class="card-white">
 <b>👤 Anagrafica - Area protetta</b>
 <div style="background:#fffbeb; border:2px solid #fbbf24; border-radius:10px; padding:8px; margin:6px 0; display:flex; gap:6px">
-<input id="pinAnag" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Inserisci PIN" style="flex:1; padding:8px; border:2px solid #fbbf24; border-radius:8px" onkeydown="if(event.key==='Enter') sbloccaAnag()">
+<input id="pinAnag" type="password" autocomplete="current-password" value="211285" style="flex:1; padding:8px; border:2px solid #fbbf24; border-radius:8px" onkeydown="if(event.key==='Enter') sbloccaAnag()">
 <button onclick="sbloccaAnag()" style="background:#f59e0b; color:white; border:0; border-radius:8px; padding:8px 14px; font-weight:800">🔓 Sblocca</button>
 <button onclick="bloccaPIN()" style="background:#64748b; color:white; border:0; border-radius:8px; padding:8px 12px">🔒</button>
 </div>
@@ -242,7 +241,6 @@ function getOrarioPerOggi(a){
   return {slots: slots, settimana: 'fissa', num: getNumeroSettimanaISO(new Date())};
 }
 
-let currentFacing='environment';
 let availableCameras=[];
 let currentCameraIndex=0;
 
@@ -258,19 +256,19 @@ function renderPlessiUI(){
 }
 function beep(){ try{ const ctx=new (window.AudioContext||window.webkitAudioContext)(); const o=ctx.createOscillator(); o.frequency.value=880; o.connect(ctx.destination); o.start(); setTimeout(()=>o.stop(),150);}catch(e){} }
 function aggiornaUIBlocco(){
-  const btnE=document.getElementById('btnEntrata'), btnU=document.getElementById('btnUscita'), btnC=document.getElementById('btnContinuo'), btnS=document.getElementById('btnSingolo');
+  const btnE=document.getElementById('btnEntrata'), btnU=document.getElementById('btnUscita');
   const blocco=document.getElementById('bloccoBox'), ok=document.getElementById('okBox'), badge=document.getElementById('badgeStato');
   if(!blocco||!ok||!badge) return;
   if(dentro){ 
-    if(btnE) btnE.disabled=false; if(btnU) btnU.disabled=false; if(btnC) btnC.disabled=false; if(btnS) btnS.disabled=false;
+    if(btnE) btnE.disabled=false; if(btnU) btnU.disabled=false;
     blocco.style.display='none'; ok.style.display='block'; ok.innerHTML='✅ Sei dentro il plesso - Puoi timbrare'; badge.textContent='GPS ATTIVO - DENTRO'; badge.style.background='#16a34a';
   } else { 
     let isGrace = lastDentroTime && (Date.now()-lastDentroTime < 60000);
     if(isGrace){
-      if(btnE) btnE.disabled=false; if(btnU) btnU.disabled=false; if(btnC) btnC.disabled=false; if(btnS) btnS.disabled=false;
+      if(btnE) btnE.disabled=false; if(btnU) btnU.disabled=false;
       blocco.style.display='none'; ok.style.display='block'; ok.style.background='#f59e0b'; ok.innerHTML='⚠️ GPS perso da '+Math.round((Date.now()-lastDentroTime)/1000)+'s ma eri dentro - puoi ancora timbrare 60s'; badge.textContent='GPS GRACE - DENTRO 60s'; badge.style.background='#f59e0b';
     } else {
-      if(btnE) btnE.disabled=true; if(btnU) btnU.disabled=true; if(btnC) btnC.disabled=true; if(btnS) btnS.disabled=true;
+      if(btnE) btnE.disabled=true; if(btnU) btnU.disabled=true;
       blocco.style.display='block'; ok.style.display='none'; 
       if(last){ badge.textContent='GPS ATTIVO - FUORI'; badge.style.background='#ef4444'; blocco.innerHTML='⛔ Sei FUORI dal plesso ('+ (vicino?vicino.n+' '+Math.round(dist(last.coords.latitude,last.coords.longitude,vicino.lat,vicino.lon))+'m':'') +') - Avvicinati (150m)'; }
       else { badge.textContent='GPS NON ATTIVO - attendi'; badge.style.background='#64748b'; blocco.innerHTML='⏳ GPS non attivo - clicca 📍 Aggiorna GPS - Consenti posizione nel browser'; }
@@ -343,7 +341,7 @@ function attivaGPS(){
   try{ navigator.geolocation.getCurrentPosition(success, error, {enableHighAccuracy:true, timeout:30000, maximumAge:0}); }catch(ex){ if(box) box.innerHTML='❌ Eccezione: '+ex.message; }
 }
 
-// QR SCANNER ROBUSTO CON DOPPIA CAMERA (ID O FACING)
+// QR SCANNER OTTIMIZZATO SENZA CONTINUO
 async function avviaScanner(){
   const reader=document.getElementById('reader'); 
   if(!reader){ alert('Reader non trovato'); return; }
@@ -385,7 +383,6 @@ async function avviaScanner(){
     if(dipEl){ dipEl.value=nomeTrovato; try{ mostraOrario(); }catch(e){} }
     setTimeout(()=>{ fermaScanner(); }, 1000);
   }, (err)=>{}).catch(e=>{
-    // Fallback automatico su facingMode se fallisce l'ID specifico
     html5Qr.start({facingMode: "environment"}, {fps:15, qrbox:{width:300, height:300}}, (decoded)=>{
       const ora=Date.now(); if(decoded===ultimoQR && (ora-ultimoTempo<2000)) return;
       ultimoQR=decoded; ultimoTempo=ora;
@@ -409,8 +406,6 @@ async function avviaScanner(){
   });
 }
 
-function avviaContinuo(){ avviaScanner(); }
-function avviaSingolo(){ avviaScanner(); }
 function fermaScanner(){ 
   if(html5Qr){ try{ html5Qr.stop().then(()=>{ document.getElementById('reader').style.display='none'; document.getElementById('stopBtn').style.display='none'; document.getElementById('switchBtn').style.display='none'; }); }catch(e){} }
   else { document.getElementById('reader').style.display='none'; }
@@ -420,7 +415,6 @@ function switchCamera(){
     currentCameraIndex = (currentCameraIndex + 1) % availableCameras.length;
     avviaScanner();
   } else {
-    currentFacing = currentFacing==='environment' ? 'user' : 'environment';
     avviaScanner();
   }
 }
@@ -704,8 +698,6 @@ function sbloccaAnag(){
 function bloccaPIN(){ 
   var area=document.getElementById('areaAnag'); 
   if(area) area.style.display='none'; 
-  var pinEl=document.getElementById('pinAnag'); 
-  if(pinEl) pinEl.value=''; 
 }
 
 function creaBadgeDa(nome){
@@ -938,7 +930,6 @@ setInterval(()=>{
 
 window.addEventListener('load', ()=>{ 
   mostraProveNascoste=false; 
-  try{ bloccaPIN(); }catch(e){}
   renderPlessiUI();
   try{ loadAnag(); }catch(e){}
   try{ aggiornaLog(); }catch(e){}
