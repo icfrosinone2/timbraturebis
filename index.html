@@ -243,6 +243,8 @@ function getOrarioPerOggi(a){
 }
 
 let currentFacing='environment';
+let availableCameras=[];
+let currentCameraIndex=0;
 
 function renderPlessiUI(){
   const grid=document.getElementById('gridPlessi'); if(!grid) return; grid.innerHTML='';
@@ -341,8 +343,8 @@ function attivaGPS(){
   try{ navigator.geolocation.getCurrentPosition(success, error, {enableHighAccuracy:true, timeout:30000, maximumAge:0}); }catch(ex){ if(box) box.innerHTML='❌ Eccezione: '+ex.message; }
 }
 
-// QR SCANNER CON ENTRAMBE LE CAMERE
-function avviaScanner(opts){
+// QR SCANNER ROBUSTO CON DOPPIA CAMERA (ID O FACING)
+async function avviaScanner(){
   const reader=document.getElementById('reader'); 
   if(!reader){ alert('Reader non trovato'); return; }
   reader.style.display='block';
@@ -350,9 +352,23 @@ function avviaScanner(opts){
   var switchBtn=document.getElementById('switchBtn');
   if(stopBtn) stopBtn.style.display='block'; 
   if(switchBtn) switchBtn.style.display='block';
-  if(html5Qr){ try{ html5Qr.stop(); }catch(e){} }
+  
+  if(html5Qr){ try{ await html5Qr.stop(); }catch(e){} }
   html5Qr=new Html5Qrcode("reader");
-  html5Qr.start(opts||{facingMode:currentFacing}, {fps:15, qrbox:{width:300, height:300}}, (decoded)=>{
+
+  try {
+    availableCameras = await Html5Qrcode.getCameras();
+  } catch(e) {
+    availableCameras = [];
+  }
+
+  let configCamera = {facingMode: "environment"};
+  if(availableCameras && availableCameras.length > 0) {
+    if(currentCameraIndex >= availableCameras.length) currentCameraIndex = 0;
+    configCamera = availableCameras[currentCameraIndex].id;
+  }
+
+  html5Qr.start(configCamera, {fps:15, qrbox:{width:300, height:300}}, (decoded)=>{
     const ora=Date.now(); if(decoded===ultimoQR && (ora-ultimoTempo<2000)) return;
     ultimoQR=decoded; ultimoTempo=ora;
     var qrResultEl=document.getElementById('qrResult');
@@ -368,18 +384,45 @@ function avviaScanner(opts){
     var dipEl=document.getElementById('dipendente');
     if(dipEl){ dipEl.value=nomeTrovato; try{ mostraOrario(); }catch(e){} }
     setTimeout(()=>{ fermaScanner(); }, 1000);
-  }, (err)=>{}).catch(e=>{ var qrResultEl=document.getElementById('qrResult'); if(qrResultEl) qrResultEl.innerHTML='❌ Errore camera: '+e; });
+  }, (err)=>{}).catch(e=>{
+    // Fallback automatico su facingMode se fallisce l'ID specifico
+    html5Qr.start({facingMode: "environment"}, {fps:15, qrbox:{width:300, height:300}}, (decoded)=>{
+      const ora=Date.now(); if(decoded===ultimoQR && (ora-ultimoTempo<2000)) return;
+      ultimoQR=decoded; ultimoTempo=ora;
+      var qrResultEl=document.getElementById('qrResult');
+      var ultimoEl=document.getElementById('ultimoScansionato');
+      if(qrResultEl) qrResultEl.innerHTML='✅ Letto: '+decoded;
+      if(ultimoEl) ultimoEl.innerHTML='✅ '+decoded+' @ '+new Date().toLocaleTimeString();
+      beep();
+      let nomeTrovato=null;
+      let decodedNome = decoded.split('|')[0].trim();
+      for(let a of anagrafiche){ if(decodedNome.toLowerCase()===a.nome.toLowerCase()){ nomeTrovato=a.nome; break; } }
+      if(!nomeTrovato){ for(let a of anagrafiche){ if(decoded.toLowerCase().includes(a.nome.toLowerCase()) || a.nome.toLowerCase().includes(decodedNome.toLowerCase())){ nomeTrovato=a.nome; break; } } }
+      if(!nomeTrovato) nomeTrovato=decodedNome;
+      var dipEl=document.getElementById('dipendente');
+      if(dipEl){ dipEl.value=nomeTrovato; try{ mostraOrario(); }catch(e){} }
+      setTimeout(()=>{ fermaScanner(); }, 1000);
+    }, (err)=>{}).catch(err2=>{
+      var qrResultEl=document.getElementById('qrResult');
+      if(qrResultEl) qrResultEl.innerHTML='❌ Errore camera: '+err2;
+    });
+  });
 }
 
-function avviaContinuo(){ avviaScanner({facingMode:currentFacing}); }
-function avviaSingolo(){ avviaScanner({facingMode:currentFacing}); }
+function avviaContinuo(){ avviaScanner(); }
+function avviaSingolo(){ avviaScanner(); }
 function fermaScanner(){ 
   if(html5Qr){ try{ html5Qr.stop().then(()=>{ document.getElementById('reader').style.display='none'; document.getElementById('stopBtn').style.display='none'; document.getElementById('switchBtn').style.display='none'; }); }catch(e){} }
   else { document.getElementById('reader').style.display='none'; }
 }
 function switchCamera(){ 
-  currentFacing = currentFacing==='environment' ? 'user' : 'environment'; 
-  avviaScanner({facingMode: currentFacing}); 
+  if(availableCameras && availableCameras.length > 1){
+    currentCameraIndex = (currentCameraIndex + 1) % availableCameras.length;
+    avviaScanner();
+  } else {
+    currentFacing = currentFacing==='environment' ? 'user' : 'environment';
+    avviaScanner();
+  }
 }
 
 // TIMBRATURE
