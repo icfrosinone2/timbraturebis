@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IC Frosinone 2 - V128 - LOG CONDIVISO + BACHECA DIGITALE</title>
+<title>IC Frosinone 2 - V130 - LOG CONDIVISO + BACHECA DIGITALE</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -46,7 +46,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <body>
 
 <div class="top-verde">
-<div class="top-left"><b>✅ IC FROSINONE 2 - V128 - LOG CONDIVISO & BACHECA DIGITALE</b><br><small>GPS attivo - Scanner QR HD - Sincronizzazione cloud in tempo reale</small></div>
+<div class="top-left"><b>✅ IC FROSINONE 2 - V130 - LOG CONDIVISO & BACHECA DIGITALE</b><br><small>GPS attivo - Scanner QR HD - Sincronizzazione cloud in tempo reale</small></div>
 <div class="top-right"><div class="istituto">Istituto Comprensivo<br>Frosinone 2°</div></div>
 </div>
 
@@ -98,12 +98,12 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 </div>
 <div id="reader" style="width:100%; max-width:420px; margin:8px auto; border-radius:12px; overflow:hidden; display:none; border:3px solid #7c3aed"></div>
 <div id="qrResult" style="font-size:13px; text-align:center; font-weight:800; padding:4px"></div>
-<div id="ultimoScansionato" style="font-size:12px; background:#f0fdf4; padding:8px; border-radius:8px; text-align:center; border:2px solid #16a34a; font-weight:700">Nessuna scansione</div>
+<div id="ultimoScansionato" style="font-size:12px; background:#f0fdf4; padding:8px; border-radius:8px; text-align:center; border:2.5px solid #16a34a; font-weight:700">Nessuna scansione</div>
 
 <div style="border:2.5px solid #0ea5e9; border-radius:12px; padding:10px; background:#f0f9ff; margin-top:10px">
 <b>📋 Timbratura manuale</b>
 <select id="dipendente" class="select-big" style="margin-top:6px"><option>⏳ Caricamento...</option></select>
-<div id="orarioGiornoBox" style="background:#e0f2fe; border:2px solid #0ea5e9; border-radius:8px; padding:8px; margin:6px 0; font-size:13px; text-align:center; font-weight:700">Oggi: --</div>
+<div id="orarioGiornoBox" style="background:#e0f2fe; border:2.5px solid #0ea5e9; border-radius:8px; padding:8px; margin:6px 0; font-size:13px; text-align:center; font-weight:700">Oggi: --</div>
 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px">
 <button class="btn btn-entrata" id="btnEntrata" onclick="timbra('ENTRATA')">🟢 ENTRATA</button>
 <button class="btn btn-uscita" id="btnUscita" onclick="timbra('USCITA')">🔴 USCITA</button>
@@ -123,7 +123,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <div class="card-white">
 <b>👤 Anagrafica - Area protetta</b>
 <div style="background:#fffbeb; border:2px solid #fbbf24; border-radius:10px; padding:8px; margin:6px 0; display:flex; gap:6px">
-<input id="pinAnag" type="password" autocomplete="off" placeholder="Inserisci PIN" style="flex:1; padding:8px; border:2px solid #fbbf24; border-radius:8px" onkeydown="if(event.key==='Enter') sbloccaAnag()">
+<input id="pinAnag" type="password" autocomplete="new-password" placeholder="Inserisci PIN" style="flex:1; padding:8px; border:2px solid #fbbf24; border-radius:8px" onkeydown="if(event.key==='Enter') sbloccaAnag()">
 <button onclick="sbloccaAnag()" style="background:#f59e0b; color:white; border:0; border-radius:8px; padding:8px 14px; font-weight:800">🔓 Sblocca</button>
 <button onclick="bloccaPIN()" style="background:#64748b; color:white; border:0; border-radius:8px; padding:8px 12px">🔒</button>
 </div>
@@ -134,6 +134,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 </div>
 <input id="qualificaAnag" placeholder="Qualifica" style="width:100%; padding:8px; border:1.5px solid #cbd5e1; border-radius:8px; margin-top:6px; box-sizing:border-box">
 <button onclick="aggiungiAnagrafica()" style="background:#16a34a; color:white; border:0; border-radius:8px; padding:8px; font-weight:800; width:100%; margin-top:6px">➕ Aggiungi / Aggiorna</button>
+<div style="margin-top:6px"><button onclick="ripristinaListaIniziale()" style="background:#64748b; color:white; border:0; border-radius:6px; padding:6px 10px; font-size:11px; font-weight:700">🔄 Ripristina lista originale</button></div>
 <div id="tabellaOrari" style="margin-top:8px"></div>
 </div>
 
@@ -162,7 +163,6 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 </div>
 
 <script>
-const FORZA_LISTA_DA_HTML = true;
 const LISTA_COMPLETA_DIPENDENTI_V59 = [
 { nome:"Belardo Giovanni", plesso:"Pietrobono", qualifica:"Collaboratore Scolastico", totale:"36h00m", orariSettimana:{ lun:[{entrata:"07:30", uscita:"14:42"}], mar:[{entrata:"07:30", uscita:"14:42"}], mer:[{entrata:"07:30", uscita:"14:42"}], gio:[{entrata:"07:30", uscita:"14:42"}], ven:[{entrata:"07:30", uscita:"14:42"}], sab:[], dom:[] } },
 { nome:"Brinoni Stella", plesso:"Pietrobono", qualifica:"Assistente Amministrativo", totale:"36h00m", orariSettimana:{ lun:[{entrata:"07:30", uscita:"14:42"}], mar:[{entrata:"07:30", uscita:"14:42"}], mer:[{entrata:"07:30", uscita:"14:42"}], gio:[{entrata:"07:30", uscita:"14:42"}], ven:[{entrata:"07:30", uscita:"14:42"}], sab:[], dom:[] } },
@@ -558,31 +558,32 @@ function modificaTimbratura(idx){
 
 function loadAnag(){
   try{
-    if(typeof LISTA_COMPLETA_DIPENDENTI_V59 !== 'undefined' && LISTA_COMPLETA_DIPENDENTI_V59.length>=32){
-      anagrafiche = JSON.parse(JSON.stringify(LISTA_COMPLETA_DIPENDENTI_V59));
-      anagrafiche.sort((a,b)=> (a.nome||"").localeCompare(b.nome||""));
-      localStorage.setItem('anagrafiche_v95', JSON.stringify(anagrafiche));
-      try{ render(); filtraElenco(); mostraOrario(); }catch(e){}
-      return;
-    }
-  }catch(e){}
-  try{
-    const s=localStorage.getItem('anagrafiche_v95'); 
+    const s = localStorage.getItem('anagrafiche_v95');
     if(s){
-      var parsed=JSON.parse(s);
-      if(parsed && parsed.length>=10){
-        anagrafiche=parsed;
+      var parsed = JSON.parse(s);
+      if(parsed && parsed.length > 0){
+        anagrafiche = parsed;
         render();
         return;
       }
     }
   }catch(e){}
-  if(!anagrafiche || anagrafiche.length===0){
-    if(typeof LISTA_COMPLETA_DIPENDENTI_V59 !== 'undefined'){
-      anagrafiche = JSON.parse(JSON.stringify(LISTA_COMPLETA_DIPENDENTI_V59));
-    }
+  
+  if(typeof LISTA_COMPLETA_DIPENDENTI_V59 !== 'undefined'){
+    anagrafiche = JSON.parse(JSON.stringify(LISTA_COMPLETA_DIPENDENTI_V59));
+    anagrafiche.sort((a,b)=> (a.nome||"").localeCompare(b.nome||""));
+    localStorage.setItem('anagrafiche_v95', JSON.stringify(anagrafiche));
   }
   render();
+}
+
+function ripristinaListaIniziale(){
+  var pin = prompt("Inserisci PIN per ripristinare la lista originale (211285):");
+  if(pin !== "211285"){ alert("PIN errato!"); return; }
+  if(!confirm("Vuoi davvero ripristinare l'elenco iniziale sovrascrivendo le modifiche?")) return;
+  localStorage.removeItem('anagrafiche_v95');
+  loadAnag();
+  alert("✅ Lista originale ripristinata!");
 }
 
 function render(){
@@ -636,8 +637,13 @@ function apriSchedaAnagrafica(nome){
   modal.style.display='flex';
   var plessi = ['Pietrobono','Rinascita','XXIII','Verdi','Pinocchio','Spinelli','Casa Test'];
   var qualifiche = ['Collaboratore Scolastico','Assistente Amministrativo','Docente','DSGA','Altro'];
-  var htmlModal = '<div style="background:white; border-radius:14px; padding:16px; width:100%; max-width:480px; max-height:90vh; overflow:auto; border:2.5px solid #0ea5e9">';
-  htmlModal+='<h3 style="margin:0 0 12px 0; color:#0ea5e9">📋 Scheda Dipendente</h3>';
+  
+  if(!a.orariSettimana) a.orariSettimana = {lun:[{entrata:"07:30", uscita:"14:42"}], mar:[{entrata:"07:30", uscita:"14:42"}], mer:[{entrata:"07:30", uscita:"14:42"}], gio:[{entrata:"07:30", uscita:"14:42"}], ven:[{entrata:"07:30", uscita:"14:42"}], sab:[], dom:[]};
+  var giorniChiave = ['lun','mar','mer','gio','ven','sab','dom'];
+  var giorniNomi = {'lun':'Lunedì', 'mar':'Martedì', 'mer':'Mercoledì', 'gio':'Giovedì', 'ven':'Venerdì', 'sab':'Sabato', 'dom':'Domenica'};
+
+  var htmlModal = '<div style="background:white; border-radius:14px; padding:16px; width:100%; max-width:520px; max-height:90vh; overflow:auto; border:2.5px solid #0ea5e9">';
+  htmlModal+='<h3 style="margin:0 0 12px 0; color:#0ea5e9">📋 Scheda Dipendente & Orari</h3>';
   htmlModal+='<label style="font-weight:700; font-size:12px">Nome:</label><input id="editNome" value="'+a.nome.replace(/"/g,'&quot;')+'" style="width:100%; padding:10px; border:1.5px solid #cbd5e1; border-radius:8px; margin:4px 0 10px 0; box-sizing:border-box">';
   htmlModal+='<label style="font-weight:700; font-size:12px">Plesso:</label><select id="editPlesso" style="width:100%; padding:10px; border:1.5px solid #cbd5e1; border-radius:8px; margin:4px 0 10px 0">';
   for(var p=0;p<plessi.length;p++){ htmlModal+='<option value="'+plessi[p]+'" '+(a.plesso===plessi[p]?'selected':'')+'>'+plessi[p]+'</option>'; }
@@ -645,7 +651,16 @@ function apriSchedaAnagrafica(nome){
   htmlModal+='<label style="font-weight:700; font-size:12px">Qualifica:</label><select id="editQual" style="width:100%; padding:10px; border:1.5px solid #cbd5e1; border-radius:8px; margin:4px 0 10px 0">';
   for(var q=0;q<qualifiche.length;q++){ htmlModal+='<option value="'+qualifiche[q]+'" '+(a.qualifica===qualifiche[q]?'selected':'')+'>'+qualifiche[q]+'</option>'; }
   htmlModal+='</select>';
-  htmlModal+='<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px">';
+  htmlModal+='<label style="font-weight:700; font-size:12px">Totale ore settimanali:</label><input id="editTotale" value="'+(a.totale||'36h00m')+'" style="width:100%; padding:8px; border:1.5px solid #cbd5e1; border-radius:8px; margin:4px 0 10px 0; box-sizing:border-box">';
+  
+  htmlModal+='<h4 style="margin:10px 0 6px 0; color:#1e293b">⏰ Orario di Servizio Giornaliero</h4>';
+  for(var g=0;g<giorniChiave.length;g++){
+    var gk = giorniChiave[g];
+    var slot = (a.orariSettimana[gk] && a.orariSettimana[gk][0]) ? a.orariSettimana[gk][0] : {entrata:"", uscita:""};
+    htmlModal+='<div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px"><span style="width:70px; font-weight:700">'+giorniNomi[gk]+'</span> Entrata: <input id="ent_'+gk+'" type="time" value="'+slot.entrata+'" style="padding:4px; border:1px solid #cbd5e1; border-radius:6px"> Uscita: <input id="usc_'+gk+'" type="time" value="'+slot.uscita+'" style="padding:4px; border:1px solid #cbd5e1; border-radius:6px"></div>';
+  }
+
+  htmlModal+='<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px">';
   htmlModal+='<button onclick="salvaSchedaAnagrafica(\''+a.nome.replace(/'/g, "\'")+'\')" style="background:#16a34a; color:white; border:0; border-radius:8px; padding:12px; font-weight:800">💾 Salva</button>';
   htmlModal+='<button onclick="chiudiSchedaAnagrafica()" style="background:#64748b; color:white; border:0; border-radius:8px; padding:12px; font-weight:800">❌ Chiudi</button>';
   htmlModal+='</div></div>';
@@ -658,8 +673,28 @@ function salvaSchedaAnagrafica(nomeVecchio){
   var nuovoNome = document.getElementById('editNome').value.trim();
   var nuovoPlesso = document.getElementById('editPlesso').value;
   var nuovaQual = document.getElementById('editQual').value;
+  var nuovoTotale = document.getElementById('editTotale').value.trim();
   if(!nuovoNome){ alert('Nome obbligatorio'); return; }
-  a.nome=nuovoNome; a.plesso=nuovoPlesso; a.qualifica=nuovaQual;
+  
+  var giorniChiave = ['lun','mar','mer','gio','ven','sab','dom'];
+  var nuoveSettimane = {};
+  for(var g=0;g<giorniChiave.length;g++){
+    var gk = giorniChiave[g];
+    var eVal = document.getElementById('ent_'+gk).value;
+    var uVal = document.getElementById('usc_'+gk).value;
+    if(eVal && uVal){
+      nuoveSettimane[gk] = [{entrata: eVal, uscita: uVal}];
+    } else {
+      nuoveSettimane[gk] = [];
+    }
+  }
+
+  a.nome=nuovoNome; 
+  a.plesso=nuovoPlesso; 
+  a.qualifica=nuovaQual;
+  a.totale=nuovoTotale;
+  a.orariSettimana=nuoveSettimane;
+
   anagrafiche.sort(function(a,b){ return a.nome.localeCompare(b.nome); });
   localStorage.setItem('anagrafiche_v95', JSON.stringify(anagrafiche));
   render(); filtraElenco(); chiudiSchedaAnagrafica();
