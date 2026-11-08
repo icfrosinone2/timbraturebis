@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IC Frosinone 2 - V147 - TIMBRATURE</title>
+<title>IC Frosinone 2 - V148 - TIMBRATURE</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -12,7 +12,7 @@
 body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 .top-verde{border:3px solid #16a34a; background:white; border-radius:14px; padding:12px 14px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center}
 .top-left{font-size:15px; font-weight:800; color:#16a34a}
-.top-right-logo{width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,#16a34a,#0ea5e9); display:flex; align-items:center; justify-content:center; color:white; font-weight:900; font-size:20px; border:2px solid #16a34a; box-shadow:0 2px 4px rgba(0,0,0,0.1)}
+.top-right img{width:46px; height:46px; border-radius:50%; object-fit:cover; border:2px solid #16a34a; display:block}
 .box-combinato{border:2px solid #cbd5e1; border-radius:14px; background:#fff5f5; display:grid; grid-template-columns:1.05fr 1.2fr; overflow:hidden; margin-bottom:8px}
 @media(max-width:800px){.box-combinato{grid-template-columns:1fr}}
 .grid-plessi{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:8px}
@@ -46,8 +46,13 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <body>
 
 <div class="top-verde">
-<div class="top-left">IC FROSINONE 2 - V147</div>
-<div class="top-right-logo" title="IC Frosinone 2">🏫</div>
+<div class="top-left">IC FROSINONE 2 - V148</div>
+<div class="top-right"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQBQYWludC5ORVQgdiAzLjUuMDUVujhLAAAEs0lEQVR4Xu1Za0hUURie91HUIjO10swsS5sKzZtY5hTTojJtVklL02xTzVwzG+uM6pQ1S8wUbbPKrCzaK62+qJlpZk6jLCOyXzKzGzI1G4m0/XvOefvW9gW3C9zPHvvuec+7v/HLO3nvPOfufKzXFzU+f8KevY1b9j/7tD1+m9z968f9g4u3jB2y4bS59M0+m/fKqK390k1tffWn6F63H6m1j/dD18wZ31s+O779yL/B/4eK5K+/vLw7L/3z78N/r7e+1M1wffs8B/V8d26yT376E2u8f5Gv/dK98a633v2/2i/5u8eP3h198O36O+m/jXnE2vI1B36VfK2v0L2M305/7Xj6DdfC35Qc8f+H3f23vH2P3p2rTf4yJ1j01rQ/XbB3R0d54z9rT4L6r8hW/l7R5zE+lXwJvR25iT5s6ZzBv17eD6K1w3y3L1N9849206vVdfvVbN928gY398q8f1rNcf2+D2yvL3hQyLqgL1MvVzO+6j5Q6d9VnL9qD5fU3w571B39c5+X5l1U0O5WjK3w85/b04Vb2d1Vdfu/vT3P1g649/Y2f1w6A0bUj9d6P+kQfH8jT2G002Xz7t93cRzL37b3pT87jF814V4V5F+pB5aG061Z4jQ943N31gZ5J3X2gE+l294jX5wPjXy31m3xW+sR+z92G2g7B5m15zR94336B69xV4v3Zwe3gV8sA736eL9rA/XgGv2K3/H8w7H75+C2T4C803V2w2rUj4sH6x9w0B8QJ2C23jVf23x+/QzX37c+j9o55sD78E07uC6/tY76X7+D8gP4Lw87o8p0sD6E3Fz4fC81u/34B6u8Y9q00x3lIq1sUv+H/m0s0bO1V0/Gz+v+167H3P+F7A6r/9nJm4tE1v90f19n6uI7tF1+wz8T/X3Gz48V9/u+bW4f7b600sL1s/4Z4j281Y64Y/b0W/Xg8a7Z1uJ/q8B330r+z/f0w9J1pYmR+WvF1u6F4fQ1v4zZ2Q9P2rB/x+J/226N/v8EefOa1r9v+C4zM1Mv95/a5lC1n6E6e6sJ9U78f9yM/x1Y948j/g2e60xN95v1N2WJq59lWbT778T3tXWq9e0O+rUffn+W2nE5/3sU1n+3q3Y763H4A9uVj82kUAAA="></div>
+</div>
+
+<!-- SEZIONE CONDIVISO ATTIVO -->
+<div id="statoCondivisoBanner" class="green-banner" style="margin-bottom:8px">
+  🌱 Condiviso attivo - 0 timbrature
 </div>
 
 <!-- SEZIONE BACHECA DIGITALE CONDIVISA -->
@@ -368,29 +373,30 @@ function aggiornaLog(){
     for(var i=0;i<Math.min(timbratureSalvate.length,50);i++){
       var t=timbratureSalvate[i]; var idx = i;
       var colore=t.tipo==='ENTRATA' ? '#16a34a' : '#dc2626';
-      html+='<div style="border-left:3px solid '+colore+'; padding:8px; margin:6px 0; background:#f8fafc; font-size:11px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; border:1px solid #e2e8f0"><div><span style="color:#64748b; font-size:10px">'+t.data+'</span><br><b style="color:'+colore+'">'+t.tipo+'</b> - <b>'+t.nome+'</b> @ <b>'+t.plesso+'</b></div><button onclick="eliminaTimbraturaProtetta('+idx+')" style="background:#ef4444; color:white; border:0; border-radius:6px; padding:6px 12px; font-size:11px; font-weight:800; cursor:pointer">Elimina (PIN)</button></div>';
+      html+='<div style="border-left:3px solid '+colore+'; padding:8px; margin:6px 0; background:#f8fafc; font-size:11px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; border:1px solid #e2e8f0"><div><span style="color:#64748b; font-size:10px">'+t.data+'</span><br><b style="color:'+colore+'">'+t.tipo+'</b> - <b>'+t.nome+'</b> @ <b>'+t.plesso+'</b></div><button onclick="eliminaTimbratura('+idx+')" style="background:#ef4444; color:white; border:0; border-radius:6px; padding:6px 12px; font-size:11px; font-weight:800; cursor:pointer">Elimina</button></div>';
     }
     logDiv.innerHTML=html || '<div style="color:#94a3b8; text-align:center; padding:10px">Nessuna timbratura registrata</div>';
+    
+    var bannerCondiviso = document.getElementById('statoCondivisoBanner');
+    if(bannerCondiviso){
+      bannerCondiviso.innerHTML = `🌱 Condiviso attivo - ${timbratureSalvate.length} timbrature`;
+    }
   }catch(e){}
 }
 
-function eliminaTimbraturaProtetta(idx){
-  var pin = prompt("Inserisci PIN per eliminare la timbratura (211285):");
-  if(pin !== "211285"){ alert("PIN errato! Eliminazione annullata."); return; }
+function eliminaTimbratura(idx){ 
   timbratureSalvate.splice(idx,1); 
   localStorage.setItem('timbrature_v93', JSON.stringify(timbratureSalvate.slice(0,500))); 
-  aggiornaLog();
-  alert("✅ Timbratura eliminata con successo.");
+  aggiornaLog(); 
 }
 
 function eliminaTutteTimbrature(){ 
   var pin = prompt("Inserisci PIN per eliminare TUTTE le timbrature (211285):");
-  if(pin !== "211285"){ alert("PIN errato! Operazione annullata."); return; }
-  if(!confirm('Confermi l\'eliminazione definitiva di tutte le timbrature?')) return; 
+  if(pin !== "211285"){ alert("PIN errato!"); return; }
+  if(!confirm('Eliminare tutte le timbrature?')) return; 
   timbratureSalvate=[]; 
   localStorage.removeItem('timbrature_v93'); 
-  aggiornaLog();
-  alert("✅ Tutte le timbrature sono state eliminate.");
+  aggiornaLog(); 
 }
 
 const DB_URLS = [
