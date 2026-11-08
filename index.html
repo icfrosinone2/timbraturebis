@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IC Frosinone 2 - V151 - TIMBRATURE</title>
+<title>IC Frosinone 2 - V152 - TIMBRATURE</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -27,7 +27,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 .badge-rosso{background:#ef4444; color:white; padding:4px 10px; border-radius:999px; font-weight:800; font-size:11px; display:inline-block}
 .chip-dist{display:inline-block; background:#fee2e2; border:1.5px solid #fca5a5; padding:5px 8px; border-radius:999px; font-size:10px; font-weight:700; margin:3px}
 .red-banner{background:#ef4444; color:white; text-align:center; font-weight:800; font-size:14px; padding:10px; border-radius:12px; margin-bottom:8px}
-.green-banner{background:#16a34a; color:white; text-align:center; font-weight:800; font-size:14px; padding:10px; border-radius:12px; margin-bottom:8px}
+.green-banner{background:#16a34a; color:white; text-align:center; font-weight:800; font-size:14px; padding:10px; border-radius:12px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center}
 .bottom-grid{display:grid; grid-template-columns:1.1fr 0.9fr; gap:8px}
 @media(max-width:850px){.bottom-grid{grid-template-columns:1fr}}
 .card-white{background:white; border:2px solid #94a3b8; border-radius:12px; padding:12px; box-shadow:0 2px 4px rgba(0,0,0,.06)}
@@ -46,13 +46,14 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <body>
 
 <div class="top-verde">
-<div class="top-left">IC FROSINONE 2 - V151</div>
-<div class="top-right"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAXRFWHRTb2Z0d2FyZWFkb2JlIFBob3Rvc2hvcCBDUzYgKENvcmVpSkFQKSwxOS4wLjIwMTYwMDIxci4xMTQyOCAwODoyNC4xMS4wMjE2MDIxcy4wLjAgMTA0OCAzMzg5oXbV9wAAIABJREFUeJztnXeYVNW9xz83M3NmN310pneZ2Z0BBlQpgg2wIMqW3oIiIoiCYkHRYkFRxIYV7IqCig2iAix0kV5YVpAuu9NneWbe5szM+f2RPefs9+6c9/udr98fz945Z52zc8+z/nuf821M0zQNJ5yAHAcBHOkggOEcAcCdAQC4BwQA3BkAwJ0D4EcAAG7BAIA7BwCAewcA4M4AAO4cAOBOAABwJwAAdw4A4M4BAO4cAOBsAIC7AQBwJwAAdw4A4M4AAO4cAPAzE535f+wWAAAAAElFTkSuQmCC" alt="Logo"></div>
+<div class="top-left">IC FROSINONE 2 - V152</div>
+<div class="top-right"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAXRFWHRTb2Z0d2FyZWFkb2JlIFBob3Rvc2hvcCBDUzYgKENvcmVpSkFQKSwxOS4wLjIwMTYwMDIxci4xMTQyOCAwODoyNC4xMS4wMjE2MDIxcy4wLjAgMTA0OCAzMzg5oXbV9wAAIABJREFUeJztnXeYVNW9xz83M3NmN310pneZ2Z0BBlQpgg2wIMqW3oIiIoiCYkHRYkFRxIYV7IqCig2iAix0kV5YVpAuu9NneWbe5szM+f2RPefs9+6c9/udr98fz945Z52zc8+z/nuf821M0zQNJ5yAHAcBHOkggOEcAcCdAQC4BwQA3BkAwJ0D4EcAAG7BAIA7BwCAewcA4M4AAO4cAOBOAABwJwAAdw4A4M4AAO4cAOBOAJPAPwAAAP//82JvI74AAAAASUVORK5CYII=" alt="Logo"></div>
 </div>
 
-<!-- SEZIONE CONDIVISO ATTIVO -->
-<div id="statoCondivisoBanner" class="green-banner" style="margin-bottom:8px">
-  🌱 Condiviso attivo - 0 timbrature
+<!-- SEZIONE CONDIVISO ATTIVO & PULSANTE AZZERAMENTO RAPIDO IN ALTO -->
+<div class="green-banner" style="margin-bottom:8px">
+  <span id="testoCondivisoBanner">🌱 Condiviso attivo - 0 timbrature</span>
+  <button onclick="azzeraDatabaseCloudCompleto()" style="background:#dc2626; color:white; border:0; border-radius:8px; padding:6px 12px; font-size:12px; font-weight:800; cursor:pointer">🗑️ Azzera Database Condiviso</button>
 </div>
 
 <!-- SEZIONE BACHECA DIGITALE CONDIVISA -->
@@ -92,7 +93,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 </div>
 
 <div id="bloccoBox" class="red-banner">⏳ Attendi GPS...</div>
-<div id="okBox" class="green-banner" style="display:none">✅ Sei dentro il plesso - Puoi timbrare</div>
+<div id="okBox" class="green-banner" style="display:none; justify-content:center">✅ Sei dentro il plesso - Puoi timbrare</div>
 
 <div class="bottom-grid">
 <div class="card-timbra">
@@ -130,8 +131,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
   <b style="font-size:14px">📜 Log timbrature (ultime 50)</b>
   <div style="display:flex; gap:4px; flex-wrap:wrap">
     <button onclick="caricaCondivise()" style="background:#0ea5e9; color:white; border:0; border-radius:6px; padding:6px 8px; font-size:11px; font-weight:800; cursor:pointer">🔄 Aggiorna</button>
-    <button onclick="eliminaTutteTimbrature()" style="background:#f59e0b; color:white; border:0; border-radius:6px; padding:6px 8px; font-size:11px; font-weight:800; cursor:pointer" title="Elimina locale">🗑️ Elimina Locali</button>
-    <button onclick="azzeraDatabaseCloudCompleto()" style="background:#ef4444; color:white; border:0; border-radius:6px; padding:6px 8px; font-size:11px; font-weight:800; cursor:pointer" title="Azzera tutto nel Cloud per inizio utilizzo">⚠️ Azzera Cloud</button>
+    <button onclick="eliminaTutteTimbrature()" style="background:#f59e0b; color:white; border:0; border-radius:6px; padding:6px 8px; font-size:11px; font-weight:800; cursor:pointer">🗑️ Elimina Locali</button>
   </div>
 </div>
 <div id="log" style="max-height:300px; overflow:auto"></div>
@@ -381,7 +381,7 @@ function aggiornaLog(){
     }
     logDiv.innerHTML=html || '<div style="color:#94a3b8; text-align:center; padding:10px">Nessuna timbratura registrata</div>';
     
-    var bannerCondiviso = document.getElementById('statoCondivisoBanner');
+    var bannerCondiviso = document.getElementById('testoCondivisoBanner');
     if(bannerCondiviso){
       bannerCondiviso.innerHTML = `🌱 Condiviso attivo - ${timbratureSalvate.length} timbrature`;
     }
@@ -402,9 +402,7 @@ function eliminaTutteTimbrature(){
 }
 
 async function azzeraDatabaseCloudCompleto(){
-  var pin = prompt("Inserisci PIN per AZZERARE IL CLOUD in vista dell'inizio ufficiale (211285):");
-  if(pin !== "211285"){ alert("PIN errato!"); return; }
-  if(!confirm("ATTENZIONE: Questo cancellerà DEFINITIVAMENTE tutte le timbrature condivise nel Cloud per tutti gli utenti. Procedere?")) return;
+  if(!confirm("ATTENZIONE: Questo cancellerà DEFINITIVAMENTE tutte le timbrature condivise nel Cloud per tutti gli utenti in vista dell'inizio ufficiale. Procedere?")) return;
   try{
     await fetch(DB_URL + "/timbrature.json", { method: "DELETE" });
     timbratureSalvate = [];
