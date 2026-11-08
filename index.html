@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IC Frosinone 2 - V143 - TIMBRATURE</title>
+<title>IC Frosinone 2 - V144 - TIMBRATURE</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -12,7 +12,7 @@
 body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 .top-verde{border:3px solid #16a34a; background:white; border-radius:14px; padding:12px 14px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center}
 .top-left{font-size:15px; font-weight:800; color:#16a34a}
-.top-right img{max-height:44px; width:44px; height:44px; border-radius:50%; object-fit:cover; border:2px solid #16a34a; display:block}
+.top-right img{width:46px; height:46px; border-radius:50%; object-fit:cover; border:2px solid #16a34a; display:block}
 .box-combinato{border:2px solid #cbd5e1; border-radius:14px; background:#fff5f5; display:grid; grid-template-columns:1.05fr 1.2fr; overflow:hidden; margin-bottom:8px}
 @media(max-width:800px){.box-combinato{grid-template-columns:1fr}}
 .grid-plessi{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:8px}
@@ -46,7 +46,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <body>
 
 <div class="top-verde">
-<div class="top-left">IC FROSINONE 2 - V143</div>
+<div class="top-left">IC FROSINONE 2 - V144</div>
 <div class="top-right"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQBQYWludC5ORVQgdiAzLjUuMDUVujhLAAAEs0lEQVR4Xu1Za0hUURie91HUIjO10swsS5sKzZtY5hTTojJtVklL02xTzVwzG+uM6pQ1S8wUbbPKrCzaK62+qJlpZk6jLCOyXzKzGzI1G4m0/XvOefvW9gW3C9zPHvvuec+7v/HLO3nvPOfufKzXFzU+f8KevY1b9j/7tD1+m9z968f9g4u3jB2y4bS59M0+m/fKqK390k1tffWn6F63H6m1j/dD18wZ31s+O779yL/B/4eK5K+/vLw7L/3z78N/r7e+1M1wffs8B/V8d26yT376E2u8f5Gv/dK98a633v2/2i/5u8eP3h198O36O+m/jXnE2vI1B36VfK2v0L2M305/7Xj6DdfC35Qc8f+H3f23vH2P3p2rTf4yJ1j01rQ/XbB3R0d54z9rT4L6r8hW/l7R5zE+lXwJvR25iT5s6ZzBv17eD6K1w3y3L1N9849206vVdfvVbN928gY398q8f1rNcf2+D2yvL3hQyLqgL1MvVzO+6j5Q6d9VnL9qD5fU3w571B39c5+X5l1U0O5WjK3w85/b04Vb2d1Vdfu/vT3P1g649/Y2f1w6A0bUj9d6P+kQfH8jT2G002Xz7t93cRzL37b3pT87jF814V4V5F+pB5aG061Z4jQ943N31gZ5J3X2gE+l294jX5wPjXy31m3xW+sR+z92G2g7B5m15zR94336B69xV4v3Zwe3gV8sA736eL9rA/XgGv2K3/H8w7H75+C2T4C803V2w2rUj4sH6x9w0B8QJ2C23jVf23x+/QzX37c+j9o55sD78E07uC6/tY76X7+D8gP4Lw87o8p0sD6E3Fz4fC81u/34B6u8Y9q00x3lIq1sUv+H/m0s0bO1V0/Gz+v+167H3P+F7A6r/9nJm4tE1v90f19n6uI7tF1+wz8T/X3Gz48V9/u+bW4f7b600sL1s/4Z4j281Y64Y/b0W/Xg8a7Z1uJ/q8B330r+z/f0w9J1pYmR+WvF1u6F4fQ1v4zZ2Q9P2rB/x+J/226N/v8EefOa1r9v+C4zM1Mv95/a5lC1n6E6e6sJ9U78f9yM/x1Y948j/g2e60xN95v1N2WJq59lWbT778T3tXWq9e0O+rUffn+W2nE5/3sU1n+3q3Y763H4A9uVj82kUAAA="></div>
 </div>
 
@@ -117,12 +117,15 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 </div>
 </div>
 
-<div style="margin-top:10px; background:white; border:2px solid #cbd5e1; border-radius:10px; padding:8px">
-<div style="display:flex; justify-content:space-between; align-items:center">
-  <b>📜 Log timbrature (ultime 50)</b>
-  <button onclick="caricaCondivise()" style="background:#0ea5e9; color:white; border:0; border-radius:6px; padding:4px 10px; font-size:11px; font-weight:800; cursor:pointer">🔄 Aggiorna Log</button>
+<div style="margin-top:10px; background:white; border:2px solid #cbd5e1; border-radius:10px; padding:10px">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
+  <b style="font-size:14px">📜 Log timbrature (ultime 50)</b>
+  <div style="display:flex; gap:6px">
+    <button onclick="caricaCondivise()" style="background:#0ea5e9; color:white; border:0; border-radius:6px; padding:6px 10px; font-size:11px; font-weight:800; cursor:pointer">🔄 Aggiorna</button>
+    <button onclick="eliminaTutteTimbrature()" style="background:#ef4444; color:white; border:0; border-radius:6px; padding:6px 10px; font-size:11px; font-weight:800; cursor:pointer">🗑️ Elimina TUTTE</button>
+  </div>
 </div>
-<div id="log" style="max-height:300px; overflow:auto; margin-top:6px"></div>
+<div id="log" style="max-height:300px; overflow:auto"></div>
 </div>
 </div>
 
@@ -359,19 +362,17 @@ function timbra(tipo){
 function aggiornaLog(){
   try{
     var logDiv=document.getElementById('log'); if(!logDiv) return;
-    var html='<div style="display:flex; gap:6px; margin-bottom:8px"><button onclick="eliminaTutteTimbrature()" style="background:#ef4444; color:white; border:0; border-radius:6px; padding:6px 10px; font-size:11px; font-weight:800">Elimina TUTTE</button><button onclick="caricaCondivise()" style="background:#0ea5e9; color:white; border:0; border-radius:6px; padding:6px 10px; font-size:11px">Aggiorna</button></div>';
-    
-    // Mostriamo tutte le timbrature, incluse quelle di prova (Casa Test)
+    var html='';
     for(var i=0;i<Math.min(timbratureSalvate.length,50);i++){
       var t=timbratureSalvate[i]; var idx = i;
       var colore=t.tipo==='ENTRATA' ? '#16a34a' : '#dc2626';
-      html+='<div style="border-left:3px solid '+colore+'; padding:6px; margin:5px 0; background:white; font-size:11px; border-radius:6px; display:flex; justify-content:space-between; align-items:center"><div><span style="color:#64748b; font-size:10px">'+t.data+'</span> - <b style="color:'+colore+'">'+t.tipo+'</b> - <b>'+t.nome+'</b> @ <b>'+t.plesso+'</b></div><button onclick="eliminaTimbratura('+idx+')" style="background:#ef4444; color:white; border:0; border-radius:4px; padding:3px 6px; font-size:10px">Del</button></div>';
+      html+='<div style="border-left:3px solid '+colore+'; padding:8px; margin:6px 0; background:#f8fafc; font-size:11px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; border:1px solid #e2e8f0"><div><span style="color:#64748b; font-size:10px">'+t.data+'</span><br><b style="color:'+colore+'">'+t.tipo+'</b> - <b>'+t.nome+'</b> @ <b>'+t.plesso+'</b></div><button onclick="eliminaTimbratura('+idx+')" style="background:#ef4444; color:white; border:0; border-radius:6px; padding:6px 12px; font-size:11px; font-weight:800; cursor:pointer">Elimina</button></div>';
     }
-    logDiv.innerHTML=html || '<div style="color:#94a3b8; text-align:center">Nessuna timbratura</div>';
+    logDiv.innerHTML=html || '<div style="color:#94a3b8; text-align:center; padding:10px">Nessuna timbratura registrata</div>';
   }catch(e){}
 }
 function eliminaTimbratura(idx){ timbratureSalvate.splice(idx,1); localStorage.setItem('timbrature_v93', JSON.stringify(timbratureSalvate.slice(0,500))); aggiornaLog(); }
-function eliminaTutteTimbrature(){ if(!confirm('Eliminare tutto?')) return; timbratureSalvate=[]; localStorage.removeItem('timbrature_v93'); aggiornaLog(); }
+function eliminaTutteTimbrature(){ if(!confirm('Eliminare tutte le timbrature?')) return; timbratureSalvate=[]; localStorage.removeItem('timbrature_v93'); aggiornaLog(); }
 
 const DB_URLS = [
   "https://icfrosinone2-default-rtdb.firebaseio.com",
@@ -806,13 +807,13 @@ function generaResocontoDareAvere(){
     }
     modal.style.display='flex';
     var htmlModal = '<div style="background:white; border-radius:14px; padding:16px; width:100%; max-width:750px; max-height:95vh; overflow:auto; border:2.5px solid #0ea5e9; margin-top:20px">';
-    htmlModal+='<div style="display:flex; justify-content:space-between; align-items:center"><h2 style="margin:0">📊 Resoconto Ore</h2><button onclick="chiudiModalResoconto()" style="background:#64748b; color:white; border:0; border-radius:50%; width:32px; height:32px; font-weight:800; cursor:pointer">✕</button></div>';
+    htmlModal+='<div style="display:flex; justify-content:space-between; align-items:center"><h2 style="margin:0; font-size:18px; color:#0ea5e9">📊 Resoconto DARE / AVERE (Differenza Oraria)</h2><button onclick="chiudiModalResoconto()" style="background:#64748b; color:white; border:0; border-radius:50%; width:32px; height:32px; font-weight:800; cursor:pointer">✕</button></div>';
     htmlModal+='<label style="font-weight:700; display:block; margin:10px 0 4px 0">👤 Dipendente:</label><select id="selDip" style="width:100%; padding:10px; border:1.5px solid #cbd5e1; border-radius:8px"><option value="TUTTI">TUTTI - Tutti i dipendenti</option>';
     for(var i=0;i<listaNomi.length;i++){ htmlModal+='<option value="'+listaNomi[i]+'">'+listaNomi[i]+'</option>'; }
     htmlModal+='</select>';
     htmlModal+='<label style="font-weight:700; display:block; margin:10px 0 4px 0">📅 DAL giorno:</label><input type="date" id="dal" value="'+primoGiorno+'" style="width:100%; padding:10px; border:1.5px solid #cbd5e1; border-radius:8px">';
     htmlModal+='<label style="font-weight:700; display:block; margin:10px 0 4px 0">📅 AL giorno:</label><input type="date" id="al" value="'+ultimoGiorno+'" style="width:100%; padding:10px; border:1.5px solid #cbd5e1; border-radius:8px">';
-    htmlModal+='<div style="text-align:center; margin-top:16px"><button onclick="generaResocontoInterno()" style="background:#0ea5e9; color:white; border:0; padding:12px 20px; border-radius:8px; font-weight:800; cursor:pointer">📊 Genera</button></div>';
+    htmlModal+='<div style="text-align:center; margin-top:16px"><button onclick="generaResocontoInterno()" style="background:#0ea5e9; color:white; border:0; padding:12px 20px; border-radius:8px; font-weight:800; cursor:pointer">📊 Calcola Differenze Ore</button></div>';
     htmlModal+='<div id="risultatoResoconto" style="margin-top:20px"></div></div>';
     modal.innerHTML=htmlModal;
     window._timbraturePerResoconto = timbratureSalvate.slice();
@@ -821,26 +822,98 @@ function generaResocontoDareAvere(){
 
 function chiudiModalResoconto(){ var modal=document.getElementById('modalResoconto'); if(modal) modal.style.display='none'; }
 
+function timeToMinutes(tStr){
+  if(!tStr) return 0;
+  var p = tStr.split(':');
+  return parseInt(p[0])*60 + parseInt(p[1]||0);
+}
+
+function minutesToHoursStr(min){
+  var sign = min < 0 ? '-' : '+';
+  var abs = Math.abs(min);
+  var h = Math.floor(abs / 60);
+  var m = abs % 60;
+  return sign + h + 'h ' + (m < 10 ? '0' : '') + m + 'm';
+}
+
 function generaResocontoInterno(){
   var dipScelto = document.getElementById("selDip").value;
   var dal = document.getElementById("dal").value;
   var al = document.getElementById("al").value;
   var timbratureSalvate = window._timbraturePerResoconto || [];
   var filtrate = timbratureSalvate.slice();
+  
   if(dipScelto!=="TUTTI") filtrate = filtrate.filter(t => t.nome===dipScelto);
   if(dal){ var dalTime = new Date(dal).getTime(); filtrate = filtrate.filter(t => (t.timestamp||0)>=dalTime); }
   if(al){ var alTime = new Date(al).getTime()+24*60*60*1000-1; filtrate = filtrate.filter(t => (t.timestamp||0)<=alTime); }
-  if(filtrate.length===0){ document.getElementById("risultatoResoconto").innerHTML="<p style=\"color:red\">Nessuna timbratura trovata nel periodo.</p>"; return; }
+  
+  if(filtrate.length===0){ document.getElementById("risultatoResoconto").innerHTML="<p style=\"color:red; text-align:center\">Nessuna timbratura trovata nel periodo selezionato.</p>"; return; }
+  
   filtrate.sort((a,b)=>(a.timestamp||0)-(b.timestamp||0));
-  var perDip={}; filtrate.forEach(t=>{ if(!perDip[t.nome]) perDip[t.nome]=[]; perDip[t.nome].push(t); });
-  var html="<h3>Riepilogo</h3><table style=\"width:100%; border-collapse:collapse\"><tr><th style=\"border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white\">Dipendente</th><th style=\"border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white\">Entrate</th><th style=\"border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white\">Uscite</th></tr>";
-  Object.keys(perDip).sort().forEach(nome=>{
-    var list=perDip[nome], ent=0, usc=0;
-    list.forEach(l=>{ if(l.tipo==="ENTRATA") ent++; if(l.tipo==="USCITA") usc++; });
-    html+="<tr><td style=\"border:1px solid #cbd5e1; padding:6px\"><b>"+nome+"</b></td><td style=\"border:1px solid #cbd5e1; padding:6px\">"+ent+"</td><td style=\"border:1px solid #cbd5e1; padding:6px\">"+usc+"</td></tr>";
+  
+  // Raggruppa per dipendente e per data (giorno)
+  var perDipGiorno = {};
+  filtrate.forEach(t => {
+    var dataGiorno = (t.data||'').split(',')[0].trim(); // es. "08/11/2026"
+    if(!perDipGiorno[t.nome]) perDipGiorno[t.nome] = {};
+    if(!perDipGiorno[t.nome][dataGiorno]) perDipGiorno[t.nome][dataGiorno] = [];
+    perDipGiorno[t.nome][dataGiorno].push(t);
   });
-  html+="</table>";
-  document.getElementById("risultatoResoconto").innerHTML=html;
+
+  var html = '<h3 style="color:#1e293b; font-size:15px">Risultato Differenza Oraria (Effettivo vs Servizio)</h3>';
+  html += '<div style="overflow:auto"><table style="width:100%; border-collapse:collapse; font-size:12px">';
+  html += '<tr><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Dipendente</th><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Data</th><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Lavorato</th><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Previsto</th><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Saldo (Dare/Avere)</th></tr>';
+
+  Object.keys(perDipGiorno).sort().forEach(nome => {
+    var dipObj = anagrafiche.find(x => x.nome === nome);
+    var giorniGiornale = perDipGiorno[nome];
+    
+    Object.keys(giorniGiornale).sort().forEach(dataStr => {
+      var timbList = giorniGiornale[dataStr];
+      // Trova prima entrata e ultima uscita del giorno
+      var entrate = timbList.filter(x => x.tipo === 'ENTRATA');
+      var uscite = timbList.filter(x => x.tipo === 'USCITA');
+      
+      var minLavorati = 0;
+      if(entrate.length > 0 && uscite.length > 0){
+        var primoEntrataMin = timeToMinutes(entrate[0].ora);
+        var ultimaUscitaMin = timeToMinutes(uscite[uscite.length - 1].ora);
+        if(ultimaUscitaMin > primoEntrataMin){
+          minLavorati = ultimaUscitaMin - primoEntrataMin;
+        }
+      }
+
+      // Calcola orario previsto per quel giorno della settimana
+      var partiData = dataStr.split('/');
+      var dObj = new Date(partiData[2], partiData[1]-1, partiData[0]);
+      var giorniArr = ['dom','lun','mar','mer','gio','ven','sab'];
+      var chiaveGiorno = giorniArr[dObj.getDay()];
+      
+      var minPrevisti = 432; // Default 7h 12m (07:30 - 14:42 = 432 min) se non specificato
+      if(dipObj && dipObj.orariSettimana && dipObj.orariSettimana[chiaveGiorno] && dipObj.orariSettimana[chiaveGiorno].length > 0){
+        var slot = dipObj.orariSettimana[chiaveGiorno][0];
+        minPrevisti = timeToMinutes(slot.uscita) - timeToMinutes(slot.entrata);
+      }
+
+      var diff = minLavorati - minPrevisti; // Positivo = Straordinario (Avere), Negativo = Deficit (Dare)
+      var coloreDiff = diff >= 0 ? '#16a34a' : '#dc2626';
+      var formatoDiff = minutesToHoursStr(diff);
+
+      var lavStr = Math.floor(minLavorati/60) + 'h ' + (minLavorati%60) + 'm';
+      var prevStr = Math.floor(minPrevisti/60) + 'h ' + (minPrevisti%60) + 'm';
+
+      html += '<tr>';
+      html += '<td style="border:1px solid #cbd5e1; padding:6px"><b>'+nome+'</b></td>';
+      html += '<td style="border:1px solid #cbd5e1; padding:6px; text-align:center">'+dataStr+'</td>';
+      html += '<td style="border:1px solid #cbd5e1; padding:6px; text-align:center">'+lavStr+'</td>';
+      html += '<td style="border:1px solid #cbd5e1; padding:6px; text-align:center">'+prevStr+'</td>';
+      html += '<td style="border:1px solid #cbd5e1; padding:6px; text-align:center; font-weight:800; color:'+coloreDiff+'">'+formatoDiff+'</td>';
+      html += '</tr>';
+    });
+  });
+
+  html += '</table></div>';
+  document.getElementById("risultatoResoconto").innerHTML = html;
 }
 
 async function caricaCondivise(){
