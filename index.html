@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IC Frosinone 2 - V149 - TIMBRATURE</title>
+<title>IC Frosinone 2 - V150 - TIMBRATURE</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -12,7 +12,7 @@
 body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 .top-verde{border:3px solid #16a34a; background:white; border-radius:14px; padding:12px 14px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center}
 .top-left{font-size:15px; font-weight:800; color:#16a34a}
-.top-right-logo{width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,#16a34a,#0ea5e9); display:flex; align-items:center; justify-content:center; color:white; font-weight:900; font-size:22px; border:2px solid #16a34a; box-shadow:0 2px 6px rgba(0,0,0,0.15)}
+.top-right-logo{width:50px; height:50px; border-radius:50%; background:linear-gradient(135deg,#16a34a,#0ea5e9); display:flex; align-items:center; justify-content:center; color:white; font-weight:900; font-size:18px; border:2.5px solid #16a34a; box-shadow:0 2px 6px rgba(0,0,0,0.15)}
 .box-combinato{border:2px solid #cbd5e1; border-radius:14px; background:#fff5f5; display:grid; grid-template-columns:1.05fr 1.2fr; overflow:hidden; margin-bottom:8px}
 @media(max-width:800px){.box-combinato{grid-template-columns:1fr}}
 .grid-plessi{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:8px}
@@ -46,8 +46,8 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <body>
 
 <div class="top-verde">
-<div class="top-left">IC FROSINONE 2 - V149</div>
-<div class="top-right-logo" title="IC Frosinone 2">🎓</div>
+<div class="top-left">IC FROSINONE 2 - V150</div>
+<div class="top-right-logo">IC 2</div>
 </div>
 
 <!-- SEZIONE CONDIVISO ATTIVO -->
@@ -109,15 +109,18 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <div id="ultimoScansionato" style="font-size:12px; background:#f0fdf4; padding:8px; border-radius:8px; text-align:center; border:2.5px solid #16a34a; font-weight:700">Nessuna scansione</div>
 
 <div style="border:2.5px solid #0ea5e9; border-radius:12px; padding:10px; background:#f0f9ff; margin-top:10px">
-<b>📋 Timbratura manuale</b>
+<b>📋 Timbratura manuale & Assenze</b>
 <select id="dipendente" class="select-big" style="margin-top:6px" onchange="onDipendenteSelezionato()"><option>⏳ Caricamento...</option></select>
 <div id="orarioGiornoBox" style="background:#e0f2fe; border:2px solid #0ea5e9; border-radius:8px; padding:8px; margin:6px 0; font-size:13px; text-align:center; font-weight:700">Oggi: --</div>
 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px">
 <button class="btn btn-entrata" id="btnEntrata" onclick="timbra('ENTRATA')">🟢 ENTRATA</button>
 <button class="btn btn-uscita" id="btnUscita" onclick="timbra('USCITA')">🔴 USCITA</button>
 </div>
+<div style="margin-top:8px">
+<button onclick="apriGestioneGiustificativi()" style="background:#8b5cf6; color:white; border:0; border-radius:8px; padding:10px; font-weight:800; width:100%; font-size:13px">📝 Inserisci Assenza / Giustificativo</button>
+</div>
 <div style="text-align:center; margin-top:8px">
-<button class="btn" style="background:#7c3aed; color:white; width:auto; padding:8px 14px" onclick="generaSchedeConQR()">📇 Badge con QR - Dipendenti (QR VERI)</button>
+<button class="btn" style="background:#7c3aed; color:white; width:auto; padding:8px 14px" onclick="generaSchedeConQR()">📇 Badge con QR (QR VERI)</button>
 <button class="btn" style="background:#0ea5e9; color:white; width:auto; padding:8px 14px; margin-left:4px" onclick="generaResocontoDareAvere()">📊 Resoconto DARE/AVERE</button>
 </div>
 </div>
@@ -125,9 +128,10 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <div style="margin-top:10px; background:white; border:2px solid #cbd5e1; border-radius:10px; padding:10px">
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
   <b style="font-size:14px">📜 Log timbrature (ultime 50)</b>
-  <div style="display:flex; gap:6px">
-    <button onclick="caricaCondivise()" style="background:#0ea5e9; color:white; border:0; border-radius:6px; padding:6px 10px; font-size:11px; font-weight:800; cursor:pointer">🔄 Aggiorna</button>
-    <button onclick="eliminaTutteTimbrature()" style="background:#ef4444; color:white; border:0; border-radius:6px; padding:6px 10px; font-size:11px; font-weight:800; cursor:pointer">🗑️ Elimina TUTTE (PIN)</button>
+  <div style="display:flex; gap:4px; flex-wrap:wrap">
+    <button onclick="caricaCondivise()" style="background:#0ea5e9; color:white; border:0; border-radius:6px; padding:6px 8px; font-size:11px; font-weight:800; cursor:pointer">🔄 Aggiorna</button>
+    <button onclick="eliminaTutteTimbrature()" style="background:#f59e0b; color:white; border:0; border-radius:6px; padding:6px 8px; font-size:11px; font-weight:800; cursor:pointer" title="Elimina locale">🗑️ Elimina Locali</button>
+    <button onclick="azzeraDatabaseCloudCompleto()" style="background:#ef4444; color:white; border:0; border-radius:6px; padding:6px 8px; font-size:11px; font-weight:800; cursor:pointer" title="Azzera tutto nel Cloud per inizio utilizzo">⚠️ Azzera Cloud</button>
   </div>
 </div>
 <div id="log" style="max-height:300px; overflow:auto"></div>
@@ -391,12 +395,23 @@ function eliminaTimbratura(idx){
 }
 
 function eliminaTutteTimbrature(){ 
-  var pin = prompt("Inserisci PIN per eliminare TUTTE le timbrature (211285):");
-  if(pin !== "211285"){ alert("PIN errato!"); return; }
-  if(!confirm('Eliminare tutte le timbrature?')) return; 
+  if(!confirm('Vuoi eliminare tutte le timbrature solo da questo dispositivo?')) return; 
   timbratureSalvate=[]; 
   localStorage.removeItem('timbrature_v93'); 
   aggiornaLog(); 
+}
+
+async function azzeraDatabaseCloudCompleto(){
+  var pin = prompt("Inserisci PIN per AZZERARE IL CLOUD in vista dell'inizio ufficiale (211285):");
+  if(pin !== "211285"){ alert("PIN errato!"); return; }
+  if(!confirm("ATTENZIONE: Questo cancellerà DEFINITIVAMENTE tutte le timbrature condivise nel Cloud per tutti gli utenti. Procedere?")) return;
+  try{
+    await fetch(DB_URL + "/timbrature.json", { method: "DELETE" });
+    timbratureSalvate = [];
+    localStorage.removeItem('timbrature_v93');
+    aggiornaLog();
+    alert("✅ Database cloud azzerato con successo! Pronto per l'uso ufficiale.");
+  }catch(e){ alert("Errore durante l'azzeramento: "+e.message); }
 }
 
 const DB_URLS = [
@@ -559,12 +574,12 @@ function apriGestioneGiustificativi(){
   
   var html = '<div style="background:white; border-radius:14px; padding:16px; width:100%; max-width:550px; max-height:90vh; overflow:auto; border:2.5px solid #8b5cf6">';
   html += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">';
-  html += '<h3 style="margin:0; color:#8b5cf6">📝 Gestione Giustificativi Assenze</h3>';
+  html += '<h3 style="margin:0; color:#8b5cf6">📝 Gestione Giustificativi & Assenze</h3>';
   html += '<button onclick="document.getElementById(\'modalGiustificativi\').style.display=\'none\'" style="background:#64748b; color:white; border:0; border-radius:50%; width:28px; height:28px; font-weight:800; cursor:pointer">✕</button>';
   html += '</div>';
   
   html += '<div style="background:#f8fafc; border:1px solid #cbd5e1; padding:10px; border-radius:10px; margin-bottom:12px">';
-  html += '<b style="font-size:12px; color:#1e293b">Aggiungi Nuovo Giustificativo</b><br>';
+  html += '<b style="font-size:12px; color:#1e293b">Inserisci Assenza / Giustificativo</b><br>';
   html += '<label style="font-size:11px; font-weight:700; display:block; margin-top:6px">Dipendente:</label>';
   html += '<select id="giustDip" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px">';
   for(var i=0; i<listaNomi.length; i++){ html += '<option value="'+listaNomi[i]+'">'+listaNomi[i]+'</option>'; }
@@ -572,13 +587,13 @@ function apriGestioneGiustificativi(){
   
   html += '<div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:6px">';
   html += '<div><label style="font-size:11px; font-weight:700; display:block">Data:</label><input type="date" id="giustData" value="'+oggiStr+'" style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:6px"></div>';
-  html += '<div><label style="font-size:11px; font-weight:700; display:block">Tipo:</label><select id="giustTipo" style="width:100%; padding:7px; border:1px solid #cbd5e1; border-radius:6px"><option value="Ferie">🌴 Ferie</option><option value="Malattia">🏥 Malattia</option><option value="Permesso">⏱️ Permesso</option><option value="Legge 104">🤝 Legge 104</option><option value="Altro">📌 Altro</option></select></div>';
+  html += '<div><label style="font-size:11px; font-weight:700; display:block">Tipo Assenza:</label><select id="giustTipo" style="width:100%; padding:7px; border:1px solid #cbd5e1; border-radius:6px"><option value="Ferie">🌴 Ferie</option><option value="Malattia">🏥 Malattia</option><option value="Permesso">⏱️ Permesso</option><option value="Legge 104">🤝 Legge 104</option><option value="Altro">📌 Altro</option></select></div>';
   html += '</div>';
   
-  html += '<button onclick="aggiungiGiustificativo()" style="background:#8b5cf6; color:white; border:0; border-radius:8px; padding:10px; font-weight:800; width:100%; margin-top:10px; cursor:pointer">➕ Salva Giustificativo</button>';
+  html += '<button onclick="aggiungiGiustificativo()" style="background:#8b5cf6; color:white; border:0; border-radius:8px; padding:10px; font-weight:800; width:100%; margin-top:10px; cursor:pointer">➕ Registra Assenza</button>';
   html += '</div>';
   
-  html += '<b style="font-size:12px; color:#1e293b">Giustificativi Registrati:</b>';
+  html += '<b style="font-size:12px; color:#1e293b">Assenze Registrate:</b>';
   html += '<div id="listaGiustificativiUI" style="max-height:180px; overflow:auto; margin-top:6px"></div>';
   html += '</div>';
   modal.innerHTML = html;
@@ -597,7 +612,7 @@ function aggiungiGiustificativo(){
   giustificativiSalvati.push({nome: nome, data: dataFormattata, tipo: tipo, timestamp: Date.now()});
   localStorage.setItem('giustificativi_v96', JSON.stringify(giustificativiSalvati));
   renderListaGiustificativi();
-  alert("✅ Giustificativo aggiunto con successo!");
+  alert("✅ Assenza registrata con successo!");
 }
 
 function renderListaGiustificativi(){
@@ -612,7 +627,7 @@ function renderListaGiustificativi(){
     html += '<button onclick="eliminaGiustificativo('+idx+')" style="background:#ef4444; color:white; border:0; border-radius:4px; padding:4px 8px; font-size:10px; cursor:pointer">Elimina</button>';
     html += '</div>';
   }
-  container.innerHTML = html || '<div style="color:#94a3b8; text-align:center; padding:10px">Nessun giustificativo registrato</div>';
+  container.innerHTML = html || '<div style="color:#94a3b8; text-align:center; padding:10px">Nessuna assenza registrata</div>';
 }
 
 function eliminaGiustificativo(idx){
