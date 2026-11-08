@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IC Frosinone 2 - V140 - TIMBRATURE & LOGO</title>
+<title>IC Frosinone 2 - V141 - TIMBRATURE</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -24,7 +24,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 .card-pl.pinocchio{border:2.5px solid #ec4899; background:#fce7f3}
 .card-pl.spinelli{border:2.5px solid #f97316; background:#ffedd5}
 .btn-maps{display:inline-block; background:#0ea5e9; color:white; padding:4px 10px; border-radius:999px; font-size:10px; font-weight:800; text-decoration:none; margin-top:4px}
-.badge-rosso{background:#ef4444; color:white; padding:6px 12px; border-radius:999px; font-weight:800; font-size:12px; display:inline-block}
+.badge-rosso{background:#ef4444; color:white; padding:4px 10px; border-radius:999px; font-weight:800; font-size:11px; display:inline-block}
 .chip-dist{display:inline-block; background:#fee2e2; border:1.5px solid #fca5a5; padding:5px 8px; border-radius:999px; font-size:10px; font-weight:700; margin:3px}
 .red-banner{background:#ef4444; color:white; text-align:center; font-weight:800; font-size:14px; padding:10px; border-radius:12px; margin-bottom:8px}
 .green-banner{background:#16a34a; color:white; text-align:center; font-weight:800; font-size:14px; padding:10px; border-radius:12px; margin-bottom:8px}
@@ -74,12 +74,15 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 </div>
 </div>
 <div class="right-gps">
-<div><b>📡 GPS</b> <span id="badgeStato" class="badge-rosso">GPS NON ATTIVO</span> <span id="precTop" style="font-size:11px; background:white; padding:2px 6px; border-radius:999px; border:1px solid #cbd5e1">--</span></div>
+<div style="display:flex; justify-content:space-between; align-items:center">
+  <div><b>📡 GPS</b> <span id="precTop" style="font-size:11px; background:white; padding:2px 6px; border-radius:999px; border:1px solid #cbd5e1">--</span></div>
+  <div><span id="badgeStato" class="badge-rosso">GPS NON ATTIVO</span></div>
+</div>
 <div id="vicinoBox" style="font-size:13px; font-weight:800; margin-top:6px">⏳ Clicca Aggiorna GPS e consenti posizione</div>
 <div id="listaDistanze" style="margin-top:6px"></div>
 <div id="coordBox" style="font-size:11px; color:#334155; background:white; padding:6px; border-radius:8px; border:1px solid #e2e8f0; margin-top:6px; text-align:center">Clicca Aggiorna GPS - Serve HTTPS e permesso Posizione</div>
 <div style="text-align:center; margin-top:8px">
-<button onclick="attivaGPS()" style="background:#0ea5e9; color:white; border:0; border-radius:8px; padding:10px 18px; font-weight:800; font-size:13px">📍 Aggiorna GPS</button>
+<button onclick="attivaGPS()" style="background:#0ea5e9; color:white; border:0; border-radius:8px; padding:10px 18px; font-weight:800; font-size:13px">📍 Clicca Aggiorna GPS e consenti posizione</button>
 </div>
 </div>
 </div>
@@ -89,11 +92,11 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 
 <div class="bottom-grid">
 <div class="card-timbra">
-<b>📷 Scanner + Timbratura</b>
-<div style="margin:8px 0">
-<button class="btn btn-dark" onclick="avviaScanner()">📷 Avvia Fotocamera</button>
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
+  <b style="font-size:14px">📷 Scanner + Timbratura</b>
+  <button class="btn" style="background:#0ea5e9; color:white; width:auto; padding:8px 14px; font-weight:800; font-size:12px" onclick="avviaScanner()">📷 Avvia Fotocamera</button>
 </div>
-<div style="display:flex; gap:6px">
+<div style="display:flex; gap:6px; margin-bottom:6px">
 <button class="btn" style="background:#64748b; display:none; flex:1" id="stopBtn" onclick="fermaScanner()">⏹️ Ferma</button>
 <button class="btn" style="background:#0ea5e9; color:white; display:none; flex:1" id="switchBtn" onclick="switchCamera()">🔄 Cambia Camera</button>
 </div>
@@ -103,7 +106,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 
 <div style="border:2.5px solid #0ea5e9; border-radius:12px; padding:10px; background:#f0f9ff; margin-top:10px">
 <b>📋 Timbratura manuale</b>
-<select id="dipendente" class="select-big" style="margin-top:6px"><option>⏳ Caricamento...</option></select>
+<select id="dipendente" class="select-big" style="margin-top:6px" onchange="onDipendenteSelezionato()"><option>⏳ Caricamento...</option></select>
 <div id="orarioGiornoBox" style="background:#e0f2fe; border:2px solid #0ea5e9; border-radius:8px; padding:8px; margin:6px 0; font-size:13px; text-align:center; font-weight:700">Oggi: --</div>
 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px">
 <button class="btn btn-entrata" id="btnEntrata" onclick="timbra('ENTRATA')">🟢 ENTRATA</button>
@@ -330,6 +333,11 @@ function switchCamera(){
     currentCameraIndex = (currentCameraIndex + 1) % availableCameras.length;
     avviaScanner();
   }
+}
+
+function onDipendenteSelezionato(){
+  mostraOrario();
+  setTimeout(()=>{ try{ avviaScanner(); }catch(e){} }, 300);
 }
 
 function timbra(tipo){
@@ -934,7 +942,7 @@ window.addEventListener('load', ()=>{
 document.addEventListener('DOMContentLoaded', ()=>{
   setTimeout(()=>{ try{ attivaGPS(); avviaWatchGPS(); }catch(e){} }, 500);
 });
-document.getElementById('dipendente')?.addEventListener('change', mostraOrario);
+document.getElementById('dipendente')?.addEventListener('change', onDipendenteSelezionato);
 </script>
 </body>
 </html>
