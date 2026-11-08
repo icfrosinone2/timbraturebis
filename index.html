@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IC Frosinone 2 - V144 - TIMBRATURE</title>
+<title>IC Frosinone 2 - V146 - TIMBRATURE</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -46,7 +46,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <body>
 
 <div class="top-verde">
-<div class="top-left">IC FROSINONE 2 - V144</div>
+<div class="top-left">IC FROSINONE 2 - V146</div>
 <div class="top-right"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQBQYWludC5ORVQgdiAzLjUuMDUVujhLAAAEs0lEQVR4Xu1Za0hUURie91HUIjO10swsS5sKzZtY5hTTojJtVklL02xTzVwzG+uM6pQ1S8wUbbPKrCzaK62+qJlpZk6jLCOyXzKzGzI1G4m0/XvOefvW9gW3C9zPHvvuec+7v/HLO3nvPOfufKzXFzU+f8KevY1b9j/7tD1+m9z968f9g4u3jB2y4bS59M0+m/fKqK390k1tffWn6F63H6m1j/dD18wZ31s+O779yL/B/4eK5K+/vLw7L/3z78N/r7e+1M1wffs8B/V8d26yT376E2u8f5Gv/dK98a633v2/2i/5u8eP3h198O36O+m/jXnE2vI1B36VfK2v0L2M305/7Xj6DdfC35Qc8f+H3f23vH2P3p2rTf4yJ1j01rQ/XbB3R0d54z9rT4L6r8hW/l7R5zE+lXwJvR25iT5s6ZzBv17eD6K1w3y3L1N9849206vVdfvVbN928gY398q8f1rNcf2+D2yvL3hQyLqgL1MvVzO+6j5Q6d9VnL9qD5fU3w571B39c5+X5l1U0O5WjK3w85/b04Vb2d1Vdfu/vT3P1g649/Y2f1w6A0bUj9d6P+kQfH8jT2G002Xz7t93cRzL37b3pT87jF814V4V5F+pB5aG061Z4jQ943N31gZ5J3X2gE+l294jX5wPjXy31m3xW+sR+z92G2g7B5m15zR94336B69xV4v3Zwe3gV8sA736eL9rA/XgGv2K3/H8w7H75+C2T4C803V2w2rUj4sH6x9w0B8QJ2C23jVf23x+/QzX37c+j9o55sD78E07uC6/tY76X7+D8gP4Lw87o8p0sD6E3Fz4fC81u/34B6u8Y9q00x3lIq1sUv+H/m0s0bO1V0/Gz+v+167H3P+F7A6r/9nJm4tE1v90f19n6uI7tF1+wz8T/X3Gz48V9/u+bW4f7b600sL1s/4Z4j281Y64Y/b0W/Xg8a7Z1uJ/q8B330r+z/f0w9J1pYmR+WvF1u6F4fQ1v4zZ2Q9P2rB/x+J/226N/v8EefOa1r9v+C4zM1Mv95/a5lC1n6E6e6sJ9U78f9yM/x1Y948j/g2e60xN95v1N2WJq59lWbT778T3tXWq9e0O+rUffn+W2nE5/3sU1n+3q3Y763H4A9uVj82kUAAA="></div>
 </div>
 
@@ -137,8 +137,9 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <button onclick="bloccaPIN()" style="background:#64748b; color:white; border:0; border-radius:8px; padding:8px 12px">🔒</button>
 </div>
 <div id="areaAnag" style="display:none">
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px">
+<div style="display:flex; flex-direction:column; gap:6px; margin-bottom:8px">
   <button onclick="aggiungiNuovoDipendentePrompt()" style="background:#16a34a; color:white; border:0; border-radius:8px; padding:8px 12px; font-weight:800; font-size:12px">➕ Aggiungi Nuovo Dipendente</button>
+  <button onclick="apriGestioneGiustificativi()" style="background:#8b5cf6; color:white; border:0; border-radius:8px; padding:8px 12px; font-weight:800; font-size:12px">📝 Gestisci Giustificativi Assenze</button>
   <button onclick="ripristinaListaInizialeCloud()" style="background:#64748b; color:white; border:0; border-radius:6px; padding:6px 10px; font-size:11px; font-weight:700">🔄 Ripristina lista originale</button>
 </div>
 <div id="tabellaOrari" style="margin-top:8px"></div>
@@ -225,6 +226,7 @@ function rimuoviCasa(){ localStorage.removeItem('plesso_casa_v94'); customPlesso
 function dist(a,b,c,d){const R=6371e3,toRad=x=>x*Math.PI/180,dLat=toRad(c-a),dLon=toRad(d-b),aa=Math.sin(dLat/2)**2+Math.cos(toRad(a))*Math.cos(toRad(c))*Math.sin(dLon/2)**2;return R*2*Math.atan2(Math.sqrt(aa),Math.sqrt(1-aa));}
 let last=null, vicino=null, html5Qr=null, ultimoQR='', ultimoTempo=0, dentro=false, watchId=null, lastDentroTime=0;
 let anagrafiche=[]; let timbratureSalvate=JSON.parse(localStorage.getItem('timbrature_v93')||'[]');
+let giustificativiSalvati = JSON.parse(localStorage.getItem('giustificativi_v96')||'[]');
 let bachecaMessaggi = [];
 let giorniMap={lun:'Lunedì', mar:'Martedì', mer:'Mercoledì', gio:'Giovedì', ven:'Venerdì', sab:'Sabato', dom:'Domenica'};
 
@@ -517,6 +519,83 @@ function eliminaDipendente(nome){
   render();
 }
 
+function apriGestioneGiustificativi(){
+  var modal = document.getElementById('modalGiustificativi');
+  if(!modal){
+    var div=document.createElement('div');
+    div.id='modalGiustificativi';
+    div.style='position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10002; display:flex; align-items:center; justify-content:center; padding:12px; box-sizing:border-box';
+    document.body.appendChild(div);
+    modal=div;
+  }
+  modal.style.display='flex';
+  var listaNomi = anagrafiche.map(a => a.nome).sort();
+  var oggiStr = new Date().toISOString().slice(0,10);
+  
+  var html = '<div style="background:white; border-radius:14px; padding:16px; width:100%; max-width:550px; max-height:90vh; overflow:auto; border:2.5px solid #8b5cf6">';
+  html += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">';
+  html += '<h3 style="margin:0; color:#8b5cf6">📝 Gestione Giustificativi Assenze</h3>';
+  html += '<button onclick="document.getElementById(\'modalGiustificativi\').style.display=\'none\'" style="background:#64748b; color:white; border:0; border-radius:50%; width:28px; height:28px; font-weight:800; cursor:pointer">✕</button>';
+  html += '</div>';
+  
+  html += '<div style="background:#f8fafc; border:1px solid #cbd5e1; padding:10px; border-radius:10px; margin-bottom:12px">';
+  html += '<b style="font-size:12px; color:#1e293b">Aggiungi Nuovo Giustificativo</b><br>';
+  html += '<label style="font-size:11px; font-weight:700; display:block; margin-top:6px">Dipendente:</label>';
+  html += '<select id="giustDip" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px">';
+  for(var i=0; i<listaNomi.length; i++){ html += '<option value="'+listaNomi[i]+'">'+listaNomi[i]+'</option>'; }
+  html += '</select>';
+  
+  html += '<div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:6px">';
+  html += '<div><label style="font-size:11px; font-weight:700; display:block">Data:</label><input type="date" id="giustData" value="'+oggiStr+'" style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:6px"></div>';
+  html += '<div><label style="font-size:11px; font-weight:700; display:block">Tipo:</label><select id="giustTipo" style="width:100%; padding:7px; border:1px solid #cbd5e1; border-radius:6px"><option value="Ferie">🌴 Ferie</option><option value="Malattia">🏥 Malattia</option><option value="Permesso">⏱️ Permesso</option><option value="Legge 104">🤝 Legge 104</option><option value="Altro">📌 Altro</option></select></div>';
+  html += '</div>';
+  
+  html += '<button onclick="aggiungiGiustificativo()" style="background:#8b5cf6; color:white; border:0; border-radius:8px; padding:10px; font-weight:800; width:100%; margin-top:10px; cursor:pointer">➕ Salva Giustificativo</button>';
+  html += '</div>';
+  
+  html += '<b style="font-size:12px; color:#1e293b">Giustificativi Registrati:</b>';
+  html += '<div id="listaGiustificativiUI" style="max-height:180px; overflow:auto; margin-top:6px"></div>';
+  html += '</div>';
+  modal.innerHTML = html;
+  renderListaGiustificativi();
+}
+
+function aggiungiGiustificativo(){
+  var nome = document.getElementById('giustDip').value;
+  var dataInput = document.getElementById('giustData').value;
+  var tipo = document.getElementById('giustTipo').value;
+  if(!dataInput){ alert("Seleziona una data!"); return; }
+  
+  var parti = dataInput.split('-');
+  var dataFormattata = parti[2] + '/' + parti[1] + '/' + parti[0]; // gg/mm/aaaa
+  
+  giustificativiSalvati.push({nome: nome, data: dataFormattata, tipo: tipo, timestamp: Date.now()});
+  localStorage.setItem('giustificativi_v96', JSON.stringify(giustificativiSalvati));
+  renderListaGiustificativi();
+  alert("✅ Giustificativo aggiunto con successo!");
+}
+
+function renderListaGiustificativi(){
+  var container = document.getElementById('listaGiustificativiUI');
+  if(!container) return;
+  var html = '';
+  for(var i=0; i<giustificativiSalvati.length; i++){
+    var g = giustificativiSalvati[i];
+    var idx = i;
+    html += '<div style="display:flex; justify-content:space-between; align-items:center; background:white; border:1px solid #cbd5e1; padding:6px; border-radius:6px; margin-bottom:4px; font-size:11px">';
+    html += '<div><b>'+g.nome+'</b> - <span style="color:#0284c7">'+g.data+'</span>: <span style="background:#f3e8ff; color:#7e22ce; padding:2px 6px; border-radius:4px; font-weight:700">'+g.tipo+'</span></div>';
+    html += '<button onclick="eliminaGiustificativo('+idx+')" style="background:#ef4444; color:white; border:0; border-radius:4px; padding:4px 8px; font-size:10px; cursor:pointer">Elimina</button>';
+    html += '</div>';
+  }
+  container.innerHTML = html || '<div style="color:#94a3b8; text-align:center; padding:10px">Nessun giustificativo registrato</div>';
+}
+
+function eliminaGiustificativo(idx){
+  giustificativiSalvati.splice(idx, 1);
+  localStorage.setItem('giustificativi_v96', JSON.stringify(giustificativiSalvati));
+  renderListaGiustificativi();
+}
+
 function apriSchedaAnagrafica(nome){
   var a=anagrafiche.find(function(x){ return x.nome===nome; }); 
   if(!a) return;
@@ -806,14 +885,19 @@ function generaResocontoDareAvere(){
       modal=div;
     }
     modal.style.display='flex';
-    var htmlModal = '<div style="background:white; border-radius:14px; padding:16px; width:100%; max-width:750px; max-height:95vh; overflow:auto; border:2.5px solid #0ea5e9; margin-top:20px">';
-    htmlModal+='<div style="display:flex; justify-content:space-between; align-items:center"><h2 style="margin:0; font-size:18px; color:#0ea5e9">📊 Resoconto DARE / AVERE (Differenza Oraria)</h2><button onclick="chiudiModalResoconto()" style="background:#64748b; color:white; border:0; border-radius:50%; width:32px; height:32px; font-weight:800; cursor:pointer">✕</button></div>';
+    var htmlModal = '<div style="background:white; border-radius:14px; padding:16px; width:100%; max-width:800px; max-height:95vh; overflow:auto; border:2.5px solid #0ea5e9; margin-top:20px">';
+    htmlModal+='<div style="display:flex; justify-content:space-between; align-items:center"><h2 style="margin:0; font-size:18px; color:#0ea5e9">📊 Resoconto Mensile DARE / AVERE</h2><button onclick="chiudiModalResoconto()" style="background:#64748b; color:white; border:0; border-radius:50%; width:32px; height:32px; font-weight:800; cursor:pointer">✕</button></div>';
     htmlModal+='<label style="font-weight:700; display:block; margin:10px 0 4px 0">👤 Dipendente:</label><select id="selDip" style="width:100%; padding:10px; border:1.5px solid #cbd5e1; border-radius:8px"><option value="TUTTI">TUTTI - Tutti i dipendenti</option>';
     for(var i=0;i<listaNomi.length;i++){ htmlModal+='<option value="'+listaNomi[i]+'">'+listaNomi[i]+'</option>'; }
     htmlModal+='</select>';
     htmlModal+='<label style="font-weight:700; display:block; margin:10px 0 4px 0">📅 DAL giorno:</label><input type="date" id="dal" value="'+primoGiorno+'" style="width:100%; padding:10px; border:1.5px solid #cbd5e1; border-radius:8px">';
     htmlModal+='<label style="font-weight:700; display:block; margin:10px 0 4px 0">📅 AL giorno:</label><input type="date" id="al" value="'+ultimoGiorno+'" style="width:100%; padding:10px; border:1.5px solid #cbd5e1; border-radius:8px">';
-    htmlModal+='<div style="text-align:center; margin-top:16px"><button onclick="generaResocontoInterno()" style="background:#0ea5e9; color:white; border:0; padding:12px 20px; border-radius:8px; font-weight:800; cursor:pointer">📊 Calcola Differenze Ore</button></div>';
+    
+    htmlModal+='<div style="display:flex; gap:8px; margin-top:16px">';
+    htmlModal+='<button onclick="generaResocontoInterno()" style="flex:1; background:#0ea5e9; color:white; border:0; padding:12px; border-radius:8px; font-weight:800; cursor:pointer">📊 Genera Resoconto</button>';
+    htmlModal+='<button onclick="esportaResocontoCSV()" style="flex:1; background:#16a34a; color:white; border:0; padding:12px; border-radius:8px; font-weight:800; cursor:pointer">📥 Esporta in CSV (Excel)</button>';
+    htmlModal+='</div>';
+
     htmlModal+='<div id="risultatoResoconto" style="margin-top:20px"></div></div>';
     modal.innerHTML=htmlModal;
     window._timbraturePerResoconto = timbratureSalvate.slice();
@@ -841,79 +925,110 @@ function generaResocontoInterno(){
   var dal = document.getElementById("dal").value;
   var al = document.getElementById("al").value;
   var timbratureSalvate = window._timbraturePerResoconto || [];
-  var filtrate = timbratureSalvate.slice();
   
-  if(dipScelto!=="TUTTI") filtrate = filtrate.filter(t => t.nome===dipScelto);
-  if(dal){ var dalTime = new Date(dal).getTime(); filtrate = filtrate.filter(t => (t.timestamp||0)>=dalTime); }
-  if(al){ var alTime = new Date(al).getTime()+24*60*60*1000-1; filtrate = filtrate.filter(t => (t.timestamp||0)<=alTime); }
+  var dStart = dal ? new Date(dal) : new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  var dEnd = al ? new Date(al) : new Date();
   
-  if(filtrate.length===0){ document.getElementById("risultatoResoconto").innerHTML="<p style=\"color:red; text-align:center\">Nessuna timbratura trovata nel periodo selezionato.</p>"; return; }
+  var dipendentiDaElaborare = dipScelto === "TUTTI" ? anagrafiche.map(x=>x.nome) : [dipScelto];
   
-  filtrate.sort((a,b)=>(a.timestamp||0)-(b.timestamp||0));
-  
-  // Raggruppa per dipendente e per data (giorno)
-  var perDipGiorno = {};
-  filtrate.forEach(t => {
-    var dataGiorno = (t.data||'').split(',')[0].trim(); // es. "08/11/2026"
-    if(!perDipGiorno[t.nome]) perDipGiorno[t.nome] = {};
-    if(!perDipGiorno[t.nome][dataGiorno]) perDipGiorno[t.nome][dataGiorno] = [];
-    perDipGiorno[t.nome][dataGiorno].push(t);
-  });
+  var html = '<h3 style="color:#1e293b; font-size:15px">📅 Resoconto Dettagliato Mensile (Servizio vs Effettivo)</h3>';
+  html += '<div style="overflow:auto"><table style="width:100%; border-collapse:collapse; font-size:11px">';
+  html += '<tr><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Dipendente</th><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Data</th><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Previsto</th><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Effettivo</th><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Saldo (Dare/Avere)</th></tr>';
 
-  var html = '<h3 style="color:#1e293b; font-size:15px">Risultato Differenza Oraria (Effettivo vs Servizio)</h3>';
-  html += '<div style="overflow:auto"><table style="width:100%; border-collapse:collapse; font-size:12px">';
-  html += '<tr><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Dipendente</th><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Data</th><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Lavorato</th><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Previsto</th><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Saldo (Dare/Avere)</th></tr>';
+  var giorniArr = ['dom','lun','mar','mer','gio','ven','sab'];
 
-  Object.keys(perDipGiorno).sort().forEach(nome => {
+  dipendentiDaElaborare.forEach(nome => {
     var dipObj = anagrafiche.find(x => x.nome === nome);
-    var giorniGiornale = perDipGiorno[nome];
+    if(!dipObj) return;
     
-    Object.keys(giorniGiornale).sort().forEach(dataStr => {
-      var timbList = giorniGiornale[dataStr];
-      // Trova prima entrata e ultima uscita del giorno
-      var entrate = timbList.filter(x => x.tipo === 'ENTRATA');
-      var uscite = timbList.filter(x => x.tipo === 'USCITA');
+    var curr = new Date(dStart);
+    while(curr <= dEnd){
+      var giornoSett = giorniArr[curr.getDay()];
+      var slotsPreVisti = dipObj.orariSettimana && dipObj.orariSettimana[giornoSett] ? dipObj.orariSettimana[giornoSett] : [];
       
-      var minLavorati = 0;
-      if(entrate.length > 0 && uscite.length > 0){
-        var primoEntrataMin = timeToMinutes(entrate[0].ora);
-        var ultimaUscitaMin = timeToMinutes(uscite[uscite.length - 1].ora);
-        if(ultimaUscitaMin > primoEntrataMin){
-          minLavorati = ultimaUscitaMin - primoEntrataMin;
+      if(slotsPreVisti.length > 0){
+        var dataStrFormatted = curr.toLocaleDateString('it-IT');
+        
+        var minPrevisti = 0;
+        slotsPreVisti.forEach(s => {
+          minPrevisti += (timeToMinutes(s.uscita) - timeToMinutes(s.entrata));
+        });
+        
+        var timbGiorn = timbratureSalvate.filter(t => t.nome === nome && (t.data||'').startsWith(dataStrFormatted));
+        var entrate = timbGiorn.filter(x => x.tipo === 'ENTRATA');
+        var uscite = timbGiorn.filter(x => x.tipo === 'USCITA');
+        
+        var giustificato = giustificativiSalvati.find(g => g.nome === nome && g.data === dataStrFormatted);
+        
+        var minLavorati = 0;
+        var statoStr = '';
+        var coloreDiff = '#16a34a';
+        
+        if(entrate.length > 0 && uscite.length > 0){
+          var primoEntrataMin = timeToMinutes(entrate[0].ora);
+          var ultimaUscitaMin = timeToMinutes(uscite[uscite.length - 1].ora);
+          if(ultimaUscitaMin > primoEntrataMin){
+            minLavorati = ultimaUscitaMin - primoEntrataMin;
+          }
+          var diff = minLavorati - minPrevisti;
+          coloreDiff = diff >= 0 ? '#16a34a' : '#dc2626';
+          statoStr = minutesToHoursStr(diff);
+        } else if(giustificato){
+          minLavorati = 0;
+          coloreDiff = '#8b5cf6';
+          statoStr = '📝 GIUSTIFICATO (' + giustificato.tipo.toUpperCase() + ')';
+        } else {
+          minLavorati = 0;
+          coloreDiff = '#ef4444';
+          statoStr = '🔴 ASSENTE (-' + Math.floor(minPrevisti/60) + 'h ' + (minPrevisti%60) + 'm)';
         }
+
+        var prevStr = Math.floor(minPrevisti/60) + 'h ' + (minPrevisti%60) + 'm';
+        var lavStr = Math.floor(minLavorati/60) + 'h ' + (minLavorati%60) + 'm';
+
+        html += '<tr>';
+        html += '<td style="border:1px solid #cbd5e1; padding:6px"><b>'+nome+'</b></td>';
+        html += '<td style="border:1px solid #cbd5e1; padding:6px; text-align:center">'+dataStrFormatted+'</td>';
+        html += '<td style="border:1px solid #cbd5e1; padding:6px; text-align:center">'+prevStr+'</td>';
+        html += '<td style="border:1px solid #cbd5e1; padding:6px; text-align:center">'+lavStr+'</td>';
+        html += '<td style="border:1px solid #cbd5e1; padding:6px; text-align:center; font-weight:800; color:'+coloreDiff+'">'+statoStr+'</td>';
+        html += '</tr>';
       }
-
-      // Calcola orario previsto per quel giorno della settimana
-      var partiData = dataStr.split('/');
-      var dObj = new Date(partiData[2], partiData[1]-1, partiData[0]);
-      var giorniArr = ['dom','lun','mar','mer','gio','ven','sab'];
-      var chiaveGiorno = giorniArr[dObj.getDay()];
-      
-      var minPrevisti = 432; // Default 7h 12m (07:30 - 14:42 = 432 min) se non specificato
-      if(dipObj && dipObj.orariSettimana && dipObj.orariSettimana[chiaveGiorno] && dipObj.orariSettimana[chiaveGiorno].length > 0){
-        var slot = dipObj.orariSettimana[chiaveGiorno][0];
-        minPrevisti = timeToMinutes(slot.uscita) - timeToMinutes(slot.entrata);
-      }
-
-      var diff = minLavorati - minPrevisti; // Positivo = Straordinario (Avere), Negativo = Deficit (Dare)
-      var coloreDiff = diff >= 0 ? '#16a34a' : '#dc2626';
-      var formatoDiff = minutesToHoursStr(diff);
-
-      var lavStr = Math.floor(minLavorati/60) + 'h ' + (minLavorati%60) + 'm';
-      var prevStr = Math.floor(minPrevisti/60) + 'h ' + (minPrevisti%60) + 'm';
-
-      html += '<tr>';
-      html += '<td style="border:1px solid #cbd5e1; padding:6px"><b>'+nome+'</b></td>';
-      html += '<td style="border:1px solid #cbd5e1; padding:6px; text-align:center">'+dataStr+'</td>';
-      html += '<td style="border:1px solid #cbd5e1; padding:6px; text-align:center">'+lavStr+'</td>';
-      html += '<td style="border:1px solid #cbd5e1; padding:6px; text-align:center">'+prevStr+'</td>';
-      html += '<td style="border:1px solid #cbd5e1; padding:6px; text-align:center; font-weight:800; color:'+coloreDiff+'">'+formatoDiff+'</td>';
-      html += '</tr>';
-    });
+      curr.setDate(curr.getDate() + 1);
+    }
   });
 
   html += '</table></div>';
   document.getElementById("risultatoResoconto").innerHTML = html;
+}
+
+function esportaResocontoCSV() {
+  var table = document.querySelector("#risultatoResoconto table");
+  if (!table) {
+    alert("Prima genera il resoconto!");
+    return;
+  }
+  
+  var csv = [];
+  var rows = table.rows;
+  
+  for (var i = 0; i < rows.length; i++) {
+    var row = [], cols = rows[i].querySelectorAll("th, td");
+    for (var j = 0; j < cols.length; j++) {
+      var data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, "").replace(/;/g, ",");
+      row.push('"' + data + '"');
+    }
+    csv.push(row.join(";"));
+  }
+  
+  var csvFile = new Blob(["\ufeff" + csv.join("\n")], { type: "text/csv;charset=utf-8;" });
+  var downloadLink = document.createElement("a");
+  downloadLink.download = "Resoconto_Dare_Avere_" + new Date().toISOString().slice(0,10) + ".csv";
+  downloadLink.href = window.URL.createObjectURL(csvFile);
+  downloadLink.style.display = "none";
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
 }
 
 async function caricaCondivise(){
