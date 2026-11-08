@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IC Frosinone 2 - V153 - TIMBRATURE</title>
+<title>IC Frosinone 2 - V154 - TIMBRATURE</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -12,7 +12,7 @@
 body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 .top-verde{border:3px solid #16a34a; background:white; border-radius:14px; padding:12px 14px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center}
 .top-left{font-size:15px; font-weight:800; color:#16a34a}
-.top-right img{width:50px; height:50px; border-radius:50%; object-fit:cover; border:2.5px solid #16a34a; display:block; box-shadow:0 2px 6px rgba(0,0,0,0.15)}
+.top-right img{width:54px; height:54px; border-radius:50%; object-fit:cover; border:2.5px solid #16a34a; display:block; box-shadow:0 2px 6px rgba(0,0,0,0.15)}
 .box-combinato{border:2px solid #cbd5e1; border-radius:14px; background:#fff5f5; display:grid; grid-template-columns:1.05fr 1.2fr; overflow:hidden; margin-bottom:8px}
 @media(max-width:800px){.box-combinato{grid-template-columns:1fr}}
 .grid-plessi{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:8px}
@@ -46,21 +46,21 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <body>
 
 <div class="top-verde">
-<div class="top-left">IC FROSINONE 2 - V153</div>
+<div class="top-left">IC FROSINONE 2 - V154</div>
 <div class="top-right"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAXRFWHRTb2Z0d2FyZWFkb2JlIFBob3Rvc2hvcCBDUzYgKENvcmVpSkFQKSwxOS4wLjIwMTYwMDIxci4xMTQyOCAwODoyNC4xMS4wMjE2MDIxcy4wLjAgMTA0OCAzMzg5oXbV9wAAIABJREFUeJztnXeYVNW9xz83M3NmN310pneZ2Z0BBlQpgg2wIMqW3oIiIoiCYkHRYkFRxIYV7IqCig2iAix0kV5YVpAuu9NneWbe5szM+f2RPefs9+6c9/udr98fz945Z52zc8+z/nuf821M0zQNJ5yAHAcBHOkggOEcAcCdAQC4BwQA3BkAwJ0D4EcAAG7BAIA7BwCAewcA4M4AAO4cAOBOAABwJwAAdw4A4M4AAO4cAOBOAJPAPwAAAP//82JvI74AAAAASUVORK5CYII=" alt="Logo"></div>
 </div>
 
-<!-- SEZIONE CONDIVISO ATTIVO & PULSANTE AZZERAMENTO RAPIDO SENZA PIN -->
+<!-- SEZIONE CONDIVISO ATTIVO & PULSANTE AZZERAMENTO CON PIN PROTETTO -->
 <div class="green-banner">
   <span id="testoCondivisoBanner">🌱 Condiviso attivo - 0 timbrature</span>
-  <button onclick="azzeraDatabaseCloudCompleto()" style="background:#dc2626; color:white; border:0; border-radius:8px; padding:6px 12px; font-size:12px; font-weight:800; cursor:pointer">🗑️ Azzera Database Condiviso (Elimina Prove)</button>
+  <button onclick="richiediAzzeraDatabase()" style="background:#dc2626; color:white; border:0; border-radius:8px; padding:6px 12px; font-size:12px; font-weight:800; cursor:pointer">🗑️ Azzera Database (PIN)</button>
 </div>
 
-<!-- SEZIONE BACHECA DIGITALE CONDIVISA (SENZA PIN) -->
+<!-- SEZIONE BACHECA DIGITALE CONDIVISA -->
 <div style="background:white; border:2.5px solid #f59e0b; border-radius:14px; padding:12px; margin-bottom:8px">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px">
     <b>📢 Bacheca Avvisi e Circolari (Condivisa)</b>
-    <button onclick="apriFormBacheca()" style="background:#f59e0b; color:white; border:0; border-radius:8px; padding:6px 12px; font-size:11px; font-weight:800">➕ Nuovo Avviso</button>
+    <button onclick="apriFormBacheca()" style="background:#f59e0b; color:white; border:0; border-radius:8px; padding:6px 12px; font-size:11px; font-weight:800">➕ Nuovo Avviso (Senza PIN)</button>
   </div>
   <div id="bachecaList" style="max-height:160px; overflow:auto; font-size:12px; color:#334155">
     ⏳ Caricamento avvisi dalla bacheca...
@@ -97,10 +97,10 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 
 <div class="bottom-grid">
 <div class="card-timbra">
-<!-- SCANNER E FOTOCAMERA SULLA STESSA LINEA E PIU GRANDI -->
+<!-- SCANNER E FOTOCAMERA PIU ALTI E SULLA STESSA LINEA -->
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px">
   <b style="font-size:16px; color:#0369a1">📷 Scanner & Timbratura</b>
-  <button class="btn" style="background:#0ea5e9; color:white; font-size:15px; padding:12px 20px; font-weight:900; width:auto; flex:1; min-width:180px" onclick="avviaScanner()">📷 AVVIA FOTOCAMERA</button>
+  <button class="btn" style="background:#0ea5e9; color:white; font-size:16px; padding:18px 22px; font-weight:900; width:auto; flex:1; min-width:190px; box-shadow:0 4px 10px rgba(14,165,233,0.3)" onclick="avviaScanner()">📷 AVVIA FOTOCAMERA</button>
 </div>
 
 <div style="display:flex; gap:6px; margin-bottom:6px">
@@ -157,6 +157,19 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 </div>
 </div>
 
+</div>
+
+<!-- MODALE SICURO PER RICHIESTA PIN (NON VISIBILE) -->
+<div id="modalPinSicuro" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:99999; align-items:center; justify-content:center; padding:12px; box-sizing:border-box">
+<div style="background:white; border-radius:14px; padding:20px; max-width:320px; width:100%; text-align:center; border:2.5px solid #dc2626">
+<h3 id="modalPinTitolo" style="margin:0 0 8px 0; color:#dc2626; font-size:16px">🔒 Area Protetta</h3>
+<p id="modalPinTesto" style="font-size:12px; color:#475569; margin-bottom:12px">Inserisci il PIN di sicurezza:</p>
+<input type="password" id="inputPinSegreto" placeholder="••••" style="width:100%; padding:10px; font-size:18px; text-align:center; border:2px solid #cbd5e1; border-radius:8px; box-sizing:border-box; margin-bottom:14px" onkeydown="if(event.key==='Enter') confermaPinSicuro()">
+<div style="display:flex; gap:8px">
+<button onclick="confermaPinSicuro()" style="flex:1; background:#16a34a; color:white; border:0; border-radius:8px; padding:10px; font-weight:800; cursor:pointer">Conferma</button>
+<button onclick="chiudiModalPinSicuro()" style="flex:1; background:#64748b; color:white; border:0; border-radius:8px; padding:10px; font-weight:800; cursor:pointer">Annulla</button>
+</div>
+</div>
 </div>
 
 <!-- MODALE STAMPA BADGE SINGOLO -->
@@ -239,6 +252,7 @@ let last=null, vicino=null, html5Qr=null, ultimoQR='', ultimoTempo=0, dentro=fal
 let anagrafiche=[]; let timbratureSalvate=JSON.parse(localStorage.getItem('timbrature_v93')||'[]');
 let giustificativiSalvati = JSON.parse(localStorage.getItem('giustificativi_v96')||'[]');
 let bachecaMessaggi = [];
+let callbackPinSicuro = null;
 let giorniMap={lun:'Lunedì', mar:'Martedì', mer:'Mercoledì', gio:'Giovedì', ven:'Venerdì', sab:'Sabato', dom:'Domenica'};
 
 function getOrarioPerOggi(a){
@@ -403,14 +417,19 @@ function eliminaTutteTimbrature(){
   aggiornaLog(); 
 }
 
+function richiediAzzeraDatabase(){
+  apriModalPinSicuro("Azzera Database Cloud", "Inserisci il PIN per azzerare tutte le timbrature nel cloud:", function(){
+    azzeraDatabaseCloudCompleto();
+  });
+}
+
 async function azzeraDatabaseCloudCompleto(){
-  if(!confirm("ATTENZIONE: Questo cancellerà DEFINITIVAMENTE tutte le timbrature condivise e di prova nel Cloud per tutti gli utenti. Procedere?")) return;
   try{
     await fetch(DB_URL + "/timbrature.json", { method: "DELETE" });
     timbratureSalvate = [];
     localStorage.removeItem('timbrature_v93');
     aggiornaLog();
-    alert("✅ Registrazioni di prova e database cloud azzerati con successo!");
+    alert("✅ Database cloud azzerato con successo!");
   }catch(e){ alert("Errore durante l'azzeramento: "+e.message); }
 }
 
@@ -471,14 +490,14 @@ async function salvaAnagraficaCloudTotale(){
 }
 
 function ripristinaListaInizialeCloud(){
-  var pin = prompt("PIN per ripristinare (211285):");
-  if(pin !== "211285"){ alert("PIN errato!"); return; }
-  anagrafiche = JSON.parse(JSON.stringify(LISTA_COMPLETA_DIPENDENTI_V59));
-  anagrafiche.sort((a,b)=> (a.nome||"").localeCompare(b.nome||""));
-  localStorage.setItem('anagrafiche_v95', JSON.stringify(anagrafiche));
-  salvaAnagraficaCloudTotale();
-  render();
-  alert("✅ Lista originale ripristinata!");
+  apriModalPinSicuro("Ripristina Lista", "Inserisci il PIN per ripristinare la lista originale:", function(){
+    anagrafiche = JSON.parse(JSON.stringify(LISTA_COMPLETA_DIPENDENTI_V59));
+    anagrafiche.sort((a,b)=> (a.nome||"").localeCompare(b.nome||""));
+    localStorage.setItem('anagrafiche_v95', JSON.stringify(anagrafiche));
+    salvaAnagraficaCloudTotale();
+    render();
+    alert("✅ Lista originale ripristinata!");
+  });
 }
 
 function aggiungiNuovoDipendentePrompt(){
@@ -550,13 +569,13 @@ function filtraElenco(mantieniScroll){
 }
 
 function eliminaDipendente(nome){
-  var pin = prompt("PIN per eliminare dipendente (211285):");
-  if(pin !== "211285"){ alert("PIN errato!"); return; }
-  if(!confirm("Eliminare "+nome+"?")) return;
-  anagrafiche = anagrafiche.filter(function(x){ return x.nome !== nome; });
-  localStorage.setItem('anagrafiche_v95', JSON.stringify(anagrafiche));
-  salvaAnagraficaCloudTotale();
-  render();
+  apriModalPinSicuro("Elimina Dipendente", "Inserisci il PIN per eliminare " + nome + ":", function(){
+    anagrafiche = anagrafiche.filter(function(x){ return x.nome !== nome; });
+    localStorage.setItem('anagrafiche_v95', JSON.stringify(anagrafiche));
+    salvaAnagraficaCloudTotale();
+    render();
+    alert("✅ Dipendente eliminato.");
+  });
 }
 
 function apriGestioneGiustificativi(){
@@ -1120,7 +1139,7 @@ async function caricaBacheca(){
       let html = '';
       bachecaMessaggi.forEach((m) => {
         let ts = m.timestamp;
-        html += `<div style="background:#fffbeb; border-left:3px solid #f59e0b; padding:6px 8px; margin-bottom:6px; border-radius:6px; display:flex; justify-content:space-between; align-items:flex-start; gap:6px"><div style="flex:1"><div style="display:flex; justify-content:space-between; font-size:10px; color:#94a3b8"><b>${m.autore || 'Segreteria'}</b><span>${m.data || ''}</span></div><div style="font-weight:700; color:#1e293b; margin-top:2px">${m.titolo || 'Avviso'}</div><div style="font-size:11px; color:#475569">${m.testo}</div></div><button onclick="eliminaAvvisoBacheca(${ts})" style="background:#ef4444; color:white; border:0; border-radius:4px; padding:4px 6px; font-size:10px; font-weight:800; cursor:pointer">Del</button></div>`;
+        html += `<div style="background:#fffbeb; border-left:3px solid #f59e0b; padding:6px 8px; margin-bottom:6px; border-radius:6px; display:flex; justify-content:space-between; align-items:flex-start; gap:6px"><div style="flex:1"><div style="display:flex; justify-content:space-between; font-size:10px; color:#94a3b8"><b>${m.autore || 'Segreteria'}</b><span>${m.data || ''}</span></div><div style="font-weight:700; color:#1e293b; margin-top:2px">${m.titolo || 'Avviso'}</div><div style="font-size:11px; color:#475569">${m.testo}</div></div><button onclick="richiediEliminaAvviso(${ts})" style="background:#ef4444; color:white; border:0; border-radius:4px; padding:4px 6px; font-size:10px; font-weight:800; cursor:pointer">Del (PIN)</button></div>`;
       });
       bachecaDiv.innerHTML = html || '<div style="color:#94a3b8; text-align:center">Nessun avviso</div>';
     } else { bachecaDiv.innerHTML = '<div style="color:#94a3b8; text-align:center">Nessun avviso</div>'; }
@@ -1145,14 +1164,44 @@ async function pubblicaAvvisoCloud(avviso){
   }catch(e){ alert("Errore: "+e.message); }
 }
 
-async function eliminaAvvisoBacheca(ts){
-  if(!confirm("Eliminare questo avviso dalla bacheca?")) return;
+function richiediEliminaAvviso(ts){
+  apriModalPinSicuro("Elimina Avviso Bacheca", "Inserisci il PIN per eliminare questo avviso:", function(){
+    eliminaAvvisoBachecaEsecuzione(ts);
+  });
+}
+
+async function eliminaAvvisoBachecaEsecuzione(ts){
   var firebaseKey = bachecaFirebaseKeys[ts];
   if(firebaseKey){
     try{
       await fetch(DB_URL + "/bacheca/" + firebaseKey + ".json", { method: "DELETE" });
       caricaBacheca();
-    }catch(e){}
+      alert("✅ Avviso eliminato.");
+    }catch(e){ alert("Errore: "+e.message); }
+  }
+}
+
+function apriModalPinSicuro(titolo, testo, callback){
+  callbackPinSicuro = callback;
+  document.getElementById('modalPinTitolo').textContent = titolo;
+  document.getElementById('modalPinTesto').textContent = testo;
+  document.getElementById('inputPinSegreto').value = '';
+  document.getElementById('modalPinSicuro').style.display = 'flex';
+  setTimeout(()=>{ document.getElementById('inputPinSegreto').focus(); }, 100);
+}
+
+function chiudiModalPinSicuro(){
+  document.getElementById('modalPinSicuro').style.display = 'none';
+  callbackPinSicuro = null;
+}
+
+function confermaPinSicuro(){
+  var val = document.getElementById('inputPinSegreto').value.trim();
+  if(val === "211285"){
+    chiudiModalPinSicuro();
+    if(callbackPinSicuro) callbackPinSicuro();
+  } else {
+    alert("❌ PIN errato!");
   }
 }
 
