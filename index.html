@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IC Frosinone 2 - V133 - ANAGRAFICA STABILE & CLOUD</title>
+<title>IC Frosinone 2 - V134 - ANAGRAFICA PERFETTAMENTE FISSA</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -46,7 +46,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <body>
 
 <div class="top-verde">
-<div class="top-left"><b>✅ IC FROSINONE 2 - V133 - ANAGRAFICA STABILE & CLOUD</b><br><small>GPS attivo - Scanner QR HD - Sincronizzazione cloud in tempo reale</small></div>
+<div class="top-left"><b>✅ IC FROSINONE 2 - V134 - ANAGRAFICA PERFETTAMENTE FISSA</b><br><small>GPS attivo - Scanner QR HD - Sincronizzazione cloud in tempo reale</small></div>
 <div class="top-right"><div class="istituto">Istituto Comprensivo<br>Frosinone 2°</div></div>
 </div>
 
@@ -766,7 +766,12 @@ function apriSchedaAnagrafica(nome){
   htmlModal+='</div></div>';
   modal.innerHTML=htmlModal;
 }
-function chiudiSchedaAnagrafica(){ var modal=document.getElementById('modalSchedaAnag'); if(modal) modal.style.display='none'; }
+
+function chiudiSchedaAnagrafica(){ 
+  var modal=document.getElementById('modalSchedaAnag'); 
+  if(modal) modal.style.display='none'; 
+}
+
 function salvaSchedaAnagrafica(nomeVecchio){
   var a=anagrafiche.find(function(x){ return x.nome===nomeVecchio; }); 
   if(!a) return;
@@ -798,7 +803,22 @@ function salvaSchedaAnagrafica(nomeVecchio){
   anagrafiche.sort(function(a,b){ return a.nome.localeCompare(b.nome); });
   localStorage.setItem('anagrafiche_v95', JSON.stringify(anagrafiche));
   salvaAnagraficaCloudTotale();
-  render(); filtraElenco(true); chiudiSchedaAnagrafica();
+  
+  chiudiSchedaAnagrafica();
+  
+  const sel=document.getElementById('dipendente'); 
+  if(sel){
+    const cur=sel.value; 
+    sel.innerHTML=''; 
+    anagrafiche.forEach(item=>{ 
+      const o=document.createElement('option'); 
+      o.value=item.nome; 
+      o.textContent=item.nome+' - '+item.qualifica+' - '+item.plesso; 
+      sel.appendChild(o); 
+    }); 
+    if(cur) sel.value=cur;
+  }
+  
   alert('✅ Salvato e sincronizzato su tutti i tablet!');
 }
 
