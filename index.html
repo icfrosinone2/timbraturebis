@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IC Frosinone 2 - V139 - TIMBRATURE</title>
+<title>IC Frosinone 2 - V140 - TIMBRATURE & LOGO</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -37,11 +37,11 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 .btn-entrata{background:linear-gradient(135deg,#16a34a,#22c55e); color:white; font-size:16px; padding:14px}
 .btn-uscita{background:linear-gradient(135deg,#dc2626,#ef4444); color:white; font-size:16px; padding:14px}
 .select-big{width:100%; padding:12px; border:3px solid #0ea5e9; border-radius:12px; font-size:15px; font-weight:700; background:white; box-sizing:border-box}
-.badge-carta{width:70mm; height:100mm; border-radius:10px; border:1.5px solid #0ea5e9; background:white; display:none; flex-direction:column; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.08); margin:10px auto; position:relative}
+.badge-carta{width:70mm; height:100mm; border-radius:10px; border:1.5px solid #0ea5e9; background:white; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.08); margin:10px auto; position:relative}
 .badge-carta-left{width:100%; height:58%; background:#f0f9ff; color:#0c4a6e; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:8px; text-align:center; border-bottom:2px solid #bae6fd}
 .badge-foto{width:60px; height:74px; border-radius:10px; border:2.5px solid white; object-fit:cover; background:#f1f5f9; display:block}
 #qrcodeCarta{width:140px; height:140px; background:white; padding:4px; border-radius:6px; border:2px solid #000; display:flex; align-items:center; justify-content:center; overflow:hidden}
-@media print{ body *{ visibility:hidden !important; } #badgeCartaBox, #badgeCartaBox *{ visibility:visible !important; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; } #badgeCartaBox{ position:absolute; left:50%; top:20px; transform:translateX(-50%); } .no-print{ display:none !important; } }
+@media print{ body *{ visibility:hidden !important; } #badgeModal, #badgeModal *{ visibility:visible !important; } #badgeModal{ position:fixed; left:0; top:0; width:100%; height:100%; background:white; z-index:99999; display:flex !important; align-items:center; justify-content:center; } .no-print{ display:none !important; } }
 </style>
 </head>
 <body>
@@ -137,6 +137,31 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 </div>
 </div>
 
+</div>
+
+<!-- MODALE STAMPA BADGE SINGOLO -->
+<div id="badgeModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:99999; align-items:center; justify-content:center; padding:10px; box-sizing:border-box">
+<div style="background:white; border-radius:14px; padding:16px; max-width:340px; width:100%; text-align:center; border:2.5px solid #0ea5e9">
+<h3 style="margin:0 0 10px 0; color:#0ea5e9">🪪 Badge Dipendente</h3>
+<div id="badgeCartaBox" class="badge-carta" style="display:flex">
+<div class="badge-carta-left">
+<div id="badgeFotoPlaceholder" style="width:50px; height:60px; background:#e0f2fe; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:28px; border:2px solid #bae6fd">👤</div>
+<div id="bNomeCarta" style="font-size:12px; font-weight:900; margin-top:4px"></div>
+<div id="bQualificaCarta" style="font-size:9px; background:white; padding:2px 6px; border-radius:999px; border:1px solid #bae6fd; margin-top:2px"></div>
+<div id="bPlessoCarta" style="font-size:10px; font-weight:800; margin-top:3px"></div>
+<div id="bOrarioCarta" style="font-size:7px; margin-top:3px; color:#475569"></div>
+</div>
+<div style="width:100%; height:42%; background:white; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:4px">
+<div style="font-size:7px; color:#0369a1; font-weight:800; margin-bottom:2px">IC FROSINONE 2 • BADGE QR</div>
+<div id="qrcodeCarta" style="width:110px; height:110px; display:flex; align-items:center; justify-content:center"></div>
+<div id="bIdCarta" style="font-size:6px; color:#94a3b8; margin-top:2px"></div>
+</div>
+</div>
+<div style="display:flex; gap:8px; margin-top:12px">
+<button onclick="window.print()" style="flex:1; background:#16a34a; color:white; border:0; border-radius:8px; padding:10px; font-weight:800; cursor:pointer">🖨️ Stampa</button>
+<button onclick="chiudiBadgeModal()" style="flex:1; background:#64748b; color:white; border:0; border-radius:8px; padding:10px; font-weight:800; cursor:pointer">❌ Chiudi</button>
+</div>
+</div>
 </div>
 
 <script>
@@ -531,7 +556,6 @@ function apriSchedaAnagrafica(nome){
   htmlModal+='</select></div>';
   htmlModal+='</div>';
 
-  // SEZIONE PERIODI DI SERVIZIO / SUPPLENZE MULTIPLE
   htmlModal+='<div style="background:#f0f9ff; border:2px solid #bae6fd; padding:10px; border-radius:10px; margin:10px 0">';
   htmlModal+='<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px"><b style="color:#0369a1; font-size:12px">📅 Periodi di Servizio / Supplenze</b><button type="button" onclick="aggiungiRigaServizioModal()" style="background:#0ea5e9; color:white; border:0; border-radius:6px; padding:4px 10px; font-size:11px; font-weight:800">➕ Aggiungi Servizio</button></div>';
   htmlModal+='<div id="containerPeriodiServizio">';
@@ -592,28 +616,36 @@ function creaBadgeDaScheda(nome){
   var a = anagrafiche.find(function(x){ return x.nome === nome; });
   if(!a) return;
   chiudiSchedaAnagrafica();
-  var box = document.getElementById('badgeCartaBox');
+  
   var nomeEl = document.getElementById('bNomeCarta');
   var qualEl = document.getElementById('bQualificaCarta');
   var plessoEl = document.getElementById('bPlessoCarta');
   var orarioEl = document.getElementById('bOrarioCarta');
   var idEl = document.getElementById('bIdCarta');
   var qrEl = document.getElementById('qrcodeCarta');
-  if(!box || !qrEl) return;
+  var modalBadge = document.getElementById('badgeModal');
+  
+  if(!modalBadge || !qrEl) return;
   nomeEl.textContent = a.nome;
   qualEl.textContent = a.qualifica || '';
   plessoEl.textContent = '🏫 ' + a.plesso;
   var servTxt = (a.periodiServizio && a.periodiServizio.length > 0 && a.periodiServizio[0].dal) ? `Servizio: ${a.periodiServizio[0].dal} al ${a.periodiServizio[0].al||'?'}` : '';
   orarioEl.textContent = servTxt;
   idEl.textContent = 'IC Frosinone 2 - ' + a.nome;
-  box.style.display = 'flex';
-  box.scrollIntoView({behavior:'smooth'});
+  
+  modalBadge.style.display = 'flex';
+  
   try{
     qrEl.innerHTML = '';
     if(typeof QRCode !== 'undefined'){
-      new QRCode(qrEl, {text: a.nome, width: 140, height: 140, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.L});
+      new QRCode(qrEl, {text: a.nome, width: 110, height: 110, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.L});
     } else { qrEl.textContent = a.nome; }
   }catch(e){ qrEl.textContent = a.nome; }
+}
+
+function chiudiBadgeModal(){
+  var modal = document.getElementById('badgeModal');
+  if(modal) modal.style.display = 'none';
 }
 
 function generaHtmlGiornoScheda(gk, nomeGiorno, slots){
@@ -732,8 +764,6 @@ function bloccaPIN(){
   document.getElementById('areaAnag').style.display='none'; 
   document.getElementById('pinAnag').value=''; 
 }
-
-function stampaBadgeCarta(){ window.print(); }
 
 function generaSchedeConQR(){
   try{
