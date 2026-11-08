@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IC Frosinone 2 - V131 - CLOUD COMPLETO ANAGRAFICA + TIMBRATURE + BACHECA</title>
+<title>IC Frosinone 2 - V132 - LOG CONDIVISO & BACHECA DIGITALE</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -46,7 +46,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <body>
 
 <div class="top-verde">
-<div class="top-left"><b>✅ IC FROSINONE 2 - V131 - ANAGRAFICA & CLOUD SINCRONIZZATO</b><br><small>GPS attivo - Scanner QR HD - Cloud in tempo reale su tutti i tablet</small></div>
+<div class="top-left"><b>✅ IC FROSINONE 2 - V132 - LOG CONDIVISO & BACHECA DIGITALE</b><br><small>GPS attivo - Scanner QR HD - Sincronizzazione cloud in tempo reale</small></div>
 <div class="top-right"><div class="istituto">Istituto Comprensivo<br>Frosinone 2°</div></div>
 </div>
 
@@ -576,7 +576,7 @@ async function fetchWithFallback(path){
   return null;
 }
 
-// Sincronizzazione Anagrafica da Cloud
+// Caricamento Anagrafica da Cloud (eseguito solo all'avvio)
 async function caricaAnagraficaCloud(){
   try{
     let val = await fetchWithFallback("/anagrafica.json");
@@ -590,7 +590,6 @@ async function caricaAnagraficaCloud(){
         return;
       }
     }
-    // Se il cloud è vuoto, carica da locale o di default
     loadAnagLocale();
   }catch(e){
     loadAnagLocale();
@@ -1103,11 +1102,10 @@ async function eliminaAvvisoBacheca(ts){
   }
 }
 
-// Auto-sync ciclico ogni 3 secondi per anagrafica, log e bacheca
+// Auto-sync ciclico ogni 3 secondi solo per log e bacheca (l'anagrafica resta stabile)
 setInterval(()=>{ 
   caricaCondivise(); 
   caricaBacheca();
-  caricaAnagraficaCloud();
 }, 3000);
 
 window.addEventListener('load', ()=>{ 
