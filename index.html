@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IC Frosinone 2 - V132 - LOG CONDIVISO & BACHECA DIGITALE</title>
+<title>IC Frosinone 2 - V133 - ANAGRAFICA STABILE & CLOUD</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -46,7 +46,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <body>
 
 <div class="top-verde">
-<div class="top-left"><b>✅ IC FROSINONE 2 - V132 - LOG CONDIVISO & BACHECA DIGITALE</b><br><small>GPS attivo - Scanner QR HD - Sincronizzazione cloud in tempo reale</small></div>
+<div class="top-left"><b>✅ IC FROSINONE 2 - V133 - ANAGRAFICA STABILE & CLOUD</b><br><small>GPS attivo - Scanner QR HD - Sincronizzazione cloud in tempo reale</small></div>
 <div class="top-right"><div class="istituto">Istituto Comprensivo<br>Frosinone 2°</div></div>
 </div>
 
@@ -681,16 +681,21 @@ function render(){
     }); 
     if(cur && anagrafiche.find(x=>x.nome===cur)) sel.value=cur; 
     else if(anagrafiche.length>0) sel.value=anagrafiche[0].nome;
-    try{ filtraElenco(); }catch(e){}
+    try{ filtraElenco(true); }catch(e){}
     try{ mostraOrario(); }catch(e){}
   }catch(e){}
 }
 
-function filtraElenco(){
+function filtraElenco(mantieniScroll){
   var cont=document.getElementById('tabellaOrari'); if(!cont) return;
+  
+  var scrollContainer = cont.querySelector('.scroll-anag-box');
+  var scrollTopVal = scrollContainer ? scrollContainer.scrollTop : 0;
+
   var filtro = (document.getElementById('filtroAnag')?.value||'').toLowerCase();
-  var html='<div style="display:flex; gap:6px; margin-bottom:8px"><input id="filtroAnag" placeholder="Cerca nome..." style="flex:1; padding:8px; border:1.5px solid #cbd5e1; border-radius:8px" oninput="filtraElenco()" value="'+(filtro||'')+'"><span style="font-size:11px; color:#64748b; padding:8px">Tot: '+anagrafiche.length+'</span></div>';
-  html+='<div style="max-height:420px; overflow:auto">';
+  var html='<div style="display:flex; gap:6px; margin-bottom:8px"><input id="filtroAnag" placeholder="Cerca nome..." style="flex:1; padding:8px; border:1.5px solid #cbd5e1; border-radius:8px" oninput="filtraElenco(true)" value="'+(filtro||'')+'"><span style="font-size:11px; color:#64748b; padding:8px">Tot: '+anagrafiche.length+'</span></div>';
+  
+  html+='<div class="scroll-anag-box" style="max-height:420px; overflow:auto">';
   var mostrati=0;
   for(var i=0;i<anagrafiche.length;i++){
     var a=anagrafiche[i];
@@ -702,6 +707,11 @@ function filtraElenco(){
   }
   html+='</div>';
   cont.innerHTML=html;
+
+  if(mantieniScroll){
+    var nuovoContainer = cont.querySelector('.scroll-anag-box');
+    if(nuovoContainer) nuovoContainer.scrollTop = scrollTopVal;
+  }
 }
 
 function eliminaDipendente(nome){
@@ -788,7 +798,7 @@ function salvaSchedaAnagrafica(nomeVecchio){
   anagrafiche.sort(function(a,b){ return a.nome.localeCompare(b.nome); });
   localStorage.setItem('anagrafiche_v95', JSON.stringify(anagrafiche));
   salvaAnagraficaCloudTotale();
-  render(); filtraElenco(); chiudiSchedaAnagrafica();
+  render(); filtraElenco(true); chiudiSchedaAnagrafica();
   alert('✅ Salvato e sincronizzato su tutti i tablet!');
 }
 
@@ -818,7 +828,7 @@ function sbloccaAnag(){
   var area=document.getElementById('areaAnag');
   if(!area) return;
   area.style.display='block'; 
-  try{ render(); filtraElenco(); }catch(e){}
+  try{ render(); filtraElenco(true); }catch(e){}
   alert('✅ Anagrafica SBLOCCATA!');
 }
 function bloccaPIN(){ 
@@ -1102,7 +1112,7 @@ async function eliminaAvvisoBacheca(ts){
   }
 }
 
-// Auto-sync ciclico ogni 3 secondi solo per log e bacheca (l'anagrafica resta stabile)
+// Auto-sync ciclico ogni 3 secondi solo per log e bacheca
 setInterval(()=>{ 
   caricaCondivise(); 
   caricaBacheca();
