@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IC Frosinone 2 - V155 - TIMBRATURE</title>
+<title>IC Frosinone 2 - V156 - TIMBRATURE</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -46,7 +46,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <body>
 
 <div class="top-verde">
-<div class="top-left">IC FROSINONE 2 - V155</div>
+<div class="top-left">IC FROSINONE 2 - V156</div>
 <div class="top-right"><div class="top-right-logo">E. N.</div></div>
 </div>
 
@@ -178,7 +178,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <h3 style="margin:0 0 10px 0; color:#0ea5e9">🪪 Badge Dipendente</h3>
 <div id="badgeCartaBox" class="badge-carta" style="display:flex">
 <div class="badge-carta-left">
-<div id="badgeFotoPlaceholder" style="width:50px; height:60px; background:#e0f2fe; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:28px; border:2px solid #bae6fd">👤</div>
+<div id="badgeFotoPlaceholder" style="width:50px; height:60px; background:#e0f2fe; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:28px; border:2.5px solid #bae6fd">👤</div>
 <div id="bNomeCarta" style="font-size:12px; font-weight:900; margin-top:4px"></div>
 <div id="bQualificaCarta" style="font-size:9px; background:white; padding:2px 6px; border-radius:999px; border:1px solid #bae6fd; margin-top:2px"></div>
 <div id="bPlessoCarta" style="font-size:10px; font-weight:800; margin-top:3px"></div>
@@ -254,6 +254,22 @@ let giustificativiSalvati = JSON.parse(localStorage.getItem('giustificativi_v96'
 let bachecaMessaggi = [];
 let callbackPinSicuro = null;
 let giorniMap={lun:'Lunedì', mar:'Martedì', mer:'Mercoledì', gio:'Giovedì', ven:'Venerdì', sab:'Sabato', dom:'Domenica'};
+
+const DB_URLS = [
+  "https://icfrosinone2-default-rtdb.europe-west1.firebasedatabase.app",
+  "https://icfrosinone2-default-rtdb.firebaseio.com"
+];
+let DB_URL = DB_URLS[0];
+
+async function fetchWithFallback(path, options){
+  for(let base of DB_URLS){
+    try{
+      const r = await fetch(base + path + (options?.method ? "" : "?ts="+Date.now()), Object.assign({cache:"no-store"}, options));
+      if(r.ok){ DB_URL = base; return r; }
+    }catch(e){}
+  }
+  throw new Error("Impossibile connettersi al database Cloud");
+}
 
 function getOrarioPerOggi(a){
   if(!a) return {slots:[]};
@@ -445,7 +461,7 @@ function richiediAzzeraDatabase(){
 
 async function azzeraDatabaseCloudCompleto(){
   try{
-    await fetch(DB_URL + "/timbrature.json", { method: "DELETE" });
+    await fetchWithFallback("/timbrature.json", { method: "DELETE" });
     timbratureSalvate = [];
     localStorage.removeItem('timbrature_v93');
     aggiornaLog();
@@ -453,25 +469,10 @@ async function azzeraDatabaseCloudCompleto(){
   }catch(e){ alert("Errore durante l'azzeramento: "+e.message); }
 }
 
-const DB_URLS = [
-  "https://icfrosinone2-default-rtdb.europe-west1.firebasedatabase.app",
-  "https://icfrosinone2-default-rtdb.firebaseio.com"
-];
-let DB_URL = DB_URLS[0];
-
-async function fetchWithFallback(path){
-  for(let base of DB_URLS){
-    try{
-      const r = await fetch(base + path + "?ts="+Date.now(), {cache:"no-store"});
-      if(r.ok){ DB_URL = base; return await r.json(); }
-    }catch(e){}
-  }
-  return null;
-}
-
 async function caricaAnagraficaCloud(){
   try{
-    let val = await fetchWithFallback("/anagrafica.json");
+    let r = await fetchWithFallback("/anagrafica.json");
+    let val = await r.json();
     if(val){
       let arr = Array.isArray(val) ? val : Object.values(val);
       if(arr && arr.length > 0){
@@ -505,7 +506,7 @@ function loadAnagLocale(){
 
 async function salvaAnagraficaCloudTotale(){
   try{
-    await fetch(DB_URL + "/anagrafica.json", { method: "PUT", body: JSON.stringify(anagrafiche), headers: {"Content-Type":"application/json"} });
+    await fetchWithFallback("/anagrafica.json", { method: "PUT", body: JSON.stringify(anagrafiche), headers: {"Content-Type":"application/json"} });
   }catch(e){}
 }
 
@@ -1112,7 +1113,8 @@ function esportaResocontoCSV() {
 
 async function caricaCondivise(){
   try{
-    let val = await fetchWithFallback("/timbrature.json");
+    let r = await fetchWithFallback("/timbrature.json");
+    let val = await r.json();
     if(val){
       let arr = Array.isArray(val) ? val : Object.values(val);
       arr = arr.filter(x=>x && x.data);
@@ -1133,24 +1135,22 @@ async function caricaCondivise(){
 async function salvaCondivisa(t){
   try{
     if(!t.timestamp) t.timestamp = Date.now();
-    await fetch(DB_URL + "/timbrature.json", { method: "POST", body: JSON.stringify(t), headers: {"Content-Type":"application/json"} });
+    await fetchWithFallback("/timbrature.json", { method: "POST", body: JSON.stringify(t), headers: {"Content-Type":"application/json"} });
     setTimeout(caricaCondivise, 500);
   }catch(e){}
 }
 
-let bachecaMapCache = {};
 async function caricaBacheca(){
   try{
-    let val = await fetchWithFallback("/bacheca.json");
+    let r = await fetchWithFallback("/bacheca.json");
+    let val = await r.json();
     const bachecaDiv = document.getElementById('bachecaList');
     if(!bachecaDiv) return;
     if(val){
-      bachecaMapCache = {};
       let keys = Object.keys(val);
       let arr = [];
       keys.forEach(k => {
         if(val[k] && val[k].testo){
-          bachecaMapCache[k] = val[k];
           arr.push({firebaseKey: k, ...val[k]});
         }
       });
@@ -1178,7 +1178,7 @@ function apriFormBacheca(){
 
 async function pubblicaAvvisoCloud(avviso){
   try{
-    await fetch(DB_URL + "/bacheca.json", { method: "POST", body: JSON.stringify(avviso), headers: {"Content-Type":"application/json"} });
+    await fetchWithFallback("/bacheca.json", { method: "POST", body: JSON.stringify(avviso), headers: {"Content-Type":"application/json"} });
     caricaBacheca();
     alert("✅ Avviso pubblicato con successo!");
   }catch(e){ alert("Errore: "+e.message); }
@@ -1192,10 +1192,10 @@ function richiediEliminaAvviso(firebaseKey){
 
 async function eliminaAvvisoBachecaEsecuzione(firebaseKey){
   try{
-    await fetch(DB_URL + "/bacheca/" + firebaseKey + ".json", { method: "DELETE" });
+    await fetchWithFallback("/bacheca/" + firebaseKey + ".json", { method: "DELETE" });
     caricaBacheca();
-    alert("✅ Avviso eliminato.");
-  }catch(e){ alert("Errore: "+e.message); }
+    alert("✅ Avviso eliminato con successo!");
+  }catch(e){ alert("Errore durante l'eliminazione: "+e.message); }
 }
 
 function apriModalPinSicuro(titolo, testo, callback){
