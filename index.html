@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IC Frosinone 2 - V156 - TIMBRATURE</title>
+<title>IC Frosinone 2 - V157 - TIMBRATURE</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -38,7 +38,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 .btn-uscita{background:linear-gradient(135deg,#dc2626,#ef4444); color:white; font-size:16px; padding:14px}
 .select-big{width:100%; padding:12px; border:3px solid #0ea5e9; border-radius:12px; font-size:15px; font-weight:700; background:white; box-sizing:border-box}
 .badge-carta{width:70mm; height:100mm; border-radius:10px; border:1.5px solid #0ea5e9; background:white; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.08); margin:10px auto; position:relative}
-.badge-carta-left{width:100%; height:58%; background:#f0f9ff; color:#0c4a6e; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:8px; text-align:center; border-bottom:2px solid #bae6fd}
+.badge-carta-left{width:100%; height:58%; background:#f0f9ff; color:#0c4a6e; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:8px; text-align:center; border-bottom:2.5px solid #bae6fd}
 #qrcodeCarta{width:140px; height:140px; background:white; padding:4px; border-radius:6px; border:2px solid #000; display:flex; align-items:center; justify-content:center; overflow:hidden}
 @media print{ body *{ visibility:hidden !important; } #badgeModal, #badgeModal *{ visibility:visible !important; } #badgeModal{ position:fixed; left:0; top:0; width:100%; height:100%; background:white; z-index:99999; display:flex !important; align-items:center; justify-content:center; } .no-print{ display:none !important; } }
 </style>
@@ -46,11 +46,10 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <body>
 
 <div class="top-verde">
-<div class="top-left">IC FROSINONE 2 - V156</div>
+<div class="top-left">IC FROSINONE 2 - V157</div>
 <div class="top-right"><div class="top-right-logo">E. N.</div></div>
 </div>
 
-<!-- SEZIONE CONDIVISO ATTIVO & AZZERAMENTO CON PIN -->
 <div class="green-banner">
   <span id="testoCondivisoBanner">🌱 Condiviso attivo - 0 timbrature</span>
   <button onclick="richiediAzzeraDatabase()" style="background:#dc2626; color:white; border:0; border-radius:8px; padding:6px 12px; font-size:12px; font-weight:800; cursor:pointer">🗑️ Azzera Database (PIN)</button>
@@ -97,7 +96,6 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 
 <div class="bottom-grid">
 <div class="card-timbra">
-<!-- SCANNER E FOTOCAMERA PIU ALTI E SULLA STESSA LINEA -->
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px">
   <b style="font-size:16px; color:#0369a1">📷 Scanner & Timbratura</b>
   <button class="btn" style="background:#0ea5e9; color:white; font-size:16px; padding:18px 22px; font-weight:900; width:auto; flex:1; min-width:190px; box-shadow:0 4px 10px rgba(14,165,233,0.3)" onclick="avviaScanner()">📷 AVVIA FOTOCAMERA</button>
@@ -149,9 +147,8 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 </div>
 <div id="areaAnag" style="display:none">
 <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:8px">
-  <button onclick="aggiungiNuovoDipendentePrompt()" style="background:#16a34a; color:white; border:0; border-radius:8px; padding:8px 12px; font-weight:800; font-size:12px">➕ Aggiungi Nuovo Dipendente</button>
+  <button onclick="apriModalNuovoDipendente()" style="background:#16a34a; color:white; border:0; border-radius:8px; padding:8px 12px; font-weight:800; font-size:12px">➕ Aggiungi Nuovo Dipendente</button>
   <button onclick="apriGestioneGiustificativi()" style="background:#8b5cf6; color:white; border:0; border-radius:8px; padding:8px 12px; font-weight:800; font-size:12px">📝 Gestisci Giustificativi Assenze</button>
-  <button onclick="ripristinaListaInizialeCloud()" style="background:#64748b; color:white; border:0; border-radius:6px; padding:6px 10px; font-size:11px; font-weight:700">🔄 Ripristina lista originale</button>
 </div>
 <div id="tabellaOrari" style="margin-top:8px"></div>
 </div>
@@ -159,7 +156,7 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 
 </div>
 
-<!-- MODALE SICURO PER RICHIESTA PIN (NON VISIBILE) -->
+<!-- MODALE SICURO PER RICHIESTA PIN -->
 <div id="modalPinSicuro" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:99999; align-items:center; justify-content:center; padding:12px; box-sizing:border-box">
 <div style="background:white; border-radius:14px; padding:20px; max-width:320px; width:100%; text-align:center; border:2.5px solid #dc2626">
 <h3 id="modalPinTitolo" style="margin:0 0 8px 0; color:#dc2626; font-size:16px">🔒 Area Protetta</h3>
@@ -168,6 +165,52 @@ body{font-family:system-ui; background:#eef2f7; margin:0; padding:8px}
 <div style="display:flex; gap:8px">
 <button onclick="confermaPinSicuro()" style="flex:1; background:#16a34a; color:white; border:0; border-radius:8px; padding:10px; font-weight:800; cursor:pointer">Conferma</button>
 <button onclick="chiudiModalPinSicuro()" style="flex:1; background:#64748b; color:white; border:0; border-radius:8px; padding:10px; font-weight:800; cursor:pointer">Annulla</button>
+</div>
+</div>
+</div>
+
+<!-- MODALE AGGIUNGI NUOVO DIPENDENTE E CREAZIONE AUTOMATICA BADGE -->
+<div id="modalNuovoDip" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10003; align-items:center; justify-content:center; padding:12px; box-sizing:border-box">
+<div style="background:white; border-radius:14px; padding:20px; max-width:420px; width:100%; max-height:90vh; overflow:auto; border:2.5px solid #16a34a">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
+<h3 style="margin:0; color:#16a34a">➕ Nuovo Dipendente / Supplente</h3>
+<button onclick="chiudiModalNuovoDip()" style="background:#64748b; color:white; border:0; border-radius:50%; width:28px; height:28px; font-weight:800; cursor:pointer">✕</button>
+</div>
+<label style="font-weight:700; font-size:12px; display:block; margin-top:6px">Nome e Cognome:</label>
+<input id="nuovoNomeInp" placeholder="Es. Rossi Mario" style="width:100%; padding:8px; border:1.5px solid #cbd5e1; border-radius:8px; margin-top:2px; box-sizing:border-box">
+
+<label style="font-weight:700; font-size:12px; display:block; margin-top:8px">Plesso di Servizio:</label>
+<select id="nuovoPlessoInp" style="width:100%; padding:8px; border:1.5px solid #cbd5e1; border-radius:8px; margin-top:2px">
+<option value="Pietrobono">Pietrobono</option>
+<option value="Rinascita">Rinascita</option>
+<option value="XXIII">XXIII</option>
+<option value="Verdi">Verdi</option>
+<option value="Pinocchio">Pinocchio</option>
+<option value="Spinelli">Spinelli</option>
+<option value="Casa Test">Casa Test</option>
+</select>
+
+<label style="font-weight:700; font-size:12px; display:block; margin-top:8px">Qualifica:</label>
+<select id="nuovoQualInp" style="width:100%; padding:8px; border:1.5px solid #cbd5e1; border-radius:8px; margin-top:2px">
+<option value="Collaboratore Scolastico">Collaboratore Scolastico</option>
+<option value="Collaboratore scolastico supplente breve">Collaboratore scolastico supplente breve</option>
+<option value="Collaboratore scolastico supplente annuale al 30 giugno">Collaboratore scolastico supplente annuale al 30 giugno</option>
+<option value="Collaboratore scolastico supplente annuale al 31 agosto">Collaboratore scolastico supplente annuale al 31 agosto</option>
+<option value="Assistente Amministrativo">Assistente Amministrativo</option>
+<option value="Assistente Amministrativo supplente annuale al 30 giugno">Assistente Amministrativo supplente annuale al 30 giugno</option>
+<option value="Assistente Amministrativo supplente annuale al 31 agosto">Assistente Amministrativo supplente annuale al 31 agosto</option>
+<option value="Docente">Docente</option>
+<option value="DSGA">DSGA</option>
+<option value="Altro">Altro</option>
+</select>
+
+<div style="background:#f0fdf4; border:1.5px solid #bbf7d0; padding:8px; border-radius:8px; margin-top:10px; font-size:11px; color:#166534">
+💡 I supplenti inseriti resteranno salvati permanentemente nell'app e pronti per essere richiamati in futuro. Cliccando conferma verrà generato anche il badge associato.
+</div>
+
+<div style="display:flex; gap:8px; margin-top:14px">
+<button onclick="salvaNuovoDipendenteDaModal()" style="flex:1; background:#16a34a; color:white; border:0; border-radius:8px; padding:10px; font-weight:800; cursor:pointer">💾 Salva e Crea Badge</button>
+<button onclick="chiudiModalNuovoDip()" style="flex:1; background:#64748b; color:white; border:0; border-radius:8px; padding:10px; font-weight:800; cursor:pointer">Annulla</button>
 </div>
 </div>
 </div>
@@ -368,8 +411,28 @@ async function avviaScanner(){
     if(!nomeTrovato) nomeTrovato=decodedNome;
     var dipEl=document.getElementById('dipendente');
     if(dipEl){ dipEl.value=nomeTrovato; try{ mostraOrario(); }catch(e){} }
+    
+    // Esecuzione automatica timbratura con fotocamera (ENTRATA automatica o rilevamento)
+    if(dentro){
+      eseguiTimbraturaAutomaticaDaQR(nomeTrovato);
+    } else {
+      alert("⚠️ QR scansionato ma sei FUORI dal plesso (GPS > 150m)!");
+    }
+    
     setTimeout(()=>{ fermaScanner(); }, 1000);
   }, (err)=>{}).catch(e=>{});
+}
+
+function eseguiTimbraturaAutomaticaDaQR(nome){
+  const a=anagrafiche.find(x=>x.nome===nome); const plesso = vicino ? vicino.n : (a ? a.plesso : 'Pietrobono');
+  const ora=new Date(); const dataStr=ora.toLocaleDateString('it-IT')+', '+ora.toLocaleTimeString('it-IT');
+  const t={nome, tipo:'ENTRATA', plesso, data:dataStr, ora:ora.toLocaleTimeString('it-IT'), timestamp:Date.now()};
+  timbratureSalvate.unshift(t); if(timbratureSalvate.length>500) timbratureSalvate=timbratureSalvate.slice(0,500);
+  localStorage.setItem('timbrature_v93', JSON.stringify(timbratureSalvate.slice(0,500)));
+  try{ salvaCondivisa(t); }catch(e){}
+  aggiornaLog();
+  document.getElementById('ultimoScansionato').innerHTML=`✅ ENTRATA ${nome} @ ${plesso} ${t.ora}`;
+  beep();
 }
 
 function fermaScanner(){ 
@@ -510,28 +573,26 @@ async function salvaAnagraficaCloudTotale(){
   }catch(e){}
 }
 
-function ripristinaListaInizialeCloud(){
-  apriModalPinSicuro("Ripristina Lista", "Inserisci il PIN per ripristinare la lista originale:", function(){
-    anagrafiche = JSON.parse(JSON.stringify(LISTA_COMPLETA_DIPENDENTI_V59));
-    anagrafiche.sort((a,b)=> (a.nome||"").localeCompare(b.nome||""));
-    localStorage.setItem('anagrafiche_v95', JSON.stringify(anagrafiche));
-    salvaAnagraficaCloudTotale();
-    render();
-    alert("✅ Lista originale ripristinata!");
-  });
+function apriModalNuovoDipendente(){
+  document.getElementById('nuovoNomeInp').value = '';
+  document.getElementById('modalNuovoDip').style.display = 'flex';
 }
 
-function aggiungiNuovoDipendentePrompt(){
-  var nome = prompt("Nome e Cognome del dipendente o supplente:");
-  if(!nome) return;
-  var plesso = prompt("Plesso (Pietrobono, Rinascita, XXIII, Verdi, Pinocchio, Spinelli):", "Pietrobono");
-  if(!plesso) return;
-  var qualifica = prompt("Qualifica:", "Collaboratore Scolastico");
+function chiudiModalNuovoDip(){
+  document.getElementById('modalNuovoDip').style.display = 'none';
+}
+
+function salvaNuovoDipendenteDaModal(){
+  var nome = document.getElementById('nuovoNomeInp').value.trim();
+  var plesso = document.getElementById('nuovoPlessoInp').value;
+  var qualifica = document.getElementById('nuovoQualInp').value;
+  
+  if(!nome){ alert("Inserisci il nome e cognome!"); return; }
   
   var nuovoDip = {
-    nome: nome.trim(),
-    plesso: plesso.trim(),
-    qualifica: qualifica ? qualifica.trim() : "Collaboratore Scolastico",
+    nome: nome,
+    plesso: plesso,
+    qualifica: qualifica,
     periodiServizio: [],
     orariSettimana: { lun:[{entrata:"07:30", uscita:"14:42"}], mar:[{entrata:"07:30", uscita:"14:42"}], mer:[{entrata:"07:30", uscita:"14:42"}], gio:[{entrata:"07:30", uscita:"14:42"}], ven:[{entrata:"07:30", uscita:"14:42"}], sab:[], dom:[] }
   };
@@ -540,8 +601,12 @@ function aggiungiNuovoDipendentePrompt(){
   anagrafiche.sort((a,b)=> (a.nome||"").localeCompare(b.nome||""));
   localStorage.setItem('anagrafiche_v95', JSON.stringify(anagrafiche));
   salvaAnagraficaCloudTotale();
+  chiudiModalNuovoDip();
   render();
-  alert("✅ Aggiunto con successo!");
+  
+  // Generazione automatica badge del nuovo dipendente
+  creaBadgeDaScheda(nome);
+  alert("✅ Dipendente salvato permanentemente e badge generato!");
 }
 
 function render(){
@@ -627,7 +692,7 @@ function apriGestioneGiustificativi(){
   
   html += '<div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:6px">';
   html += '<div><label style="font-size:11px; font-weight:700; display:block">Data:</label><input type="date" id="giustData" value="'+oggiStr+'" style="width:100%; padding:6px; border:1px solid #cbd5e1; border-radius:6px"></div>';
-  html += '<div><label style="font-size:11px; font-weight:700; display:block">Tipo Assenza:</label><select id="giustTipo" style="width:100%; padding:7px; border:1px solid #cbd5e1; border-radius:6px"><option value="Ferie">🌴 Ferie</option><option value="Malattia">🏥 Malattia</option><option value="Permesso">⏱️ Permesso</option><option value="Legge 104">🤝 Legge 104</option><option value="Altro">📌 Altro</option></select></div>';
+  html += '<div><label style="font-size:11px; font-weight:700; display:block">Tipo Assenza / Voce:</label><select id="giustTipo" style="width:100%; padding:7px; border:1px solid #cbd5e1; border-radius:6px"><option value="Permesso Motivi personali e/o familiari">👤 Permesso Motivi personali e/o familiari</option><option value="Visita Specialistica">🩺 Visita Specialistica</option><option value="Permesso Orario da recuperare">⏳ Permesso Orario da recuperare</option><option value="Ferie">🌴 Ferie</option><option value="Festività Soppresse">🎉 Festività Soppresse (3-4/anno)</option><option value="Malattia">🏥 Malattia</option><option value="Legge 104">🤝 Legge 104</option><option value="Altro">📌 Altro</option></select></div>';
   html += '</div>';
   
   html += '<button onclick="aggiungiGiustificativo()" style="background:#8b5cf6; color:white; border:0; border-radius:8px; padding:10px; font-weight:800; width:100%; margin-top:10px; cursor:pointer">➕ Registra Assenza</button>';
@@ -1011,9 +1076,9 @@ function generaResocontoInterno(){
   
   var dipendentiDaElaborare = dipScelto === "TUTTI" ? anagrafiche.map(x=>x.nome) : [dipScelto];
   
-  var html = '<h3 style="color:#1e293b; font-size:15px">📅 Resoconto Dettagliato Mensile (Servizio vs Effettivo)</h3>';
+  var html = '<h3 style="color:#1e293b; font-size:15px">📅 Resoconto Dettagliato Mensile & Gestione Timbrature</h3>';
   html += '<div style="overflow:auto"><table style="width:100%; border-collapse:collapse; font-size:11px">';
-  html += '<tr><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Dipendente</th><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Data</th><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Previsto</th><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Effettivo</th><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Saldo (Dare/Avere)</th></tr>';
+  html += '<tr><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Dipendente</th><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Data</th><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Previsto</th><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Effettivo / Timbrature</th><th style="border:1px solid #cbd5e1; padding:6px; background:#0ea5e9; color:white">Saldo (Dare/Avere)</th></tr>';
 
   var giorniArr = ['dom','lun','mar','mer','gio','ven','sab'];
 
@@ -1051,12 +1116,22 @@ function generaResocontoInterno(){
             minLavorati = ultimaUscitaMin - primoEntrataMin;
           }
           var diff = minLavorati - minPrevisti;
-          coloreDiff = diff >= 0 ? '#16a34a' : '#dc2626';
-          statoStr = minutesToHoursStr(diff);
+          
+          if(giustificato && giustificato.tipo === 'Permesso Orario da recuperare'){
+            diff = 0;
+            statoStr = '⏳ RECUPERO ORARIO (Saldo 0)';
+          } else {
+            coloreDiff = diff >= 0 ? '#16a34a' : '#dc2626';
+            statoStr = minutesToHoursStr(diff);
+          }
         } else if(giustificato){
           minLavorati = 0;
           coloreDiff = '#8b5cf6';
-          statoStr = '📝 GIUSTIFICATO (' + giustificato.tipo.toUpperCase() + ')';
+          if(giustificato.tipo === 'Permesso Orario da recuperare'){
+            statoStr = '⏳ PERMESSO DA RECUPERARE (In attesa)';
+          } else {
+            statoStr = '📝 ' + giustificato.tipo.toUpperCase();
+          }
         } else {
           minLavorati = 0;
           coloreDiff = '#ef4444';
@@ -1065,12 +1140,21 @@ function generaResocontoInterno(){
 
         var prevStr = Math.floor(minPrevisti/60) + 'h ' + (minPrevisti%60) + 'm';
         var lavStr = Math.floor(minLavorati/60) + 'h ' + (minLavorati%60) + 'm';
+        
+        if(timbGiorn.length > 0){
+          lavStr += '<div style="font-size:9px; margin-top:2px">';
+          timbGiorn.forEach(tg => {
+            var globalIdx = timbratureSalvate.indexOf(tg);
+            lavStr += `<div>• ${tg.tipo} (${tg.ora}) <button onclick="adminEliminaTimbraturaDaResoconto(${globalIdx})" style="background:#ef4444; color:white; border:0; border-radius:3px; padding:1px 4px; font-size:8px; cursor:pointer; margin-left:4px">Del Admin</button></div>`;
+          });
+          lavStr += '</div>';
+        }
 
         html += '<tr>';
         html += '<td style="border:1px solid #cbd5e1; padding:6px"><b>'+nome+'</b></td>';
         html += '<td style="border:1px solid #cbd5e1; padding:6px; text-align:center">'+dataStrFormatted+'</td>';
         html += '<td style="border:1px solid #cbd5e1; padding:6px; text-align:center">'+prevStr+'</td>';
-        html += '<td style="border:1px solid #cbd5e1; padding:6px; text-align:center">'+lavStr+'</td>';
+        html += '<td style="border:1px solid #cbd5e1; padding:6px">'+lavStr+'</td>';
         html += '<td style="border:1px solid #cbd5e1; padding:6px; text-align:center; font-weight:800; color:'+coloreDiff+'">'+statoStr+'</td>';
         html += '</tr>';
       }
@@ -1082,16 +1166,23 @@ function generaResocontoInterno(){
   document.getElementById("risultatoResoconto").innerHTML = html;
 }
 
+function adminEliminaTimbraturaDaResoconto(globalIdx){
+  apriModalPinSicuro("Elimina Timbratura (Admin)", "Inserisci il PIN amministratore per rimuovere questa timbratura errata o di prova:", function(){
+    if(globalIdx >= 0 && globalIdx < timbratureSalvate.length){
+      timbratureSalvate.splice(globalIdx, 1);
+      localStorage.setItem('timbrature_v93', JSON.stringify(timbratureSalvate.slice(0,500)));
+      aggiornaLog();
+      generaResocontoInterno();
+      alert("✅ Timbratura eliminata con successo!");
+    }
+  });
+}
+
 function esportaResocontoCSV() {
   var table = document.querySelector("#risultatoResoconto table");
-  if (!table) {
-    alert("Prima genera il resoconto!");
-    return;
-  }
-  
+  if (!table) { alert("Prima genera il resoconto!"); return; }
   var csv = [];
   var rows = table.rows;
-  
   for (var i = 0; i < rows.length; i++) {
     var row = [], cols = rows[i].querySelectorAll("th, td");
     for (var j = 0; j < cols.length; j++) {
@@ -1100,7 +1191,6 @@ function esportaResocontoCSV() {
     }
     csv.push(row.join(";"));
   }
-  
   var csvFile = new Blob(["\ufeff" + csv.join("\n")], { type: "text/csv;charset=utf-8;" });
   var downloadLink = document.createElement("a");
   downloadLink.download = "Resoconto_Dare_Avere_" + new Date().toISOString().slice(0,10) + ".csv";
